@@ -1,0 +1,13 @@
+# Finales de línea uniformes para que el proyecto funcione igual en cualquier PC
+* text=auto eol=lf
+
+# Archivos binarios: Git no debe modificarlos nunca
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.xlsx binary
+*.xls binary
+*.docx binary

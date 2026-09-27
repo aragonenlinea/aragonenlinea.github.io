@@ -1,0 +1,11 @@
+{
+  "nombre": "Conjunto Residencial Aragón",
+  "ciudad": "Neiva, Huila",
+  "lema": "Comunicados, documentos y zonas comunes del conjunto, en un solo lugar.",
+  "modo_prueba": true,
+  "directorio": [
+    { "nombre": "Emergencias", "detalle": "Línea 123", "enlace": "tel:123" },
+    { "nombre": "Portería", "detalle": "Número por definir", "enlace": "" },
+    { "nombre": "Administración", "detalle": "Correo y horario por definir", "enlace": "" }
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "nombre": "Salón social",
+    "icono": "salon",
+    "horario": "Todos los días, 8:00 a. m. a 10:00 p. m.",
+    "capacidad": "60 personas (prueba)",
+    "reserva": "Con reserva previa en la administración",
+    "reglas": [
+      "Reservar con mínimo 5 días de anticipación.",
+      "Entregar el salón limpio y en el horario acordado.",
+      "Música a volumen moderado."
+    ]
+  },
+  {
+    "nombre": "Zona BBQ",
+    "icono": "bbq",
+    "horario": "Todos los días, 10:00 a. m. a 9:00 p. m.",
+    "capacidad": "20 personas (prueba)",
+    "reserva": "Con reserva previa en la administración",
+    "reglas": [
+      "Traer su propio carbón y utensilios.",
+      "Apagar completamente el fuego al terminar."
+    ]
+  },
+  {
+    "nombre": "Piscina",
+    "icono": "piscina",
+    "horario": "Martes a domingo, 8:00 a. m. a 8:00 p. m. Lunes cerrada por mantenimiento.",
+    "capacidad": "30 personas (prueba)",
+    "reserva": "Uso libre para residentes",
+    "reglas": [
+      "Menores de 12 años siempre con un adulto responsable.",
+      "Ducharse antes de ingresar.",
+      "No se permiten envases de vidrio."
+    ]
+  },
+  {
+    "nombre": "Cancha múltiple",
+    "icono": "cancha",
+    "horario": "Todos los días, 6:00 a. m. a 9:00 p. m.",
+    "capacidad": "",
+    "reserva": "Uso libre para residentes",
+    "reglas": [
+      "Usar calzado deportivo."
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "categoria": "Reglamentos y manuales",
+    "titulo": "Reglamento de propiedad horizontal (prueba)",
+    "descripcion": "Documento de prueba. Se reemplaza por el reglamento vigente.",
+    "fecha": "2026-07-15",
+    "archivo": "documentos/documento-de-prueba.pdf"
+  },
+  {
+    "categoria": "Reglamentos y manuales",
+    "titulo": "Manual de convivencia (prueba)",
+    "descripcion": "Documento de prueba.",
+    "fecha": "2026-03-01",
+    "archivo": "documentos/documento-de-prueba.pdf"
+  },
+  {
+    "categoria": "Políticas",
+    "titulo": "Política de tratamiento de datos personales (prueba)",
+    "descripcion": "Cómo el conjunto trata los datos personales, según la Ley 1581 de 2012. Documento de prueba.",
+    "fecha": "2026-09-01",
+    "archivo": "documentos/documento-de-prueba.pdf"
+  }
+]

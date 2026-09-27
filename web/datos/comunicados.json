@@ -1,0 +1,26 @@
+[
+  {
+    "id": 3,
+    "fecha": "2026-09-26",
+    "categoria": "Mantenimiento",
+    "titulo": "Mantenimiento de tanques de agua (prueba)",
+    "texto": "El sábado se suspende el servicio de agua de 7:00 a. m. a 1:00 p. m. para lavado y desinfección de tanques.\nLe recomendamos almacenar agua desde el viernes.",
+    "adjunto": ""
+  },
+  {
+    "id": 2,
+    "fecha": "2026-09-22",
+    "categoria": "Asamblea",
+    "titulo": "Convocatoria a asamblea extraordinaria (prueba)",
+    "texto": "Se convoca a los copropietarios para revisar la propuesta de reforma del reglamento. La citación formal se entregará por los canales oficiales.",
+    "adjunto": "documentos/documento-de-prueba.pdf"
+  },
+  {
+    "id": 1,
+    "fecha": "2026-09-15",
+    "categoria": "Convivencia",
+    "titulo": "Horario de la piscina (prueba)",
+    "texto": "De martes a domingo, 8:00 a. m. a 8:00 p. m. Los lunes se realiza mantenimiento.",
+    "adjunto": ""
+  }
+]

@@ -1,0 +1,22 @@
+# Claves y configuración privada: NUNCA se suben
+.env
+.env.*
+!.env.ejemplo
+*.key
+
+# Datos reales de la administración: se trabajan en el PC, nunca en el repositorio
+datos-reales/
+*.xlsx
+*.xls
+!plantillas/*.xlsx
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Windows y editores
+Thumbs.db
+desktop.ini
+.vscode/
+.claude/settings.local.json

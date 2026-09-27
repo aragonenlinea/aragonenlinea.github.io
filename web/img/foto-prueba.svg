@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#CFE6DF"/>
+  <circle cx="620" cy="140" r="60" fill="#E8B931"/>
+  <path d="M0 360 L160 280 L300 330 L460 250 L620 320 L800 270 V500 H0Z" fill="#5E9585"/>
+  <rect x="300" y="190" width="150" height="220" fill="#FFFFFF"/>
+  <rect x="292" y="178" width="166" height="14" fill="#0F4C45"/>
+  <rect x="470" y="240" width="110" height="170" fill="#F2F6F4"/>
+  <rect x="462" y="228" width="126" height="14" fill="#0F4C45"/>
+  <rect x="0" y="410" width="800" height="90" fill="#0F4C45"/>
+  <text x="400" y="470" text-anchor="middle" font-family="Manrope, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF">Foto de prueba</text>
+</svg>
