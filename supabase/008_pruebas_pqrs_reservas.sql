@@ -6,7 +6,7 @@
 -- no debe y al final DESHACE TODO (no deja datos). El resultado sale en ROJO a propósito:
 --   "PRUEBAS 2b: NN de NN correctas" → todo bien.
 --   Si dice "FALLARON", copie el mensaje completo y envíelo al equipo técnico.
--- Requiere haber aplicado 001 a 007.
+-- Requiere haber aplicado 001 a 007 y 009.
 -- =====================================================================
 do $$
 declare
@@ -287,6 +287,42 @@ begin
   get diagnostics n = row_count;
   perform pg_temp.base();
   total := total + 1; if n <> 1 then fallas := array_append(fallas, '3f: la administración no pudo publicar un comunicado'); end if;
+
+  -- ---------- 4. Zonas editables (requiere 009_zonas_editables.sql) ----------
+  perform pg_temp.como(null);
+  select count(*) into n from public.zonas_reservables where activa;
+  perform pg_temp.base();
+  total := total + 1; if n < 1 then fallas := array_append(fallas, '4a: el público no ve los horarios de las zonas'); end if;
+
+  perform pg_temp.como(u_p1);
+  begin
+    update public.zonas_reservables set capacidad = 45 where id = 'salon';
+    get diagnostics n = row_count;
+  exception when others then n := 0; end;
+  perform pg_temp.base();
+  total := total + 1; if n <> 0 then fallas := array_append(fallas, '4b: un residente cambió la configuración de una zona'); end if;
+
+  perform pg_temp.como(u_p1);
+  begin
+    insert into public.zonas_reservables (id, nombre, turnos) values ('falsa', 'Zona falsa', '[{"id":"x","nombre":"Turno"}]');
+    ok := false;
+  exception when others then ok := true; end;
+  perform pg_temp.base();
+  total := total + 1; if not ok then fallas := array_append(fallas, '4c: un residente creó una zona'); end if;
+
+  perform pg_temp.como(u_admin);
+  update public.zonas_reservables set anticipacion_dias_habiles = 5 where id = 'bbq';
+  get diagnostics n = row_count;
+  perform pg_temp.base();
+  total := total + 1; if n <> 1 then fallas := array_append(fallas, '4d: la administración no pudo ajustar una zona'); end if;
+
+  perform pg_temp.como(u_admin);
+  begin
+    update public.zonas_reservables set turnos = '[]' where id = 'bbq';
+    ok := false;
+  exception when others then ok := true; end;
+  perform pg_temp.base();
+  total := total + 1; if not ok then fallas := array_append(fallas, '4e: se guardó una zona sin turnos'); end if;
 
   -- ---------- Resultado (se deshace todo) ----------
   if array_length(fallas, 1) is null then

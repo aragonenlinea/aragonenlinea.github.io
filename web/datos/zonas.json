@@ -2,10 +2,11 @@
   {
     "nombre": "Salón social",
     "icono": "salon",
-    "horario": "Turno de día: 10:00 a. m. a 6:00 p. m. Turno de noche: 6:00 p. m. a 12:00 a. m.",
+    "zona_reservable": "salon",
+    "horario": "Turno de día: 10:00 a. m. a 6:00 p. m. Turno de noche: 6:00 p. m. a 12:00 de la noche (medianoche).",
     "costo": "Día: 2,7 SMDLV. Noche: 3,3 SMDLV.",
     "capacidad": "50 personas",
-    "reserva": "Con alquiler. Solicítelo por escrito a la administración",
+    "reserva": "Con alquiler. Solicítela en Mi cuenta → Reservas o en la administración",
     "reglas": [
       "Solicite la reserva con mínimo 10 días hábiles de anticipación. Si varias casas piden la misma fecha, se asigna por orden de solicitud.",
       "Al recibir el salón se paga el alquiler y se firma el inventario de lo que se entrega.",
@@ -20,10 +21,11 @@
   {
     "nombre": "Zona BBQ",
     "icono": "bbq",
-    "horario": "10:00 a. m. a 12:00 a. m.",
+    "zona_reservable": "bbq",
+    "horario": "10:00 a. m. a 12:00 de la noche (medianoche)",
     "costo": "1 SMDLV",
     "capacidad": "",
-    "reserva": "Con alquiler. Solicítelo por escrito a la administración",
+    "reserva": "Con alquiler. Solicítela en Mi cuenta → Reservas o en la administración",
     "reglas": [
       "Deje el lugar limpio al terminar. Si no, se cobra una multa igual al valor del alquiler.",
       "No se alquila a menores de edad.",

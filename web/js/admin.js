@@ -16,7 +16,7 @@ const ROL = { propietario: "Propietario", arrendatario: "Arrendatario", administ
 
 function encabezado() {
   const tabs = estado.es_admin
-    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["comunicados", "Comunicados"],
+    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"],
        ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
     : [["censo", "Censo"]];
   return `${barraCuenta(estado, estado.es_admin ? "Panel de administración" : "Censo del conjunto", "admin.html")}
@@ -187,6 +187,43 @@ async function vistaComunicados() {
   </div>`;
 }
 
+// ---------- Zonas reservables (configuración) ----------
+const slug = t => (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30) || "zona";
+
+const filaTurno = (t = {}) => `<div class="turno-fila" data-turno-fila>
+    <input type="hidden" name="t_id" value="${esc(t.id || "")}">
+    <div><label>Nombre del turno</label><input name="t_nombre" maxlength="40" value="${esc(t.nombre || "")}" placeholder="Turno de día"></div>
+    <div><label>Horario</label><input name="t_horario" maxlength="80" value="${esc(t.horario || "")}" placeholder="10:00 a. m. a 6:00 p. m."></div>
+    <div><label>Tarifa</label><input name="t_tarifa" maxlength="40" value="${esc(t.tarifa || "")}" placeholder="2,7 SMDLV"></div>
+    <button class="btn sm ghost" type="button" data-quitar-turno>Quitar</button>
+  </div>`;
+
+const formZona = (z, nueva = false) => `<form class="panel" data-zona="${nueva ? "" : esc(z.id)}" novalidate>
+    <h2>${nueva ? "Nueva zona" : esc(z.nombre)}</h2>
+    <label>Nombre</label><input name="nombre" maxlength="60" required value="${esc(z.nombre || "")}">
+    ${nueva ? "" : `<label class="check"><input type="checkbox" name="activa" ${z.activa ? "checked" : ""}> Activa (se puede reservar)</label>`}
+    <div class="grid tres">
+      <div><label>Anticipación mínima (días hábiles)</label><input name="anticipacion_dias_habiles" type="number" min="0" max="60" value="${z.anticipacion_dias_habiles ?? 0}"></div>
+      <div><label>Reservar hasta (días adelante)</label><input name="max_dias_adelante" type="number" min="1" max="365" value="${z.max_dias_adelante ?? 90}"></div>
+      <div><label>Capacidad (vacío = sin límite)</label><input name="capacidad" type="number" min="1" max="500" value="${z.capacidad ?? ""}"></div>
+    </div>
+    <label>Reglas que ve el residente al reservar</label>
+    <textarea name="reglas" maxlength="1000">${esc(z.reglas || "")}</textarea>
+    <h3>Turnos</h3>
+    <div data-turnos>${(z.turnos?.length ? z.turnos : [{}]).map(filaTurno).join("")}</div>
+    <div class="acciones-form"><button class="btn sm ghost" type="button" data-agregar-turno>Agregar turno</button>
+      <button class="btn" type="submit">${nueva ? "Crear zona" : "Guardar cambios"}</button></div>
+  </form>`;
+
+async function vistaZonas() {
+  const zonas = await consulta(sb.from("zonas_reservables").select("*").order("nombre"));
+  return `<div class="panel nota bloque-sm"><p>Ajuste aquí los turnos, horarios, tarifas, anticipación y capacidad de las zonas que se reservan, según lo aprobado por la asamblea, el consejo o el manual de convivencia.
+      Los cambios se ven de inmediato en <b>Reservas</b> y en la página pública de <b>Zonas comunes</b>. Una zona desactivada deja de aceptar reservas nuevas; no se borra para conservar su historial.</p>
+      <p>Tarifa y horario son texto libre (por ejemplo "2,7 SMDLV" o "$60.000"). La plataforma no cobra: solo informa.</p></div>
+    <div class="grid g2">${zonas.map(z => formZona(z)).join("")}${formZona({ turnos: [{}] }, true)}</div>`;
+}
+
 function haceUnAnio() {
   const d = new Date(); d.setFullYear(d.getFullYear() - 1);
   return d.toISOString().slice(0, 10);
@@ -265,7 +302,7 @@ async function pintarPestana() {
   document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === pestana));
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
-    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, comunicados: vistaComunicados,
+    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados,
                      censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
     cont.innerHTML = await vistas[pestana]();
   } catch (err) {
@@ -279,6 +316,18 @@ caja.addEventListener("click", async e => {
   const b = e.target.closest("button");
   if (!b) return;
   try {
+    if (b.hasAttribute("data-agregar-turno")) {
+      const cont = b.closest("form").querySelector("[data-turnos]");
+      if (cont.querySelectorAll("[data-turno-fila]").length >= 8) { msg("Máximo 8 turnos por zona.", "error"); return; }
+      cont.insertAdjacentHTML("beforeend", filaTurno());
+      return;
+    }
+    if (b.hasAttribute("data-quitar-turno")) {
+      const cont = b.closest("[data-turnos]");
+      if (cont.querySelectorAll("[data-turno-fila]").length <= 1) { msg("La zona debe tener al menos un turno.", "error"); return; }
+      b.closest("[data-turno-fila]").remove();
+      return;
+    }
     if (b.dataset.filtroPqrs) { filtroPqrs = b.dataset.filtroPqrs; pqrsAbierta = null; await pintarPestana(); return; }
     if (b.dataset.verPqrs) { pqrsAbierta = pqrsAbierta === b.dataset.verPqrs ? null : b.dataset.verPqrs; await pintarPestana(); return; }
     if (b.dataset.tramite) {
@@ -342,6 +391,48 @@ caja.addEventListener("submit", async e => {
       const r = await rpc("escribir_pqrs", { p_pqrs: f.dataset.responder, p_texto: texto });
       msg(r.mensaje, r.ok ? "ok" : "error");
       if (r.ok) await pintarPestana();
+      return;
+    }
+    if (f.hasAttribute("data-zona")) {
+      const id = f.dataset.zona;
+      const num = (n, def) => { const v = f.elements[n]?.value.trim(); return v === "" || v == null ? def : Math.round(+v); };
+      const turnos = [...f.querySelectorAll("[data-turno-fila]")].map(fila => ({
+        id: fila.querySelector("[name=t_id]").value || "",
+        nombre: fila.querySelector("[name=t_nombre]").value.trim(),
+        horario: fila.querySelector("[name=t_horario]").value.trim(),
+        tarifa: fila.querySelector("[name=t_tarifa]").value.trim()
+      })).filter(t => t.nombre || t.horario || t.tarifa);
+      if (!turnos.length || turnos.some(t => t.nombre.length < 2)) { msg("Cada turno necesita un nombre.", "error"); return; }
+      turnos.forEach(t => { if (!t.id) t.id = `${slug(t.nombre).slice(0, 30)}-${Math.random().toString(36).slice(2, 6)}`; });
+      const fila = {
+        nombre: f.elements.nombre.value.trim(),
+        anticipacion_dias_habiles: num("anticipacion_dias_habiles", 0),
+        max_dias_adelante: num("max_dias_adelante", 90),
+        capacidad: num("capacidad", null),
+        reglas: f.elements.reglas.value.trim() || null,
+        turnos
+      };
+      if (fila.nombre.length < 2) { msg("Escriba el nombre de la zona.", "error"); return; }
+      if (id) {
+        // No se puede quitar un turno que tenga reservas vigentes.
+        const antes = await consulta(sb.from("zonas_reservables").select("turnos").eq("id", id).maybeSingle());
+        const quitados = (antes?.turnos || []).map(t => t.id).filter(tid => !turnos.some(t => t.id === tid));
+        if (quitados.length) {
+          const vigentes = await consulta(sb.from("reservas").select("id,turno").eq("zona_id", id).in("turno", quitados)
+            .in("estado", ["pendiente", "aprobada"]).gte("fecha", hoyISO()));
+          if (vigentes.length) { msg(`No se puede quitar un turno que tiene ${vigentes.length} reserva(s) vigente(s). Anúlelas primero en la pestaña Reservas.`, "error"); return; }
+        }
+        fila.activa = f.elements.activa.checked;
+        await consulta(sb.from("zonas_reservables").update(fila).eq("id", id));
+        msg(`Zona "${fila.nombre}" actualizada.`);
+      } else {
+        const existentes = await consulta(sb.from("zonas_reservables").select("id"));
+        let nuevo = slug(fila.nombre);
+        while (existentes.some(z => z.id === nuevo)) nuevo = `${slug(fila.nombre).slice(0, 25)}-${Math.random().toString(36).slice(2, 5)}`;
+        await consulta(sb.from("zonas_reservables").insert({ id: nuevo, ...fila, activa: true }));
+        msg(`Zona "${fila.nombre}" creada. Ya se puede reservar.`);
+      }
+      await pintarPestana();
       return;
     }
     if (f.id === "fComunicado") {

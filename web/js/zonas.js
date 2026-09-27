@@ -1,12 +1,12 @@
 // Página de zonas comunes (zonas.html). Los datos están en datos/zonas.json.
-import { montarPagina, cargar, esc, icono, avisoError, irAlAncla } from "./comun.js";
+import { montarPagina, cargarZonas, esc, icono, avisoError, irAlAncla } from "./comun.js";
 
 const caja = document.getElementById("zonas");
 
 async function iniciar() {
   await montarPagina();
   try {
-    const datos = await cargar("zonas");
+    const datos = await cargarZonas();
     const lista = Array.isArray(datos) ? datos : [];
     caja.innerHTML = `<div class="grid g2">${lista.map((z, i) => {
       const reglas = (Array.isArray(z.reglas) ? z.reglas : []).filter(Boolean);

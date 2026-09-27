@@ -72,6 +72,33 @@ export async function cargarComunicados(limite = 100) {
   return r.json();
 }
 
+// Zonas comunes: la descripción está en datos/zonas.json; los horarios, tarifas y capacidad de las
+// zonas que se reservan ("zona_reservable") salen de la configuración del panel (Supabase).
+// Si Supabase no responde, se muestran los textos de zonas.json.
+export async function cargarZonas() {
+  const zonas = await cargar("zonas");
+  if (!Array.isArray(zonas) || !zonas.some(z => z.zona_reservable)) return zonas;
+  try {
+    const { SUPABASE_URL, SUPABASE_CLAVE } = await import("./config.js");
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/zonas_reservables?select=id,turnos,capacidad`, { headers: { apikey: SUPABASE_CLAVE } });
+    if (!r.ok) return zonas;
+    const conf = await r.json();
+    return zonas.map(z => {
+      const c = conf.find(x => x.id === z.zona_reservable);
+      if (!c) return z;
+      const varios = c.turnos.length > 1;
+      return {
+        ...z,
+        horario: c.turnos.map(t => (varios ? `${t.nombre}: ` : "") + (t.horario || "")).join(". "),
+        costo: c.turnos.filter(t => t.tarifa).map(t => (varios ? `${t.nombre}: ` : "") + t.tarifa).join(". "),
+        capacidad: c.capacidad ? `${c.capacidad} personas` : z.capacidad
+      };
+    });
+  } catch (e) {
+    return zonas;
+  }
+}
+
 export function avisoError(contenedor, err) {
   console.error(err);
   contenedor.innerHTML = `<div class="panel error"><h2>No se pudo mostrar esta sección</h2><p>${esc(err.message)}</p><p class="m">Si usted administra el sitio, consulte docs/manual-administracion.md.</p></div>`;

@@ -76,10 +76,14 @@ async function pintar() {
           <div class="row">${pillReserva(r.estado)}${r.motivo ? `<span class="m">${esc(r.motivo)}</span>` : ""}</div></div>
           ${["pendiente", "aprobada"].includes(r.estado) && r.fecha >= hoyISO() ? `<button class="btn sm ghost" type="button" data-cancelar="${r.id}">Cancelar</button>` : ""}</div>`).join("")
         || `<div class="empty">No tiene reservas.</div>`}</div>
-      <h2 class="bloque">Fechas ocupadas (próximos 60 días)</h2>
-      <p class="m">${esc(z.nombre)}. Solo se muestra que el turno está ocupado, no quién lo reservó.</p>
-      <div class="list">${proximos.map(o => `<div class="item"><div><div class="t">${fecha(o.fecha)}</div><div class="m">${esc(nombreTurno(z.id, o.turno))}</div></div>${o.estado === "aprobada" ? `<span class="pill p-bad">Ocupado</span>` : `<span class="pill p-warn">Solicitado</span>`}</div>`).join("")
-        || `<div class="empty">No hay turnos ocupados.</div>`}</div>
+      <h2 class="bloque">${esc(z.nombre)}: turnos ya tomados</h2>
+      <p class="m">Próximos 60 días. Cualquier fecha y turno que no aparezca aquí está libre. No se muestra quién hizo cada reserva.</p>
+      <div class="list">${proximos.map(o => {
+        const mia = mias.some(r => r.zona_id === z.id && r.fecha === o.fecha && r.turno === o.turno && ["pendiente", "aprobada"].includes(r.estado));
+        const etiqueta = mia ? `<span class="pill p-info">Su reserva</span>`
+          : o.estado === "aprobada" ? `<span class="pill p-bad">Reservado</span>` : `<span class="pill p-warn">Solicitado por otra casa</span>`;
+        return `<div class="item"><div><div class="t">${fecha(o.fecha)}</div><div class="m">${esc(nombreTurno(z.id, o.turno))}</div></div>${etiqueta}</div>`;
+      }).join("") || `<div class="empty">Todos los turnos de los próximos 60 días están libres.</div>`}</div>
     </div>
   </div>`;
   caja.innerHTML = html;

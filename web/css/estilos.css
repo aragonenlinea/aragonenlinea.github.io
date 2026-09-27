@@ -208,6 +208,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .turno b{display:block}
 .turno span{display:block;font-size:13px;color:var(--muted)}
 .alerta-dias{color:var(--bad);font-weight:700}
+.grid.tres{grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:0 12px}
+.turno-fila{display:grid;grid-template-columns:1fr 1.4fr 1fr auto;gap:8px;align-items:end;padding:10px 0;border-top:1px solid var(--line)}
+.turno-fila label{margin-top:0}
+@media (max-width:700px){.turno-fila{grid-template-columns:1fr}}
+form.panel h3{font-size:15px;margin:18px 0 0}
 .bloque-sm .btn{margin-top:4px}
 select#casa{max-width:320px;margin-bottom:16px}
 @media print{
