@@ -58,6 +58,8 @@ Al importar: vista previa; validar que todas las unidades existan, que no haya r
 
 - **Unidades:** el conjunto son 40 casas (Casa 1 a 40), no torres ni apartamentos.
 - **Ingreso de residentes:** enlace o código enviado al correo (sin contraseña). Registro con código de invitación por casa, aprobado por la administración.
+- **Cuentas por casa:** una principal del propietario y una del arrendatario, esta última autorizada por el propietario (o por la administración con autorización escrita del propietario), con fecha de vencimiento opcional y revocable. El arrendatario no toma decisiones que corresponden al propietario: no autoriza ni retira accesos, no vota en encuestas, no ve el estado de cuenta salvo que el propietario lo habilite, no accede a documentos privados de copropietarios ni solicita obras de reforma; su trasteo requiere permiso del propietario.
+- **Política de tratamiento de datos:** el conjunto no tenía. Borrador en `docs/politica-tratamiento-datos.md`, pendiente de revisión y aprobación; sin ella no se abre el registro a residentes reales.
 - **Supabase:** región Estados Unidos (país con nivel adecuado de protección según la SIC; Brasil no está en esa lista). Plan gratuito: los proyectos inactivos una semana se pausan; se necesita una tarea programada que lo mantenga activo. El correo integrado de Supabase solo envía 2 correos por hora y solo a miembros del equipo: para residentes reales se requiere SMTP propio.
 - **Documentos publicados:** se revisan y tapan con `herramientas/tapar_pdf.py`; `herramientas/revisar_pdfs.py` frena la publicación si detecta datos personales.
 

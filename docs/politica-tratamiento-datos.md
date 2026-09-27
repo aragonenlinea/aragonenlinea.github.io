@@ -94,7 +94,8 @@ La mayoría de datos puede consultarlos y actualizarlos el mismo titular en la s
 ## 9. Propietarios y arrendatarios
 
 - El **propietario** registra y administra los datos de su casa.
-- Cuando la casa está arrendada, el propietario puede **autorizar al arrendatario** para que tenga su propia cuenta. El propietario puede retirar esa autorización en cualquier momento, y vence en la fecha de terminación del contrato que indique el propietario.
+- Cada casa tiene **una cuenta principal del propietario** y, cuando está arrendada, **una cuenta del arrendatario**.
+- El propietario puede **autorizar al arrendatario** para que tenga su propia cuenta; si el propietario no usa la plataforma, la administración puede crearla con autorización escrita del propietario. El propietario puede retirar esa autorización en cualquier momento, y vence en la fecha de terminación del contrato que indique el propietario.
 - El arrendatario ve y actualiza los datos de su propio hogar (habitantes, mascotas, vehículos y contacto). **[POR CONFIRMAR con el alcance aprobado por el Consejo: si el arrendatario puede ver el estado de cuenta de la casa.]**
 - El propietario **no ve** los datos de contacto de los habitantes registrados por el arrendatario, salvo los necesarios para la administración de su inmueble **[POR CONFIRMAR]**.
 
