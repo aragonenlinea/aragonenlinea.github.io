@@ -196,6 +196,18 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .oculto{display:none!important}
 .angosto{max-width:520px}
 .bloque-sm{margin-bottom:16px}
+.crece{flex:1;min-width:0}
+.hilo{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.msj{border-radius:var(--r-md);padding:10px 12px;background:var(--bg);border:1px solid var(--line)}
+.msj.administracion{background:var(--primary-soft);border-color:transparent}
+.msj .texto{white-space:pre-line;margin-top:2px}
+.turnos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:6px}
+.turno{border:1.5px solid var(--line);background:var(--surface);border-radius:var(--r-md);padding:12px;cursor:pointer;text-align:left}
+.turno[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.turno:disabled{opacity:.5;cursor:not-allowed}
+.turno b{display:block}
+.turno span{display:block;font-size:13px;color:var(--muted)}
+.alerta-dias{color:var(--bad);font-weight:700}
 .bloque-sm .btn{margin-top:4px}
 select#casa{max-width:320px;margin-bottom:16px}
 @media print{

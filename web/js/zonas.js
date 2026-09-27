@@ -26,7 +26,7 @@ async function iniciar() {
     <div class="panel nota bloque">
       <p><b>SMDLV</b> es el salario mínimo diario legal vigente. Consulte el valor en pesos con la administración.</p>
       <p>Las casas con más de dos meses de mora en la cuota de administración no pueden usar el salón social, la zona BBQ ni la piscina (Manual de convivencia, arts. 32 y 54).</p>
-      <p>Las reservas en línea estarán disponibles más adelante. Por ahora, solicítelas directamente a la administración.</p>
+      <p>Los residentes con cuenta pueden solicitar el salón social y la zona BBQ en <a href="reservas.html">Mi cuenta → Reservas</a>. También puede solicitarlas directamente en la administración.</p>
     </div>`;
     irAlAncla();
   } catch (err) { avisoError(caja, err); }

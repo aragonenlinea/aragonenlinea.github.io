@@ -1,5 +1,5 @@
 // Portada del sitio (index.html).
-import { montarPagina, cargar, esc, fecha, aFecha, hoyISO, recientesPrimero, enlaceSeguro, icono } from "./comun.js";
+import { montarPagina, cargar, cargarComunicados, esc, fecha, aFecha, hoyISO, recientesPrimero, enlaceSeguro, icono } from "./comun.js";
 
 const ESCENA = `<svg class="escena" viewBox="0 0 1200 460" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
 <defs>
@@ -78,7 +78,7 @@ function normas(lista) {
 
 async function iniciar() {
   const sitio = await montarPagina();
-  const [com, eve, zon, fot, nor] = await Promise.allSettled(["comunicados", "eventos", "zonas", "fotos", "normas"].map(cargar));
+  const [com, eve, zon, fot, nor] = await Promise.allSettled([cargarComunicados(3), ...["eventos", "zonas", "fotos", "normas"].map(cargar)]);
 
   document.getElementById("inicio").innerHTML = `
   <section class="portada">

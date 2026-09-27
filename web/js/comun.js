@@ -61,6 +61,17 @@ export function irAlAncla() {
   el.scrollIntoView();
 }
 
+// Comunicados publicados (se administran desde el panel y se guardan en Supabase).
+export async function cargarComunicados(limite = 100) {
+  const { SUPABASE_URL, SUPABASE_CLAVE } = await import("./config.js");
+  const url = `${SUPABASE_URL}/rest/v1/comunicados?select=id,fecha,categoria,titulo,texto,adjunto&publicado=eq.true&order=fecha.desc,id.desc&limit=${limite}`;
+  let r;
+  try { r = await fetch(url, { headers: { apikey: SUPABASE_CLAVE } }); }
+  catch (e) { throw new Error("No se pudieron cargar los comunicados. Revise la conexión a internet."); }
+  if (!r.ok) throw new Error("No se pudieron cargar los comunicados en este momento. Intente más tarde.");
+  return r.json();
+}
+
 export function avisoError(contenedor, err) {
   console.error(err);
   contenedor.innerHTML = `<div class="panel error"><h2>No se pudo mostrar esta sección</h2><p>${esc(err.message)}</p><p class="m">Si usted administra el sitio, consulte docs/manual-administracion.md.</p></div>`;

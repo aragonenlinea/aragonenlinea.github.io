@@ -38,7 +38,24 @@ Lo que agregue queda **pendiente de validación** hasta que la administración l
 
 Una vez al año, presione **Confirmar que mis datos están al día**.
 
-## 5. Privacidad
+## 5. PQRS (peticiones, quejas, reclamos y sugerencias)
+
+1. **Mi cuenta** → **PQRS**.
+2. Elija el tipo, escriba el asunto y la descripción → **Radicar**. Recibe un número de radicado (ejemplo: `PQ-2026-0001`).
+3. En **Mis solicitudes** vea el estado: *Radicada*, *En trámite* o *Respondida*. Con **Ver** lee la respuesta y puede agregar información.
+
+Solo usted y la administración ven sus solicitudes. El propietario y el arrendatario no ven las del otro.
+
+## 6. Reservas de zonas comunes
+
+1. **Mi cuenta** → **Reservas**.
+2. Elija la zona (salón social o zona BBQ), la fecha y un turno libre. Los turnos ocupados aparecen bloqueados (no se muestra quién los reservó).
+3. Indique el número de personas → **Solicitar**. La reserva queda *pendiente* hasta que la administración la apruebe.
+4. El alquiler se paga en la administración. Puede **Cancelar** una reserva pendiente o aprobada antes de la fecha.
+
+El salón social se solicita con mínimo 10 días hábiles de anticipación y admite hasta 50 personas. Las casas con más de dos meses de mora no pueden usar el salón ni la zona BBQ.
+
+## 7. Privacidad
 
 - Nadie de otra casa ve sus datos.
 - El propietario no ve los teléfonos ni los habitantes que registre el arrendatario, y viceversa.

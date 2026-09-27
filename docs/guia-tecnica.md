@@ -77,10 +77,17 @@ Si el recuadro de la firma pisa el nombre impreso debajo, reduzca `y1` hasta jus
   2. `002_datos_iniciales.sql`: 40 casas y versión de la política.
   3. `003_pruebas_seguridad.sql`: 54 pruebas que simulan cada rol; se deshacen solas y muestran el resultado como un mensaje en rojo.
   4. `004_primer_administrador.sql`: da el rol de administración (o consejo) a una cuenta que ya ingresó.
+  5. `005_mejoras_retiro.sql`: aviso de acceso retirado, limpieza de pendientes y conteos solo de cuentas vigentes.
+  6. `006_limpiar_datos_prueba.sql`: borra las cuentas `aragonenlinea.neiva+…` y su rastro. Solo antes del lanzamiento.
+  7. `007_pqrs_reservas_comunicados.sql`: PQRS con radicado y conversación, zonas reservables y reservas (un turno no se reserva dos veces; la disponibilidad no revela quién reservó), y comunicados.
+  8. `008_pruebas_pqrs_reservas.sql`: 36 pruebas de la entrega 2b (mismo formato que 003).
   Los cambios futuros van en archivos nuevos (`005_...`), nunca editando los ya aplicados.
 - **Modelo:** `perfiles` une usuario, casa y rol (`propietario`, `arrendatario`, `administracion`, `consejo`). Una cuenta de propietario y una de arrendatario por casa (índices únicos). Los registros de Mi hogar pertenecen al perfil que los creó; un disparador los devuelve a *pendiente* ante cualquier cambio que no haga la administración. Las funciones `privado.*` alimentan las reglas RLS; las `public.*` son la API que llama el sitio y responden `{ok, mensaje}`.
 - **Códigos de invitación:** 8 caracteres sin letras ambiguas; solo se guarda su huella SHA-256; 10 intentos fallidos por hora como máximo.
 - **Política de datos:** tabla `politicas` con una sola versión activa. Al aprobar una nueva: `insert` de la versión (con `activa = false`), luego `update politicas set activa = false;` y después `update politicas set activa = true where version = 'X';` (en dos pasos, por el índice que permite una sola activa). La plataforma vuelve a pedir la autorización.
+- **Fechas:** `privado.hoy()` da la fecha de Colombia (UTC-5 fijo, sin horario de verano). Los días hábiles cuentan lunes a viernes sin festivos (`privado.dias_habiles_entre`).
+- **Comunicados:** tabla `comunicados` en Supabase. El sitio público los lee con una consulta REST directa (`cargarComunicados` en `comun.js`), sin cargar la librería; por eso `index.html` y `comunicados.html` permiten conectarse a Supabase. El visitante anónimo tiene una regla RLS propia: no puede evaluar funciones del esquema `privado`.
+- **Zonas reservables:** tabla `zonas_reservables` (turnos en JSON, anticipación en días hábiles, capacidad, reglas). Para cambiar horarios o tarifas se edita esa tabla en Supabase (Table Editor).
 - **Mantener activo:** `.github/workflows/mantener-activo.yml` consulta Supabase a diario (el plan gratuito pausa tras una semana sin uso).
 - **Correos:** SMTP de Gmail con contraseña de aplicación y plantillas en español: ver `docs/plantillas-correo.md`.
 

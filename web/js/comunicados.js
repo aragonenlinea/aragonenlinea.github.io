@@ -1,5 +1,5 @@
-// Página de comunicados (comunicados.html). Los datos están en datos/comunicados.json.
-import { montarPagina, cargar, esc, fecha, recientesPrimero, enlaceSeguro, avisoError, irAlAncla } from "./comun.js";
+// Página de comunicados (comunicados.html). Se publican desde el panel de administración y se guardan en Supabase.
+import { montarPagina, cargarComunicados, esc, fecha, recientesPrimero, enlaceSeguro, avisoError, irAlAncla } from "./comun.js";
 
 const caja = document.getElementById("comunicados");
 let todos = [];
@@ -34,7 +34,7 @@ caja.addEventListener("click", e => {
 async function iniciar() {
   await montarPagina();
   try {
-    const datos = await cargar("comunicados");
+    const datos = await cargarComunicados();
     todos = (Array.isArray(datos) ? datos : []).sort(recientesPrimero);
     pintar();
     irAlAncla();

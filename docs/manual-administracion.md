@@ -10,11 +10,11 @@ Este manual es para la administración y el consejo. No hay que saber programar:
 
 ## 1. Cómo funciona, en una frase
 
-El contenido del sitio (comunicados, eventos, documentos, zonas, contactos) está guardado en archivos de texto dentro de la carpeta `web/datos/` de GitHub. Cuando usted cambia uno de esos archivos y lo guarda, GitHub revisa que esté bien escrito y **publica el sitio solo, en 1 o 2 minutos**.
+Los **comunicados** se publican desde el **panel de administración** (sección 3). El resto del contenido (eventos, documentos, zonas, contactos) está guardado en archivos de texto dentro de la carpeta `web/datos/` de GitHub. Cuando usted cambia uno de esos archivos y lo guarda, GitHub revisa que esté bien escrito y **publica el sitio solo, en 1 o 2 minutos**.
 
 | Quiero cambiar... | Archivo |
 |---|---|
-| Comunicados | `web/datos/comunicados.json` |
+| Comunicados | Panel de administración → pestaña **Comunicados** |
 | Próximos eventos | `web/datos/eventos.json` |
 | Lista de documentos | `web/datos/documentos.json` (los PDF van en `web/documentos/`) |
 | Zonas comunes | `web/datos/zonas.json` |
@@ -41,30 +41,15 @@ Los archivos `.json` son listas. Cada elemento va entre llaves `{ }` y los eleme
 
 ## 3. Publicar un comunicado
 
-1. Entre a https://github.com/aragonenlinea/aragonenlinea.github.io e inicie sesión.
-2. Abra la carpeta `web`, luego `datos` y dé clic en `comunicados.json`.
-3. Dé clic en el ícono del **lápiz** (arriba a la derecha, "Edit this file").
-4. Justo después del primer corchete `[`, pegue este bloque y cambie los textos:
+1. Entre al sitio → **Mi cuenta** (con el correo de administración) → pestaña **Comunicados**.
+2. Llene **fecha**, **categoría**, **título** y **texto**. Los párrafos se separan con Enter.
+3. **Documento adjunto** (opcional): elija un PDF de la lista de documentos del sitio. Si el PDF es nuevo, primero súbalo (sección 4) y luego vuelva aquí.
+4. Deje marcada la casilla **Publicado** para que se vea de inmediato; desmárquela para guardarlo como borrador.
+5. **Publicar**. Aparece en el sitio al instante (no hay que esperar a GitHub).
 
-```json
-  {
-    "id": 5,
-    "fecha": "2026-10-01",
-    "categoria": "Mantenimiento",
-    "titulo": "Título corto del comunicado",
-    "texto": "Primer párrafo.\nSegundo párrafo.",
-    "adjunto": ""
-  },
-```
+Para corregir uno: **Editar**, cambie y **Guardar cambios**. **Eliminar** lo quita del sitio definitivamente.
 
-   - **id:** un número que no se repita. Use el número más alto que ya exista, más uno.
-   - **categoria:** por ejemplo Mantenimiento, Asamblea, Convivencia, Seguridad, Financiero, Administrativo.
-   - **adjunto:** si el comunicado tiene un PDF, escriba su ruta, por ejemplo `"documentos/circular-05-2026.pdf"` (primero súbalo, vea la sección 4). Si no tiene, deje `""`.
-   - Fíjese en la **coma al final** del bloque: separa este comunicado del siguiente.
-5. Dé clic en el botón verde **Commit changes...** y luego otra vez en **Commit changes**.
-6. Espere 1 o 2 minutos y recargue el sitio.
-
-El orden en el sitio es por fecha: el más reciente aparece primero.
+El orden en el sitio es por fecha: el más reciente aparece primero. Aplique las mismas reglas de la sección 5: no escriba datos personales en los comunicados.
 
 ---
 
@@ -196,12 +181,15 @@ Para ver qué cambió y cuándo: abra el archivo y dé clic en **History**. Ahí
 
 ## 10. Panel de administración (residentes)
 
-Entre a **https://aragonenlinea.github.io/admin.html** con el correo que tiene el rol de administración.
+Entre al sitio → **Mi cuenta** con el correo que tiene el rol de administración; lo lleva directo al panel.
 
 - **Pendientes:**
   - *Cuentas por aprobar:* antes de aprobar, verifique que la persona sea propietaria de la casa (registro de copropietarios o certificado de libertad y tradición). Si rechaza, escriba el motivo: la persona lo verá.
   - *Datos por validar:* habitantes, mascotas y vehículos nuevos o cambiados. Validar o rechazar con motivo.
-- **Censo:** resumen de las 40 casas sin nombres ni teléfonos. Es lo único que ve el consejo.
+- **PQRS:** bandeja de peticiones, quejas, reclamos y sugerencias. *Ver y responder* muestra la conversación; al enviar una respuesta queda **Respondida**. *Marcar en trámite* avisa que se está atendiendo. Si el residente escribe de nuevo, vuelve a **En trámite**. Se resaltan las abiertas con más de 15 días hábiles.
+- **Reservas:** solicitudes de salón social y zona BBQ. Antes de aprobar, verifique que la casa esté a paz y salvo (el Manual no permite usar el salón ni la BBQ con más de dos meses de mora). El alquiler se cobra en la administración: la plataforma no recibe pagos. Una reserva aprobada se puede *Anular* con motivo.
+- **Comunicados:** ver la sección 3.
+- **Censo:** resumen de las 40 casas y de las PQRS, sin nombres ni teléfonos. Es lo único que ve el consejo.
 - **Códigos de invitación:** marque las casas (el botón "Marcar casas sin propietario" ayuda), genere e **imprima de inmediato**; los códigos no se vuelven a mostrar. Generar uno nuevo anula el anterior sin usar. Entregue cada código en sobre cerrado al propietario.
 - **Cuentas:** todas las cuentas activas. *Retirar* se usa, por ejemplo, cuando se vende una casa. También puede autorizar a un arrendatario **solo con autorización escrita del propietario**, que debe archivar.
 

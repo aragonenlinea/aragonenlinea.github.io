@@ -1,6 +1,7 @@
 // Mi hogar: autorización de datos, registro con código, datos del hogar y acceso del arrendatario.
 import { montarPagina, esc, fecha, hoyISO, enlaceSeguro } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from "./supabase.js";
+import { barraCuenta as barraComun, casaElegida, recordarCasa } from "./cuenta.js";
 
 const caja = document.getElementById("cuenta");
 let estado = null;          // respuesta de mi_estado()
@@ -71,12 +72,7 @@ function campoHTML(c, prefijo) {
 
 // ---------- Vistas de acceso ----------
 function barraCuenta() {
-  const panel = estado.es_admin || estado.es_consejo
-    ? `<a class="btn sm" href="admin.html">${estado.es_admin ? "Panel de administración" : "Censo del conjunto"}</a>` : "";
-  return `<div class="cuenta-barra">
-    <div><h1>Mi hogar</h1><p class="m">Sesión: ${esc(estado.correo || "")}</p></div>
-    <div class="row">${panel}<button class="btn sm ghost" type="button" id="salir">Cerrar sesión</button></div>
-  </div>`;
+  return barraComun(estado, "Mi hogar", "mi-hogar.html");
 }
 
 function vistaPolitica() {
@@ -279,8 +275,9 @@ async function pintar() {
     return;
   }
 
-  const actual = activos.find(p => p.unidad_id === casaActual) || activos[0];
+  const actual = activos.find(p => p.unidad_id === casaActual) || casaElegida(estado) || activos[0];
   casaActual = actual.unidad_id;
+  recordarCasa(casaActual);
   caja.innerHTML = html + await vistaHogar(actual);
 }
 
@@ -355,10 +352,7 @@ caja.addEventListener("click", async e => {
   const b = e.target.closest("button, [data-abrir]");
   if (!b) return;
   try {
-    if (b.id === "salir") {
-      await sb.auth.signOut();
-      location.replace("index.html");
-    } else if (b.dataset.abrir) {
+    if (b.dataset.abrir) {
       document.querySelector(`[data-form="${b.dataset.abrir}"]`).classList.remove("oculto");
       b.classList.add("oculto");
     } else if (b.dataset.cerrar) {

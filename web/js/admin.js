@@ -1,6 +1,7 @@
 // Panel de administración (y censo para el consejo).
-import { montarPagina, esc, fecha, hoyISO } from "./comun.js";
+import { montarPagina, esc, fecha, hoyISO, cargar } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from "./supabase.js";
+import { barraCuenta, pillPqrs, pillReserva, fechaHora, diasHabilesDesde } from "./cuenta.js";
 
 const caja = document.getElementById("admin");
 let estado = null;
@@ -15,12 +16,10 @@ const ROL = { propietario: "Propietario", arrendatario: "Arrendatario", administ
 
 function encabezado() {
   const tabs = estado.es_admin
-    ? [["pendientes", "Pendientes"], ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
+    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["comunicados", "Comunicados"],
+       ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
     : [["censo", "Censo"]];
-  return `<div class="cuenta-barra no-imprimir">
-      <div><h1>${estado.es_admin ? "Panel de administración" : "Censo del conjunto"}</h1><p class="m">Sesión: ${esc(estado.correo || "")}</p></div>
-      <div class="row"><a class="btn sm ghost" href="mi-hogar.html?hogar=1">Mi hogar</a><button class="btn sm ghost" type="button" id="salir">Cerrar sesión</button></div>
-    </div>
+  return `${barraCuenta(estado, estado.es_admin ? "Panel de administración" : "Censo del conjunto", "admin.html")}
     <div class="pestanas no-imprimir" role="tablist">${tabs.map(([k, t]) =>
       `<button type="button" role="tab" data-tab="${k}" aria-selected="${k === pestana}">${t}</button>`).join("")}</div>
     <div id="msg" class="no-imprimir"></div>
@@ -59,12 +58,18 @@ async function vistaPendientes() {
 
 // ---------- Censo ----------
 async function vistaCenso() {
-  const filas = await rpc("censo");
+  const [filas, pq] = await Promise.all([rpc("censo"), rpc("resumen_pqrs")]);
   const suma = k => filas.reduce((a, f) => a + Number(f[k] || 0), 0);
   const conProp = filas.filter(f => f.propietario === "activo").length;
   const conArr = filas.filter(f => f.arrendatario === "activo").length;
   const alDia = filas.filter(f => f.datos_confirmados_en && f.datos_confirmados_en.slice(0, 10) >= haceUnAnio()).length;
-  return `<div class="kpis">
+  const kpisPqrs = pq ? `<h2>PQRS</h2><div class="kpis">
+      <div class="panel kpi"><div class="n">${pq.total}</div><div class="l">PQRS radicadas en total</div></div>
+      <div class="panel kpi"><div class="n">${pq.radicadas + pq.en_tramite}</div><div class="l">Abiertas (radicadas o en trámite)</div></div>
+      <div class="panel kpi"><div class="n">${pq.respondidas}</div><div class="l">Respondidas</div></div>
+      <div class="panel kpi"><div class="n ${pq.abiertas_mas_15_dias_habiles ? "alerta-dias" : ""}">${pq.abiertas_mas_15_dias_habiles}</div><div class="l">Abiertas hace más de 15 días hábiles</div></div>
+    </div>` : "";
+  return `${kpisPqrs}<h2>Casas</h2><div class="kpis">
       <div class="panel kpi"><div class="n">${conProp}/40</div><div class="l">Casas con propietario registrado</div></div>
       <div class="panel kpi"><div class="n">${conArr}</div><div class="l">Casas con arrendatario con acceso</div></div>
       <div class="panel kpi"><div class="n">${alDia}/40</div><div class="l">Casas con datos confirmados en el último año</div></div>
@@ -80,6 +85,106 @@ async function vistaCenso() {
         <td>${f.datos_confirmados_en ? fecha(f.datos_confirmados_en.slice(0, 10)) : `<span class="m">Nunca</span>`}</td></tr>`).join("")}</tbody>
     </table></div>
     <p class="m">El censo no muestra nombres ni teléfonos. ${estado.es_admin ? "Los datos detallados están en las pestañas Pendientes y Cuentas." : ""}</p></div>`;
+}
+
+// ---------- PQRS ----------
+let filtroPqrs = "abiertas";
+let pqrsAbierta = null;
+
+async function vistaPqrs() {
+  let q = sb.from("pqrs").select("*, perfiles(nombre, rol)").order("creado_en", { ascending: false }).limit(200);
+  if (filtroPqrs === "abiertas") q = q.neq("estado", "respondida");
+  const lista = await consulta(q);
+  const mensajes = pqrsAbierta ? await consulta(sb.from("pqrs_mensajes").select("*").eq("pqrs_id", pqrsAbierta).order("creado_en")) : [];
+  return `<div class="filtros">
+      <button type="button" data-filtro-pqrs="abiertas" aria-pressed="${filtroPqrs === "abiertas"}">Abiertas</button>
+      <button type="button" data-filtro-pqrs="todas" aria-pressed="${filtroPqrs === "todas"}">Todas</button>
+    </div>
+    <div class="panel"><div class="list">${lista.map(p => {
+      const dias = diasHabilesDesde(p.creado_en);
+      const abierta = pqrsAbierta === p.id;
+      return `<div class="item"><div class="crece">
+        <div class="row"><span class="t">${esc(p.asunto)}</span>${pillPqrs(p.estado)}</div>
+        <div class="m">${esc(p.radicado)} · Casa ${esc(p.unidad_id)} · ${esc(p.tipo)} · ${esc(p.perfiles?.nombre || "")} (${ROL[p.perfiles?.rol] || ""})</div>
+        <div class="m ${p.estado !== "respondida" && dias > 15 ? "alerta-dias" : ""}">Radicada el ${fecha(p.creado_en.slice(0, 10))} · ${dias} día(s) hábil(es)</div>
+        ${abierta ? `<div class="hilo">
+            <div class="msj residente"><div class="m">Residente · ${fechaHora(p.creado_en)}</div><div class="texto">${esc(p.descripcion)}</div></div>
+            ${mensajes.map(m => `<div class="msj ${m.autor}"><div class="m">${m.autor === "administracion" ? "Administración" : "Residente"} · ${fechaHora(m.creado_en)}</div><div class="texto">${esc(m.texto)}</div></div>`).join("")}
+          </div>
+          <form data-responder="${p.id}" novalidate>
+            <label for="resp-${p.id}">Respuesta al residente</label>
+            <textarea id="resp-${p.id}" name="texto" maxlength="3000" required></textarea>
+            <div class="acciones-form"><button class="btn sm" type="submit">Enviar respuesta</button>
+              ${p.estado === "radicada" ? `<button class="btn sm ghost" type="button" data-tramite="${p.id}">Marcar en trámite</button>` : ""}</div>
+          </form>` : ""}
+        <button class="btn sm ghost" type="button" data-ver-pqrs="${p.id}">${abierta ? "Ocultar" : "Ver y responder"}</button>
+      </div></div>`;
+    }).join("") || `<div class="empty">${filtroPqrs === "abiertas" ? "No hay PQRS abiertas." : "No hay PQRS."}</div>`}</div>
+    <p class="m">Los días hábiles cuentan de lunes a viernes, sin descontar festivos. Se resaltan las abiertas con más de 15 días hábiles.</p></div>`;
+}
+
+// ---------- Reservas ----------
+async function vistaReservas() {
+  const [zonas, lista] = await Promise.all([
+    consulta(sb.from("zonas_reservables").select("id,nombre,turnos")),
+    consulta(sb.from("reservas").select("*, perfiles(nombre, rol)").gte("fecha", hoyISO()).in("estado", ["pendiente", "aprobada"]).order("fecha").order("turno"))
+  ]);
+  const z = id => zonas.find(x => x.id === id);
+  const turno = (zid, t) => z(zid)?.turnos.find(x => x.id === t);
+  const fila = r => {
+    const t = turno(r.zona_id, r.turno);
+    return `<div class="item"><div>
+      <div class="t">${esc(z(r.zona_id)?.nombre || r.zona_id)} · ${fecha(r.fecha)} · ${esc(t?.nombre || r.turno)}</div>
+      <div class="m">Casa ${esc(r.unidad_id)} · ${esc(r.perfiles?.nombre || "")} (${ROL[r.perfiles?.rol] || ""}) · ${r.invitados} persona(s)${t?.tarifa ? " · alquiler " + esc(t.tarifa) : ""}</div>
+      ${r.observaciones ? `<div class="m">Observaciones: ${esc(r.observaciones)}</div>` : ""}
+      <div class="row">${pillReserva(r.estado)}</div></div>
+      <div class="row">${r.estado === "pendiente" ? `<button class="btn sm" type="button" data-reserva="${r.id}" data-ok="1">Aprobar</button>` : ""}
+        <button class="btn sm ghost" type="button" data-reserva="${r.id}" data-ok="0">${r.estado === "pendiente" ? "Rechazar" : "Anular"}</button></div></div>`;
+  };
+  const pend = lista.filter(r => r.estado === "pendiente"), apro = lista.filter(r => r.estado === "aprobada");
+  return `<div class="grid g2">
+    <div class="panel"><h2>Por aprobar</h2>
+      <p class="m">Antes de aprobar, verifique que la casa esté a paz y salvo (el Manual no permite usar el salón ni la BBQ con más de dos meses de mora).</p>
+      <div class="list">${pend.map(fila).join("") || `<div class="empty">No hay reservas pendientes.</div>`}</div></div>
+    <div class="panel"><h2>Próximas aprobadas</h2>
+      <div class="list">${apro.map(fila).join("") || `<div class="empty">No hay reservas aprobadas próximas.</div>`}</div></div>
+  </div>`;
+}
+
+// ---------- Comunicados ----------
+let comunicadoEditado = null;
+const CATEGORIAS = ["Mantenimiento", "Asamblea", "Convivencia", "Seguridad", "Financiero", "Administrativo", "Eventos"];
+
+async function vistaComunicados() {
+  const [lista, docs] = await Promise.all([
+    consulta(sb.from("comunicados").select("*").order("fecha", { ascending: false }).order("id", { ascending: false })),
+    cargar("documentos").catch(() => [])
+  ]);
+  const c = lista.find(x => x.id === comunicadoEditado) || {};
+  return `<div class="grid g2">
+    <div class="panel"><h2>${c.id ? "Editar comunicado" : "Publicar comunicado"}</h2>
+      <form id="fComunicado" novalidate>
+        <label for="co-fecha">Fecha</label><input id="co-fecha" name="fecha" type="date" value="${esc(c.fecha || hoyISO())}" required>
+        <label for="co-cat">Categoría</label>
+        <select id="co-cat" name="categoria">${CATEGORIAS.map(x => `<option ${x === c.categoria ? "selected" : ""}>${x}</option>`).join("")}</select>
+        <label for="co-tit">Título</label><input id="co-tit" name="titulo" maxlength="150" required value="${esc(c.titulo || "")}">
+        <label for="co-txt">Texto</label><textarea id="co-txt" name="texto" maxlength="5000" required>${esc(c.texto || "")}</textarea>
+        <label for="co-adj">Documento adjunto (opcional)</label>
+        <select id="co-adj" name="adjunto"><option value="">Sin adjunto</option>${docs.map(d =>
+          `<option value="${esc(d.archivo)}" ${d.archivo === c.adjunto ? "selected" : ""}>${esc(d.titulo)}</option>`).join("")}</select>
+        <p class="m">Para adjuntar un PDF nuevo, primero súbalo a la lista de documentos (manual de administración, sección 4).</p>
+        <label class="check"><input type="checkbox" name="publicado" ${c.id && !c.publicado ? "" : "checked"}> Publicado (visible en el sitio)</label>
+        <div class="acciones-form"><button class="btn" type="submit">${c.id ? "Guardar cambios" : "Publicar"}</button>
+          ${c.id ? `<button class="btn ghost" type="button" data-cancelar-edicion>Cancelar edición</button>` : ""}</div>
+      </form>
+    </div>
+    <div class="panel"><h2>Comunicados</h2><div class="list">${lista.map(x => `<div class="item"><div>
+        <div class="row"><span class="t">${esc(x.titulo)}</span><span class="pill p-info">${esc(x.categoria)}</span>${x.publicado ? "" : `<span class="pill p-warn">No publicado</span>`}</div>
+        <div class="m">${fecha(x.fecha)}${x.adjunto ? " · con adjunto" : ""}</div></div>
+        <div class="row"><button class="btn sm ghost" type="button" data-editar-com="${x.id}">Editar</button>
+          <button class="btn sm peligro" type="button" data-borrar-com="${x.id}">Eliminar</button></div></div>`).join("")
+        || `<div class="empty">No hay comunicados.</div>`}</div></div>
+  </div>`;
 }
 
 function haceUnAnio() {
@@ -160,7 +265,8 @@ async function pintarPestana() {
   document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === pestana));
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
-    const vistas = { pendientes: vistaPendientes, censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
+    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, comunicados: vistaComunicados,
+                     censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
     cont.innerHTML = await vistas[pestana]();
   } catch (err) {
     aviso(cont, err.message, "error");
@@ -173,7 +279,27 @@ caja.addEventListener("click", async e => {
   const b = e.target.closest("button");
   if (!b) return;
   try {
-    if (b.id === "salir") { await sb.auth.signOut(); location.replace("index.html"); return; }
+    if (b.dataset.filtroPqrs) { filtroPqrs = b.dataset.filtroPqrs; pqrsAbierta = null; await pintarPestana(); return; }
+    if (b.dataset.verPqrs) { pqrsAbierta = pqrsAbierta === b.dataset.verPqrs ? null : b.dataset.verPqrs; await pintarPestana(); return; }
+    if (b.dataset.tramite) {
+      const r = await rpc("admin_estado_pqrs", { p_pqrs: b.dataset.tramite, p_estado: "en_tramite" });
+      msg(r.mensaje, r.ok ? "ok" : "error"); await pintarPestana(); return;
+    }
+    if (b.dataset.reserva) {
+      const aprobar = b.dataset.ok === "1";
+      const motivo = aprobar ? null : prompt("Motivo (lo verá el residente):");
+      if (!aprobar && motivo === null) return;
+      const r = await rpc("admin_revisar_reserva", { p_reserva: b.dataset.reserva, p_aprobar: aprobar, p_motivo: motivo });
+      msg(r.mensaje, r.ok ? "ok" : "error"); await pintarPestana(); return;
+    }
+    if (b.dataset.editarCom) { comunicadoEditado = +b.dataset.editarCom; await pintarPestana(); window.scrollTo(0, 0); return; }
+    if (b.hasAttribute("data-cancelar-edicion")) { comunicadoEditado = null; await pintarPestana(); return; }
+    if (b.dataset.borrarCom) {
+      if (!confirm("¿Eliminar este comunicado del sitio? No se puede deshacer.")) return;
+      await consulta(sb.from("comunicados").delete().eq("id", +b.dataset.borrarCom));
+      if (comunicadoEditado === +b.dataset.borrarCom) comunicadoEditado = null;
+      msg("Comunicado eliminado."); await pintarPestana(); return;
+    }
     if (b.dataset.tab) { pestana = b.dataset.tab; msg(""); await pintarPestana(); return; }
     if (b.dataset.perfil) {
       const aprobar = b.dataset.ok === "1";
@@ -210,6 +336,29 @@ caja.addEventListener("submit", async e => {
   const boton = f.querySelector("button[type=submit]");
   boton.disabled = true;
   try {
+    if (f.dataset.responder) {
+      const texto = (new FormData(f).get("texto") || "").trim();
+      if (!texto) { msg("Escriba la respuesta.", "error"); return; }
+      const r = await rpc("escribir_pqrs", { p_pqrs: f.dataset.responder, p_texto: texto });
+      msg(r.mensaje, r.ok ? "ok" : "error");
+      if (r.ok) await pintarPestana();
+      return;
+    }
+    if (f.id === "fComunicado") {
+      const d = datosForm(f);
+      if (!d.titulo || !d.texto) { msg("Escriba el título y el texto.", "error"); return; }
+      const fila = { fecha: d.fecha || hoyISO(), categoria: d.categoria, titulo: d.titulo, texto: d.texto, adjunto: d.adjunto || null, publicado: d.publicado };
+      if (comunicadoEditado) {
+        await consulta(sb.from("comunicados").update({ ...fila, actualizado_en: new Date().toISOString() }).eq("id", comunicadoEditado));
+        msg("Comunicado actualizado.");
+      } else {
+        await consulta(sb.from("comunicados").insert(fila));
+        msg(fila.publicado ? "Comunicado publicado. Ya se ve en el sitio." : "Comunicado guardado sin publicar.");
+      }
+      comunicadoEditado = null;
+      await pintarPestana();
+      return;
+    }
     if (f.id === "fCodigos") {
       const casas = [...f.querySelectorAll("[name=casa]:checked")].map(c => +c.value);
       if (!casas.length) { msg("Marque al menos una casa.", "error"); return; }
