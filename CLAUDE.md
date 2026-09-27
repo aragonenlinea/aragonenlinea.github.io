@@ -49,20 +49,30 @@ Al importar: vista previa; validar que todas las unidades existan, que no haya r
 
 ## Fases
 
-1. **Sitio público:** portada, comunicados, documentos, zonas comunes, directorio. Sin inicio de sesión ni datos personales. Publicado en GitHub Pages.
-2. **Acceso de residentes:** registro con autorización de datos, Mi hogar (contacto, habitantes, mascotas, vehículos con validación), PQRS, reservas, visitantes. Panel de administración y censo.
+1. **Sitio público:** portada, comunicados, documentos, zonas comunes, directorio. Sin inicio de sesión ni datos personales. Publicado en GitHub Pages. **Aprobada el 2026-09-27.**
+2. **Acceso de residentes:** registro con autorización de datos, Mi hogar (contacto, habitantes, mascotas, vehículos con validación), PQRS, reservas. Panel de administración y censo. Entregas: 2a (Supabase, ingreso, autorización, Mi hogar, censo), 2b (PQRS y reservas).
 3. **Estado de cuenta:** plantilla de cartera, importación desde el panel, script de sincronización del PC, enlace al pago del banco.
-4. **Portería y consultas:** validación de visitantes y placas, encuestas a la comunidad.
+4. **Portería, visitantes y consultas:** autorización de visitantes por los residentes y su validación en portería, consulta de placas, encuestas a la comunidad. (Visitantes se movió de la Fase 2 a la 4 el 2026-09-27.)
+
+## Decisiones tomadas
+
+- **Unidades:** el conjunto son 40 casas (Casa 1 a 40), no torres ni apartamentos.
+- **Ingreso de residentes:** enlace o código enviado al correo (sin contraseña). Registro con código de invitación por casa, aprobado por la administración.
+- **Supabase:** región Estados Unidos (país con nivel adecuado de protección según la SIC; Brasil no está en esa lista). Plan gratuito: los proyectos inactivos una semana se pausan; se necesita una tarea programada que lo mantenga activo. El correo integrado de Supabase solo envía 2 correos por hora y solo a miembros del equipo: para residentes reales se requiere SMTP propio.
+- **Documentos publicados:** se revisan y tapan con `herramientas/tapar_pdf.py`; `herramientas/revisar_pdfs.py` frena la publicación si detecta datos personales.
 
 ## Estructura de carpetas
 
 ```
-plataforma-aragon/
+C:\Proyectos\plataforma_aragon\   (repositorio público aragonenlinea/aragonenlinea.github.io)
 ├── CLAUDE.md
 ├── referencia/prototipo.html
 ├── web/            # frontend publicado
 ├── supabase/       # esquema SQL, políticas RLS, datos de prueba
 ├── sync/           # script Python del PC de la administración
 ├── plantillas/     # plantilla de cartera y otras
+├── herramientas/   # tapar y revisar datos personales en PDF
 └── docs/           # manual de administración, manual de residentes, guía técnica
 ```
+
+Los documentos originales del conjunto se reciben en `C:\Proyectos\material-aragon` (fuera del repositorio) y nunca se suben sin revisar.
