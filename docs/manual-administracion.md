@@ -194,7 +194,20 @@ Para ver qué cambió y cuándo: abra el archivo y dé clic en **History**. Ahí
 
 ---
 
-## 10. Cuentas y continuidad
+## 10. Panel de administración (residentes)
+
+Entre a **https://aragonenlinea.github.io/admin.html** con el correo que tiene el rol de administración.
+
+- **Pendientes:**
+  - *Cuentas por aprobar:* antes de aprobar, verifique que la persona sea propietaria de la casa (registro de copropietarios o certificado de libertad y tradición). Si rechaza, escriba el motivo: la persona lo verá.
+  - *Datos por validar:* habitantes, mascotas y vehículos nuevos o cambiados. Validar o rechazar con motivo.
+- **Censo:** resumen de las 40 casas sin nombres ni teléfonos. Es lo único que ve el consejo.
+- **Códigos de invitación:** marque las casas (el botón "Marcar casas sin propietario" ayuda), genere e **imprima de inmediato**; los códigos no se vuelven a mostrar. Generar uno nuevo anula el anterior sin usar. Entregue cada código en sobre cerrado al propietario.
+- **Cuentas:** todas las cuentas activas. *Retirar* se usa, por ejemplo, cuando se vende una casa. También puede autorizar a un arrendatario **solo con autorización escrita del propietario**, que debe archivar.
+
+Para dar acceso a una persona del consejo o de la administración, se usa el archivo `supabase/004_primer_administrador.sql` en Supabase (pida ayuda técnica).
+
+## 11. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.

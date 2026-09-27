@@ -1,0 +1,24 @@
+# Supabase pausa los proyectos gratuitos que pasan una semana sin uso.
+# Esta tarea hace una consulta pública y liviana (la versión de la política de datos)
+# todos los días para mantener el proyecto activo. No toca datos personales.
+# Ojo: GitHub desactiva las tareas programadas si el repositorio pasa 60 días sin cambios;
+# en ese caso, reactívela en la pestaña Actions.
+name: Mantener activa la base de datos
+
+on:
+  schedule:
+    - cron: "17 13 * * *"   # todos los días, 8:17 a. m. hora de Colombia
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consultar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consultar Supabase
+        run: |
+          curl --fail --silent --show-error \
+            "https://bljgybxgkcpnlwlvflss.supabase.co/rest/v1/politicas?select=version" \
+            -H "apikey: sb_publishable_dFlPYn77x2NctKF9QOFPxQ_HBTKoPNL"

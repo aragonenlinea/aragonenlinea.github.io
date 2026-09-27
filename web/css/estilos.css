@@ -162,6 +162,48 @@ a.item:hover .t{color:var(--primary);text-decoration:underline}
 .comunicado .texto{white-space:pre-line}
 .doc-grupo + .doc-grupo{margin-top:16px}
 
+/* ---------- Formularios, tablas y estados (zona de residentes) ---------- */
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 4px}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px}
+textarea{min-height:90px;resize:vertical}
+input[type=checkbox]{width:auto;margin:3px 0 0}
+.check{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-weight:500;font-size:15px}
+.acciones-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.peligro{background:transparent;color:var(--bad);border:1.5px solid var(--bad)}
+.p-ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.p-bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.aviso{padding:12px 14px;border-radius:var(--r-md);margin:12px 0;font-weight:600}
+.aviso.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.aviso.error{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+.aviso.info{background:var(--primary-soft);color:var(--primary)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.kpi .n{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.kpi .l{color:var(--muted);font-size:13px}
+.pestanas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.pestanas button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:700}
+.pestanas button[aria-selected="true"]{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
+.cuenta-barra{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px}
+.politica-texto{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);padding:14px;font-size:14px;max-height:260px;overflow:auto}
+.codigo{font-size:24px;font-weight:800;letter-spacing:.12em;color:var(--primary);font-variant-numeric:tabular-nums}
+.tarjetas-codigo{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.tarjeta-codigo{border:1.5px dashed var(--line);border-radius:var(--r-md);padding:16px;background:var(--surface);break-inside:avoid}
+.oculto{display:none!important}
+.angosto{max-width:520px}
+.bloque-sm{margin-bottom:16px}
+.bloque-sm .btn{margin-top:4px}
+select#casa{max-width:320px;margin-bottom:16px}
+@media print{
+  .no-imprimir{display:none!important}
+  .tarjeta-codigo{border-color:#999;color:#000;background:#fff}
+  .tarjeta-codigo .codigo{color:#000}
+}
+
 /* ---------- Visor de documentos ---------- */
 .visor-barra{display:flex;gap:12px 20px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:16px}
 .visor-titulo{display:flex;gap:14px;align-items:center;min-width:0}

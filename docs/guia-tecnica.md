@@ -66,6 +66,27 @@ python -c "import pymupdf; d=pymupdf.open('original.pdf'); [print(i+1, x['bbox']
 
 Si el recuadro de la firma pisa el nombre impreso debajo, reduzca `y1` hasta justo encima del nombre. Revise siempre el resultado abriéndolo y buscando el dato con Ctrl+F. Los originales se guardan fuera del repositorio (por ejemplo `C:\Proyectos\material-aragon`).
 
+## Fase 2: zona de residentes (Supabase)
+
+- **Proyecto:** `aragon-en-linea`, región East US. URL y clave *publishable* en `web/js/config.js` (son públicas; la seguridad la da RLS). La clave *secret* / *service_role* nunca va en el repositorio.
+- **Librería:** `@supabase/supabase-js` con versión fija, desde jsdelivr (`SUPABASE_JS` en `config.js`). Flujo `implicit`: el enlace del correo funciona aunque se abra en otro navegador. También se acepta el código de 6 dígitos (`verifyOtp`).
+- **Páginas:** `ingresar.html`, `mi-hogar.html`, `admin.html` (con `noindex`). Solo estas tres permiten conectarse a Supabase y a jsdelivr en su política de seguridad. El menú muestra "Mi cuenta" cuando `acceso_residentes` es `true` en `web/datos/sitio.json`.
+- **Base de datos:** archivos numerados en `supabase/`, que se pegan en orden en el SQL Editor:
+  1. `001_esquema.sql`: tablas, RLS en todas, funciones y disparadores.
+  2. `002_datos_iniciales.sql`: 40 casas y versión de la política.
+  3. `003_pruebas_seguridad.sql`: 54 pruebas que simulan cada rol; se deshacen solas y muestran el resultado como un mensaje en rojo.
+  4. `004_primer_administrador.sql`: da el rol de administración (o consejo) a una cuenta que ya ingresó.
+  Los cambios futuros van en archivos nuevos (`005_...`), nunca editando los ya aplicados.
+- **Modelo:** `perfiles` une usuario, casa y rol (`propietario`, `arrendatario`, `administracion`, `consejo`). Una cuenta de propietario y una de arrendatario por casa (índices únicos). Los registros de Mi hogar pertenecen al perfil que los creó; un disparador los devuelve a *pendiente* ante cualquier cambio que no haga la administración. Las funciones `privado.*` alimentan las reglas RLS; las `public.*` son la API que llama el sitio y responden `{ok, mensaje}`.
+- **Códigos de invitación:** 8 caracteres sin letras ambiguas; solo se guarda su huella SHA-256; 10 intentos fallidos por hora como máximo.
+- **Política de datos:** tabla `politicas` con una sola versión activa. Al aprobar una nueva: `insert` de la versión (con `activa = false`), luego `update politicas set activa = false;` y después `update politicas set activa = true where version = 'X';` (en dos pasos, por el índice que permite una sola activa). La plataforma vuelve a pedir la autorización.
+- **Mantener activo:** `.github/workflows/mantener-activo.yml` consulta Supabase a diario (el plan gratuito pausa tras una semana sin uso).
+- **Correos:** SMTP de Gmail con contraseña de aplicación y plantillas en español: ver `docs/plantillas-correo.md`.
+
+### Probar la base de datos en el PC (sin tocar Supabase)
+
+Se usó un PostgreSQL 16 portátil (binarios del paquete `pgserver` de PyPI, descomprimidos en una carpeta temporal) y `supabase/pruebas/simulacion_supabase.sql`, que imita roles, `auth.users`, `auth.uid()` y `auth.jwt()`. Orden: simulación → 001 → 002 → 003. Para comprobar que las pruebas detectan fallas, se introdujeron fallas a propósito (una regla que deja ver todo, un arrendatario tratado como propietario, un residente que se autovalida) y las pruebas las reportaron.
+
 ## Pendientes conocidos
 
 - El teléfono de portería publicado es temporal (celular de un miembro del consejo); reemplazar por el real.

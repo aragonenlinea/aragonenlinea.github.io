@@ -102,10 +102,14 @@ export async function montarPagina() {
     document.body.prepend(aviso);
   }
 
+  // "Mi cuenta" aparece cuando se habilita el acceso de residentes (sitio.json → "acceso_residentes": true).
+  const menu = [...MENU];
+  if (sitio.acceso_residentes) menu.splice(menu.length - 1, 0, ["mi-hogar.html", "Mi cuenta"]);
+
   const cab = document.getElementById("encabezado");
   cab.innerHTML = `<div class="barra-in">
       <a class="marca" href="index.html"><img class="logo" src="img/logo-aragon.png" alt="" width="94" height="40"><span>Aragón en línea<small>${esc(sitio.nombre)}, ${esc(sitio.ciudad)}</small></span></a>
-      <nav aria-label="Menú principal">${MENU.map(([h, t]) =>
+      <nav aria-label="Menú principal">${menu.map(([h, t]) =>
         `<a href="${h}"${h === actual ? ' aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
       <button class="tema" type="button"></button>
     </div>`;

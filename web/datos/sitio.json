@@ -4,6 +4,7 @@
   "ciudad": "Neiva, Huila",
   "lema": "Comunicados, documentos, zonas comunes y normas de las 40 casas del conjunto, en un solo lugar.",
   "modo_prueba": false,
+  "acceso_residentes": false,
   "directorio": [
     { "nombre": "Emergencias", "detalle": "Línea 123", "enlace": "tel:123" },
     { "nombre": "Portería", "detalle": "317 365 6199", "enlace": "tel:+573173656199" },
