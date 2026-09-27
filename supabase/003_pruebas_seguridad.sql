@@ -7,7 +7,7 @@
 --
 -- El resultado aparece como un mensaje en ROJO (es a propósito: así se deshacen
 -- los cambios). Léalo:
---   "PRUEBAS DE SEGURIDAD: 45 de 45 correctas"  → todo bien.
+--   "PRUEBAS DE SEGURIDAD: 57 de 57 correctas"  → todo bien (requiere haber aplicado 005).
 --   Si dice "FALLARON", copie el mensaje completo y envíelo al equipo técnico.
 -- =====================================================================
 do $$
@@ -411,6 +411,23 @@ begin
   select count(*) into n from public.habitantes;
   perform pg_temp.base();
   total := total + 1; if n <> 0 then fallas := array_append(fallas, '7c: el arrendatario retirado sigue viendo datos'); end if;
+
+  -- Requiere 005_mejoras_retiro.sql: los pendientes del retirado se borran y el retirado ve el aviso.
+  select count(*) into n from public.habitantes where id = hab_t1;
+  total := total + 1; if n <> 0 then fallas := array_append(fallas, '7d: quedaron registros pendientes de una cuenta retirada'); end if;
+
+  perform pg_temp.como(u_t1);
+  r := public.mi_estado();
+  perform pg_temp.base();
+  total := total + 1;
+  if not exists (select 1 from jsonb_array_elements(r -> 'perfiles') e where e ->> 'estado' = 'retirado') then
+    fallas := array_append(fallas, '7e: el arrendatario retirado no recibe el aviso de acceso retirado');
+  end if;
+
+  perform pg_temp.como(u_p1);
+  r := public.resumen_casa(1::smallint);
+  perform pg_temp.base();
+  total := total + 1; if coalesce((r ->> 'habitantes')::int, -1) <> 1 then fallas := array_append(fallas, '7f: el resumen sigue contando registros del arrendatario retirado'); end if;
 
   -- ---------- Resultado (se deshace todo) ----------
   if array_length(fallas, 1) is null then

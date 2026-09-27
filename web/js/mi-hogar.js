@@ -255,10 +255,16 @@ async function pintar() {
     for (const p of deCasa.filter(p => p.estado === "rechazado")) {
       html += `<div class="aviso error">Su registro de la Casa ${esc(p.unidad_id)} fue rechazado${p.motivo_rechazo ? ": " + esc(p.motivo_rechazo) : "."} Comuníquese con la administración.</div>`;
     }
-    for (const p of deCasa.filter(p => p.vencido)) {
-      html += `<div class="aviso error">Su acceso como arrendatario de la Casa ${esc(p.unidad_id)} venció el ${fecha(p.vence_el)}.</div>`;
+    for (const p of deCasa.filter(p => p.vencido && p.estado === "activo")) {
+      html += `<div class="aviso error">Su acceso como arrendatario de la Casa ${esc(p.unidad_id)} venció el ${fecha(p.vence_el)}. Si el contrato se renovó, pídale al propietario que lo autorice de nuevo.</div>`;
     }
-    if (!deCasa.some(p => p.estado === "pendiente") && !inv) {
+    const vigenteEn = u => deCasa.some(q => q.unidad_id === u && ["pendiente", "activo"].includes(q.estado) && !q.vencido);
+    const retiradas = [...new Set(deCasa.filter(p => p.estado === "retirado" && !vigenteEn(p.unidad_id)).map(p => p.unidad_id))];
+    for (const u of retiradas) {
+      html += `<div class="aviso error">Su acceso a la Casa ${esc(u)} fue retirado. Si cree que es un error, comuníquese con la administración.</div>`;
+    }
+    const conAviso = retiradas.length || deCasa.some(p => p.vencido && p.estado === "activo");
+    if (!deCasa.some(p => p.estado === "pendiente") && !inv && !conAviso) {
       html += vistaCodigo(estado.es_admin || estado.es_consejo ? "¿También es propietario? Registre su casa" : "Registre su casa");
     }
     caja.innerHTML = html;

@@ -31,9 +31,11 @@ function encabezado() {
 async function vistaPendientes() {
   const [cuentas, ...listas] = await Promise.all([
     consulta(sb.from("perfiles").select("id,unidad_id,rol,nombre,correo,creado_en").eq("estado", "pendiente").order("creado_en")),
-    ...Object.keys(TABLAS).map(t => consulta(sb.from(t).select("*, perfiles(nombre, rol)").eq("estado", "pendiente").order("creado_en")))
+    ...Object.keys(TABLAS).map(t => consulta(sb.from(t).select("*, perfiles(nombre, rol, estado, vence_el)").eq("estado", "pendiente").order("creado_en")))
   ]);
-  const registros = Object.keys(TABLAS).flatMap((t, i) => listas[i].map(r => ({ ...r, _tabla: t })))
+  // Solo registros de cuentas activas y vigentes (no de arrendatarios retirados o vencidos).
+  const vigente = p => p && p.estado === "activo" && (!p.vence_el || p.vence_el >= hoyISO());
+  const registros = Object.keys(TABLAS).flatMap((t, i) => listas[i].filter(r => vigente(r.perfiles)).map(r => ({ ...r, _tabla: t })))
     .sort((a, b) => a.unidad_id - b.unidad_id || a.creado_en.localeCompare(b.creado_en));
   return `<div class="grid g2">
     <div class="panel"><h2>Cuentas por aprobar</h2>
