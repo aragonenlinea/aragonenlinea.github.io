@@ -88,6 +88,10 @@ function haceUnAnio() {
 // ---------- Códigos ----------
 async function vistaCodigos() {
   const filas = await rpc("censo");
+  if (!Array.isArray(filas) || !filas.length) {
+    return `<div class="panel error"><p>No se pudo cargar la lista de casas. Espere un momento y vuelva a intentar.</p>
+      <button class="btn sm" type="button" data-tab="codigos">Reintentar</button></div>`;
+  }
   return `<div class="panel no-imprimir">
       <h2>Generar códigos de invitación</h2>
       <p>Cada propietario usa el código de su casa una sola vez para registrarse. Los códigos vencen a los 60 días.
