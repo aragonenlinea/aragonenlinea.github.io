@@ -1,3 +1,8 @@
 [
-  { "archivo": "img/piscina.jpg", "descripcion": "Piscina y zona social" }
+  { "archivo": "img/fachada.jpg", "descripcion": "Entrada principal y portería, Calle 19" },
+  { "archivo": "img/piscina.jpg", "descripcion": "Piscina" },
+  { "archivo": "img/plazoleta.jpg", "descripcion": "Plazoleta interna" },
+  { "archivo": "img/zona-piscina.jpg", "descripcion": "Zona de la piscina" },
+  { "archivo": "img/letrero.jpg", "descripcion": "Letrero del conjunto" },
+  { "archivo": "img/parque-infantil.jpg", "descripcion": "Parque infantil" }
 ]

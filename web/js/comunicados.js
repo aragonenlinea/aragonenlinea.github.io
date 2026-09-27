@@ -17,7 +17,9 @@ function pintar() {
       return `<article class="item comunicado" id="c-${esc(c.id)}"><div>
         <div class="row"><h2 class="t">${esc(c.titulo)}</h2>${c.categoria ? `<span class="pill p-info">${esc(c.categoria)}</span>` : ""}</div>
         <p class="texto">${esc(c.texto)}</p>
-        <div class="row"><span class="m">Publicado el ${fecha(c.fecha)}</span>${adj ? `<a class="btn sm ghost" href="${esc(adj)}" target="_blank" rel="noopener">Ver documento adjunto</a>` : ""}</div>
+        <div class="row"><span class="m">Publicado el ${fecha(c.fecha)}</span>${adj ? (adj.startsWith("documentos/")
+          ? `<a class="btn sm" href="visor.html?doc=${encodeURIComponent(adj)}">Ver documento</a><a class="btn sm ghost" href="${esc(adj)}" download>Descargar</a>`
+          : `<a class="btn sm ghost" href="${esc(adj)}" target="_blank" rel="noopener">Ver documento</a>`) : ""}</div>
       </div></article>`;
     }).join("") || `<div class="empty">No hay comunicados publicados.</div>`}</div></div>`;
 }

@@ -90,6 +90,8 @@ El orden en el sitio es por fecha: el más reciente aparece primero.
 
 6. **Commit changes**.
 
+En el sitio, cada documento tiene dos botones: **Ver**, que lo abre dentro del sitio (también en celular), y **Descargar**, que es opcional.
+
 Para retirar un documento: borre su bloque en `documentos.json` y luego borre el PDF en `web/documentos` (abrir el archivo → menú de tres puntos → **Delete file**). Ojo: GitHub guarda el historial, así que un PDF que se subió por error **sigue existiendo en el historial**. Por eso la revisión de la sección 5 se hace **antes** de subir.
 
 ---
@@ -146,7 +148,7 @@ Para retirar un documento: borre su bloque en `documentos.json` y luego borre el
 
 ## 7. Fotos de la galería
 
-1. Use fotos **sin caras de niños, sin placas de vehículos y sin números de casa visibles**.
+1. Use fotos **sin personas (ni siquiera parcialmente, en los bordes), sin placas de vehículos y sin números de casa visibles**. Revise también los bordes: dedos, sombras o reflejos.
 2. Reduzca el tamaño a menos de 500 KB (en Windows: abrir con Fotos → "…" → Cambiar tamaño → "M").
 3. Nombre en minúsculas sin espacios, por ejemplo `salon-social.jpg`, y súbala a `web/img` (Add file → Upload files).
 4. En `fotos.json` agregue: `{ "archivo": "img/salon-social.jpg", "descripcion": "Salón social" },`

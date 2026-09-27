@@ -4,6 +4,11 @@ import { montarPagina, cargar, esc, fecha, enlaceSeguro, avisoError } from "./co
 
 const caja = document.getElementById("documentos");
 
+// "Ver" abre el visor del sitio; "Descargar" es opcional.
+const acciones = url => url.startsWith("documentos/")
+  ? `<div class="row doc-acciones"><a class="btn sm" href="visor.html?doc=${encodeURIComponent(url)}">Ver</a><a class="btn sm ghost" href="${esc(url)}" download>Descargar</a></div>`
+  : `<a class="btn sm ghost" href="${esc(url)}" target="_blank" rel="noopener">Abrir</a>`;
+
 async function iniciar() {
   await montarPagina();
   try {
@@ -23,7 +28,7 @@ async function iniciar() {
             <h3 class="t">${esc(d.titulo)}</h3>
             ${d.descripcion ? `<div>${esc(d.descripcion)}</div>` : ""}
             ${d.fecha ? `<div class="m">Fecha: ${fecha(d.fecha)}</div>` : ""}
-          </div>${url ? `<a class="btn sm ghost" href="${esc(url)}" target="_blank" rel="noopener">Abrir PDF</a>` : `<span class="pill p-warn">No disponible</span>`}</div>`;
+          </div>${url ? acciones(url) : `<span class="pill p-warn">No disponible</span>`}</div>`;
       }).join("")}</div></section>`).join("")
       || `<div class="panel"><div class="empty">Aún no hay documentos publicados.</div></div>`;
   } catch (err) { avisoError(caja, err); }

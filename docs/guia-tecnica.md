@@ -12,11 +12,11 @@ Para quien continúe el desarrollo. El manual para publicar contenido está en `
 ```
 .github/workflows/publicar.yml   Revisa los JSON y publica web/ en GitHub Pages
 web/                              Lo único que se publica
-  index.html, comunicados.html, documentos.html, zonas.html, 404.html
+  index.html, comunicados.html, documentos.html, zonas.html, visor.html, 404.html
   css/estilos.css                 Todos los estilos; colores en :root (claro y oscuro)
   js/tema.js                      Aplica el modo claro/oscuro antes de pintar (script clásico)
   js/comun.js                     Encabezado, pie, menú (MENU), lectura de datos, fechas, íconos
-  js/inicio.js, comunicados.js, documentos.js, zonas.js   Una por página
+  js/inicio.js, comunicados.js, documentos.js, zonas.js, visor.js   Una por página
   datos/*.json                    Contenido editable por la administración
   documentos/                     PDF publicados (ya revisados por datos personales)
   img/                            Logo, fotos, ícono
@@ -32,6 +32,7 @@ supabase/, sync/, plantillas/     Vacías; se usan desde la Fase 2
 - Todo texto que viene de un JSON pasa por `esc()` antes de insertarse, y los enlaces por `enlaceSeguro()` (solo rutas propias, https, tel y mailto).
 - Si un JSON está mal escrito, solo esa sección muestra un aviso; el resto de la página funciona.
 - Cada página tiene una política de seguridad de contenido (etiqueta `Content-Security-Policy`): solo permite scripts propios y la fuente Manrope de Google Fonts. En la Fase 2 habrá que agregar el dominio de Supabase en `connect-src` y el CDN del cliente en `script-src`. No use atributos `style="..."` dentro del HTML generado: la política los bloquea.
+- **Visor de documentos:** `visor.html?doc=documentos/archivo.pdf` muestra el PDF dentro del sitio con PDF.js (versión fija en `js/visor.js`, cargada desde cdnjs), página por página a medida que se desplaza, con zoom y botón de descarga opcional. Solo acepta archivos de `documentos/`. Su política de seguridad es la única que permite cdnjs (`script-src`, `worker-src blob:` y `connect-src`). Si PDF.js no carga, ofrece abrir el PDF en el navegador o descargarlo.
 - Fechas en formato `AAAA-MM-DD` en los JSON; se muestran con `toLocaleDateString("es-CO")`.
 
 ## Ver el sitio en el PC
