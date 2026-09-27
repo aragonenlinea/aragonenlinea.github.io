@@ -69,9 +69,16 @@ function zonas(lista) {
     <div class="zonas">${lista.map((z, i) => `<a class="zona z${i % 4}" href="zonas.html#zona-${i + 1}">${icono(z.icono)}<div><b>${esc(z.nombre)}</b><span>${esc(z.horario || "Horario por definir")}</span></div></a>`).join("")}</div>`;
 }
 
+function normas(lista) {
+  if (!lista.length) return "";
+  return `<h2 class="sec">Normas básicas</h2>
+    <div class="normas">${lista.map(n => `<div class="norma"><h3>${esc(n.titulo)}</h3><p>${esc(n.texto)}</p>${n.fuente ? `<p class="m">${esc(n.fuente)}</p>` : ""}</div>`).join("")}</div>
+    <p class="m">Resumen informativo. Las normas completas están en el <a href="documentos.html">Manual de convivencia y el Reglamento</a>.</p>`;
+}
+
 async function iniciar() {
   const sitio = await montarPagina();
-  const [com, eve, zon, fot] = await Promise.allSettled(["comunicados", "eventos", "zonas", "fotos"].map(cargar));
+  const [com, eve, zon, fot, nor] = await Promise.allSettled(["comunicados", "eventos", "zonas", "fotos", "normas"].map(cargar));
 
   document.getElementById("inicio").innerHTML = `
   <section class="portada">
@@ -98,7 +105,9 @@ async function iniciar() {
     ${seccion(eve, proximosEventos)}
   </div>
 
-  ${seccion(zon, zonas)}`;
+  ${seccion(zon, zonas)}
+
+  ${seccion(nor, normas)}`;
 }
 
 iniciar();

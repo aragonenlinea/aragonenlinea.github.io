@@ -2,46 +2,94 @@
   {
     "nombre": "Salón social",
     "icono": "salon",
-    "horario": "Todos los días, 8:00 a. m. a 10:00 p. m.",
-    "capacidad": "60 personas (prueba)",
-    "reserva": "Con reserva previa en la administración",
+    "horario": "Turno de día: 10:00 a. m. a 6:00 p. m. Turno de noche: 6:00 p. m. a 12:00 a. m.",
+    "costo": "Día: 2,7 SMDLV. Noche: 3,3 SMDLV.",
+    "capacidad": "50 personas",
+    "reserva": "Con alquiler. Solicítelo por escrito a la administración",
     "reglas": [
-      "Reservar con mínimo 5 días de anticipación.",
-      "Entregar el salón limpio y en el horario acordado.",
-      "Música a volumen moderado."
-    ]
+      "Solicite la reserva con mínimo 10 días hábiles de anticipación. Si varias casas piden la misma fecha, se asigna por orden de solicitud.",
+      "Al recibir el salón se paga el alquiler y se firma el inventario de lo que se entrega.",
+      "Deje en portería la lista de invitados antes de la reunión.",
+      "Los invitados solo pueden estar en la zona social.",
+      "Entregue el salón limpio y en el mismo estado en que lo recibió. No use silicona ni cinta adhesiva en las paredes.",
+      "Mantenga un volumen de música que no moleste a los vecinos.",
+      "No se alquila para fiestas empresariales."
+    ],
+    "fuente": "Manual de convivencia, arts. 33 a 39 y 57. Reglamento de propiedad horizontal, cap. XIV-VI."
   },
   {
     "nombre": "Zona BBQ",
     "icono": "bbq",
-    "horario": "Todos los días, 10:00 a. m. a 9:00 p. m.",
-    "capacidad": "20 personas (prueba)",
-    "reserva": "Con reserva previa en la administración",
+    "horario": "10:00 a. m. a 12:00 a. m.",
+    "costo": "1 SMDLV",
+    "capacidad": "",
+    "reserva": "Con alquiler. Solicítelo por escrito a la administración",
     "reglas": [
-      "Traer su propio carbón y utensilios.",
-      "Apagar completamente el fuego al terminar."
-    ]
+      "Deje el lugar limpio al terminar. Si no, se cobra una multa igual al valor del alquiler.",
+      "No se alquila a menores de edad.",
+      "Música a volumen moderado.",
+      "Use solo elementos que no pongan en riesgo las zonas vecinas."
+    ],
+    "fuente": "Manual de convivencia, art. 57. Reglamento de propiedad horizontal, cap. XIV-VI."
   },
   {
     "nombre": "Piscina",
     "icono": "piscina",
-    "horario": "Martes a domingo, 8:00 a. m. a 8:00 p. m. Lunes cerrada por mantenimiento.",
-    "capacidad": "30 personas (prueba)",
+    "horario": "Todos los días de 9:00 a. m. a 10:00 p. m., excepto el primer día hábil de la semana, que se hace mantenimiento.",
+    "costo": "",
+    "capacidad": "Hasta 4 invitados por casa",
     "reserva": "Uso libre para residentes",
     "reglas": [
-      "Menores de 12 años siempre con un adulto responsable.",
-      "Ducharse antes de ingresar.",
-      "No se permiten envases de vidrio."
-    ]
+      "Dúchese antes de entrar. Si usa bronceador o crema, dúchese de nuevo.",
+      "Use vestido de baño y gorro. Los niños que usan pañal deben tener pañal especial para piscina.",
+      "Los menores de 12 años deben estar siempre con un adulto responsable.",
+      "No se permiten alimentos, bebidas, cigarrillos ni envases de vidrio alrededor de la piscina.",
+      "No se permite el ingreso en estado de embriaguez, con heridas visibles ni con mascotas.",
+      "No se permiten clavados, carreras ni juegos bruscos.",
+      "Si usa un equipo de sonido, manténgalo a volumen moderado y lejos del agua."
+    ],
+    "fuente": "Manual de convivencia, arts. 61 a 63. Reglamento de propiedad horizontal, cap. XIV-V."
   },
   {
-    "nombre": "Cancha múltiple",
+    "nombre": "Polideportivo",
     "icono": "cancha",
-    "horario": "Todos los días, 6:00 a. m. a 9:00 p. m.",
+    "horario": "Todos los días, 7:00 a. m. a 10:00 p. m.",
+    "costo": "",
     "capacidad": "",
     "reserva": "Uso libre para residentes",
     "reglas": [
-      "Usar calzado deportivo."
-    ]
+      "Si hay otras personas esperando, cada turno es de una hora.",
+      "Los residentes tienen prelación sobre los visitantes.",
+      "Música a volumen moderado.",
+      "Se puede apartar para un evento privado con carta a la administración indicando fecha y hora."
+    ],
+    "fuente": "Manual de convivencia, art. 58. Reglamento de propiedad horizontal, cap. XIV-VII."
+  },
+  {
+    "nombre": "Parque infantil",
+    "icono": "parque",
+    "horario": "Todos los días, 7:00 a. m. a 10:00 p. m.",
+    "costo": "",
+    "capacidad": "",
+    "reserva": "Uso libre para residentes",
+    "reglas": [
+      "Los niños deben estar acompañados de un adulto responsable.",
+      "Enseñe a los niños a cuidar los juegos y las zonas comunes."
+    ],
+    "fuente": "Manual de convivencia, arts. 51 y 52. Reglamento de propiedad horizontal, cap. XIV-VII."
+  },
+  {
+    "nombre": "Parqueadero de visitantes",
+    "icono": "parqueadero",
+    "horario": "Uso exclusivo de visitantes. De 12:00 a. m. a 7:00 a. m. tiene costo; de día no se cobra.",
+    "costo": "0,17 SMDLV por noche",
+    "capacidad": "",
+    "reserva": "Solo para visitantes",
+    "reglas": [
+      "Los residentes no pueden usarlo: cada casa tiene su garaje.",
+      "Un visitante puede usarlo hasta 15 días seguidos. Después de 15 días se considera residente.",
+      "Si no hay cupo, el vehículo del visitante debe quedar fuera del conjunto."
+    ],
+    "fuente": "Manual de convivencia, arts. 15, 16, 51 y 57."
   }
 ]

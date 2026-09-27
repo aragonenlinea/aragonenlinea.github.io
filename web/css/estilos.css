@@ -138,6 +138,14 @@ a.item:hover .t{color:var(--primary);text-decoration:underline}
 .zona-ficha dd{margin:0}
 .zona-ficha ul{margin:8px 0 0;padding-left:20px}
 .zona-ficha li{margin:3px 0}
+.zona-ficha .fuente{margin:12px 0 0}
+.nota p{margin:0 0 8px}
+.nota p:last-child{margin:0}
+.normas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px}
+.norma{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--sun);border-radius:14px;padding:16px}
+.norma h3{margin:0 0 6px;font-size:16px}
+.norma p{margin:0}
+.norma .m{margin-top:8px}
 
 /* ---------- Comunicados y documentos ---------- */
 .filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}

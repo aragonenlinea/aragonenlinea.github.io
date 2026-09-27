@@ -117,7 +117,7 @@ export async function montarPagina() {
       <div id="contacto" class="directorio" role="region" aria-label="Directorio">${directorio(sitio.directorio)}</div>
     </div>
     <div class="pie-in">
-      <p>${esc(sitio.nombre)}, ${esc(sitio.ciudad)}.</p>
+      <p>${esc(sitio.nombre)}${sitio.direccion ? `, ${esc(sitio.direccion)}` : ""}, ${esc(sitio.ciudad)}.</p>
       <p>Sitio informativo: no pide datos personales ni recibe pagos.</p>
     </div>`;
   return sitio;
@@ -137,6 +137,8 @@ export const ICONOS = {
   bbq: '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><ellipse cx="24" cy="20" rx="14" ry="6"/><path d="M10 20c0 8 6 12 14 12s14-4 14-12"/><path d="M16 32l-4 9M32 32l4 9M24 32v9"/></svg>',
   piscina: '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 30c4-3 8-3 12 0s8 3 12 0 8-3 12 0"/><path d="M6 38c4-3 8-3 12 0s8 3 12 0 8-3 12 0"/><path d="M16 24V10a4 4 0 0 1 8 0M30 24V10a4 4 0 0 1 8 0M16 16h14"/></svg>',
   cancha: '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="15"/><path d="M9 24h30M24 9c-6 5-6 25 0 30M24 9c6 5 6 25 0 30"/></svg>',
+  parque: '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M10 40V14M38 40V14M8 14h32"/><path d="M18 14v14M30 14v14"/><path d="M15 28h6M27 28h6"/></svg>',
+  parqueadero: '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="9" y="7" width="30" height="34" rx="5"/><path d="M19 33V15h7a5 5 0 0 1 0 10h-7"/></svg>',
   general: '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M24 40s-12-10-12-20a12 12 0 0 1 24 0c0 10-12 20-12 20z"/><circle cx="24" cy="20" r="4"/></svg>'
 };
 export const icono = nombre => ICONOS[nombre] || ICONOS.general;

@@ -1,7 +1,8 @@
 {
   "nombre": "Conjunto Residencial Aragón",
+  "direccion": "Calle 19 No. 45A-41",
   "ciudad": "Neiva, Huila",
-  "lema": "Comunicados, documentos y zonas comunes del conjunto, en un solo lugar.",
+  "lema": "Comunicados, documentos, zonas comunes y normas de las 40 casas del conjunto, en un solo lugar.",
   "modo_prueba": true,
   "directorio": [
     { "nombre": "Emergencias", "detalle": "Línea 123", "enlace": "tel:123" },
