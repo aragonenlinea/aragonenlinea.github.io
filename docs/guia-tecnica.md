@@ -70,7 +70,8 @@ Si el recuadro de la firma pisa el nombre impreso debajo, reduzca `y1` hasta jus
 
 - **Proyecto:** `aragon-en-linea`, región East US. URL y clave *publishable* en `web/js/config.js` (son públicas; la seguridad la da RLS). La clave *secret* / *service_role* nunca va en el repositorio.
 - **Librería:** `@supabase/supabase-js` con versión fija, desde jsdelivr (`SUPABASE_JS` en `config.js`). Flujo `implicit`: el enlace del correo funciona aunque se abra en otro navegador. También se acepta el código de 6 dígitos (`verifyOtp`).
-- **Páginas:** `ingresar.html`, `mi-hogar.html`, `admin.html` (con `noindex`). Solo estas tres permiten conectarse a Supabase y a jsdelivr en su política de seguridad. El menú muestra "Mi cuenta" cuando `acceso_residentes` es `true` en `web/datos/sitio.json`.
+- **Caché del navegador:** GitHub Pages permite guardar archivos 10 minutos (`max-age=600`). Al cambiar `admin.js`, `mi-hogar.js` o `ingresar.js`, suba el número de versión en su página (`js/admin.js?v=2` → `?v=3`) para que los navegadores carguen la nueva.
+- **Páginas:** `ingresar.html`, `mi-hogar.html`, `admin.html` (con `noindex`). Ningún elemento generado por JavaScript puede usar `id="contenido"`: es el `<main>` de todas las páginas. Solo estas tres permiten conectarse a Supabase y a jsdelivr en su política de seguridad. El menú muestra "Mi cuenta" cuando `acceso_residentes` es `true` en `web/datos/sitio.json`.
 - **Base de datos:** archivos numerados en `supabase/`, que se pegan en orden en el SQL Editor:
   1. `001_esquema.sql`: tablas, RLS en todas, funciones y disparadores.
   2. `002_datos_iniciales.sql`: 40 casas y versión de la política.
