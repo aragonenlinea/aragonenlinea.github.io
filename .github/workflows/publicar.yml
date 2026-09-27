@@ -1,0 +1,47 @@
+# Publica la carpeta web/ en GitHub Pages cada vez que se guarda un cambio en la rama main.
+# Antes de publicar revisa que los archivos de web/datos/ no tengan errores de escritura;
+# si alguno tiene error, NO publica y el sitio anterior sigue funcionando.
+name: Publicar sitio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Revisar los archivos de datos
+        run: |
+          error=0
+          for f in web/datos/*.json; do
+            if ! python3 -m json.tool "$f" > /dev/null; then
+              echo "::error file=$f::El archivo $f tiene un error de escritura (revise comas, comillas y corchetes)."
+              error=1
+            fi
+          done
+          exit $error
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+      - id: despliegue
+        uses: actions/deploy-pages@v4
