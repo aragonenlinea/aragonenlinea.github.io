@@ -1,5 +1,13 @@
 [
   {
+    "id": 5,
+    "fecha": "2026-10-01",
+    "categoria": "Administrativo",
+    "titulo": "Convocatoria a reunión de consejo",
+    "texto": "Primer párrafo.\nSegundo párrafo.",
+    "adjunto": "documentos/convocatoria.pdf"
+  },
+  {
     "id": 4,
     "fecha": "2026-08-24",
     "categoria": "Administrativo",
