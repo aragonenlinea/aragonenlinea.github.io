@@ -1,9 +1,30 @@
 [
   {
     "categoria": "Reglamentos y manuales",
+    "titulo": "Reglamento de propiedad horizontal",
+    "descripcion": "Versión para consulta de los copropietarios (Escritura 3115 de 2008, Notaría Tercera de Neiva). Se taparon datos personales de las personas que aparecen en la escritura.",
+    "fecha": "2008-11-06",
+    "archivo": "documentos/reglamento-propiedad-horizontal.pdf"
+  },
+  {
+    "categoria": "Reglamentos y manuales",
     "titulo": "Manual de convivencia",
     "descripcion": "Normas de convivencia, seguridad, uso de zonas comunes, mascotas, piscina y procedimiento de sanciones. Aprobado por la asamblea el 3 de junio de 2021.",
     "fecha": "2021-06-03",
     "archivo": "documentos/manual-de-convivencia-2021.pdf"
+  },
+  {
+    "categoria": "Circulares",
+    "titulo": "Circular 04-2026: Certificado de libertad y tradición",
+    "descripcion": "Solicitud a los propietarios del certificado actualizado de su casa.",
+    "fecha": "2026-08-24",
+    "archivo": "documentos/circular-04-2026.pdf"
+  },
+  {
+    "categoria": "Circulares",
+    "titulo": "Circular 03-2026: Parqueaderos, cuota de administración e intereses de mora",
+    "descripcion": "Cobro de parqueaderos internos, descuento por pronto pago e intereses de mora.",
+    "fecha": "2026-07-26",
+    "archivo": "documentos/circular-03-2026.pdf"
   }
 ]

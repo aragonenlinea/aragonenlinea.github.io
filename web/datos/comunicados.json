@@ -1,26 +1,18 @@
 [
   {
+    "id": 4,
+    "fecha": "2026-08-24",
+    "categoria": "Administrativo",
+    "titulo": "Circular 04-2026: Certificado de libertad y tradición",
+    "texto": "Por solicitud del Consejo de Administración, todos los propietarios deben entregar el certificado de libertad y tradición actualizado de su casa.\nPlazo: 31 de agosto de 2026, al correo oficial del conjunto indicado en la circular.\nSi no se entrega a tiempo, el costo de obtener el certificado se incluirá en la cuenta de cobro del mes siguiente.",
+    "adjunto": "documentos/circular-04-2026.pdf"
+  },
+  {
     "id": 3,
-    "fecha": "2026-09-26",
-    "categoria": "Mantenimiento",
-    "titulo": "Mantenimiento de tanques de agua (prueba)",
-    "texto": "El sábado se suspende el servicio de agua de 7:00 a. m. a 1:00 p. m. para lavado y desinfección de tanques.\nLe recomendamos almacenar agua desde el viernes.",
-    "adjunto": ""
-  },
-  {
-    "id": 2,
-    "fecha": "2026-09-22",
-    "categoria": "Asamblea",
-    "titulo": "Convocatoria a asamblea extraordinaria (prueba)",
-    "texto": "Se convoca a los copropietarios para revisar la propuesta de reforma del reglamento. La citación formal se entregará por los canales oficiales.",
-    "adjunto": "documentos/documento-de-prueba.pdf"
-  },
-  {
-    "id": 1,
-    "fecha": "2026-09-15",
-    "categoria": "Convivencia",
-    "titulo": "Horario de la piscina (prueba)",
-    "texto": "De martes a domingo, 8:00 a. m. a 8:00 p. m. Los lunes se realiza mantenimiento.",
-    "adjunto": ""
+    "fecha": "2026-07-26",
+    "categoria": "Financiero",
+    "titulo": "Circular 03-2026: Parqueaderos internos, cuota de administración e intereses de mora",
+    "texto": "Parqueaderos internos junto al salón social: desde el 27 de julio de 2026 se retoma el cobro, $8.000 por día.\nCuota de administración: $550.000 si paga dentro de los 10 primeros días del mes (pronto pago). Del día 11 al último día del mes, $600.000.\nIntereses de mora: la cuota no pagada dentro del mes genera intereses desde el primer día del mes siguiente, según la Ley 675 de 2001.",
+    "adjunto": "documentos/circular-03-2026.pdf"
   }
 ]

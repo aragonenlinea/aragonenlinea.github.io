@@ -3,10 +3,10 @@
   "direccion": "Calle 19 No. 45A-41",
   "ciudad": "Neiva, Huila",
   "lema": "Comunicados, documentos, zonas comunes y normas de las 40 casas del conjunto, en un solo lugar.",
-  "modo_prueba": true,
+  "modo_prueba": false,
   "directorio": [
     { "nombre": "Emergencias", "detalle": "Línea 123", "enlace": "tel:123" },
-    { "nombre": "Portería", "detalle": "Número por definir", "enlace": "" },
-    { "nombre": "Administración", "detalle": "Correo y horario por definir", "enlace": "" }
+    { "nombre": "Portería", "detalle": "317 365 6199", "enlace": "tel:+573173656199" },
+    { "nombre": "Administración", "detalle": "aragonenlinea.neiva@gmail.com", "enlace": "mailto:aragonenlinea.neiva@gmail.com" }
   ]
 }
