@@ -46,6 +46,9 @@ img{max-width:100%}
 .barra{background:var(--barra);color:#fff;position:sticky;top:0;z-index:10}
 .barra-in{max-width:1180px;margin:0 auto;padding:12px clamp(16px,4vw,32px);display:flex;align-items:center;gap:20px}
 .marca{color:#fff;text-decoration:none;font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.1;flex:none}
+.marca{display:flex;align-items:center;gap:12px}
+.marca .logo{height:40px;width:auto;display:block}
+.logo-portada{display:block;height:clamp(64px,9vw,92px);width:auto;margin:0 0 14px}
 .marca small{display:block;font-weight:500;font-size:12px;opacity:.75;letter-spacing:0}
 .barra nav{display:flex;gap:2px;margin-left:auto}
 .barra nav a{color:rgba(255,255,255,.85);text-decoration:none;padding:9px 12px;border-radius:var(--r-sm);font-weight:600;white-space:nowrap}
@@ -176,6 +179,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);color:var(--mu
   .tema{margin-left:auto}
   .barra nav{order:3;width:100%;margin-left:0;overflow-x:auto;gap:6px;padding-bottom:2px}
   .barra nav a{padding:8px 12px}
+  .marca .logo{height:32px}
   .portada{min-height:460px;flex-direction:column;align-items:stretch;justify-content:flex-end}
   .portada svg.escena{height:62%}
   .portada::after{background:linear-gradient(0deg,rgba(8,40,36,.88) 0%,rgba(8,40,36,.5) 55%,rgba(8,40,36,0) 85%)}

@@ -84,6 +84,7 @@ async function iniciar() {
   <section class="portada">
     ${ESCENA}
     <div class="portada-txt">
+      <img class="logo-portada" src="img/logo-aragon.png" alt="Logo del Conjunto Residencial Aragón" width="215" height="92">
       <p class="saludo">Bienvenido a Aragón en línea</p>
       <h1 class="titular">${esc(sitio.nombre)}</h1>
       <p class="lema">${esc(sitio.lema || "")}</p>

@@ -104,7 +104,7 @@ export async function montarPagina() {
 
   const cab = document.getElementById("encabezado");
   cab.innerHTML = `<div class="barra-in">
-      <a class="marca" href="index.html">Aragón en línea<small>${esc(sitio.nombre)}, ${esc(sitio.ciudad)}</small></a>
+      <a class="marca" href="index.html"><img class="logo" src="img/logo-aragon.png" alt="" width="94" height="40"><span>Aragón en línea<small>${esc(sitio.nombre)}, ${esc(sitio.ciudad)}</small></span></a>
       <nav aria-label="Menú principal">${MENU.map(([h, t]) =>
         `<a href="${h}"${h === actual ? ' aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
       <button class="tema" type="button"></button>
