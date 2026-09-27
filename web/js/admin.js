@@ -24,7 +24,7 @@ function encabezado() {
     <div class="pestanas no-imprimir" role="tablist">${tabs.map(([k, t]) =>
       `<button type="button" role="tab" data-tab="${k}" aria-selected="${k === pestana}">${t}</button>`).join("")}</div>
     <div id="msg" class="no-imprimir"></div>
-    <div id="contenido"></div>`;
+    <div id="panel-contenido"></div>`;
 }
 
 // ---------- Pendientes ----------
@@ -150,7 +150,7 @@ async function vistaCuentas() {
 
 // ---------- Pintar ----------
 async function pintarPestana() {
-  const cont = document.getElementById("contenido");
+  const cont = document.getElementById("panel-contenido");
   document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === pestana));
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
