@@ -244,6 +244,14 @@ async function pintar() {
   const deCasa = estado.perfiles.filter(p => p.unidad_id);
   const activos = deCasa.filter(p => p.estado === "activo" && !p.vencido);
   const inv = estado.invitacion_arrendatario;
+
+  // Administración o consejo sin casa: "Mi cuenta" lleva directo al panel.
+  // (El botón "Mi hogar" del panel usa ?hogar=1 para quedarse aquí y poder registrar una casa.)
+  if ((estado.es_admin || estado.es_consejo) && !deCasa.length && !inv
+      && !new URLSearchParams(location.search).has("hogar")) {
+    location.replace("admin.html");
+    return;
+  }
   if (inv && !deCasa.some(p => p.unidad_id === inv.unidad_id && ["pendiente", "activo"].includes(p.estado))) {
     html += vistaInvitacion(inv);
   }

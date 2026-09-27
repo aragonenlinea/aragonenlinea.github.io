@@ -19,7 +19,7 @@ function encabezado() {
     : [["censo", "Censo"]];
   return `<div class="cuenta-barra no-imprimir">
       <div><h1>${estado.es_admin ? "Panel de administración" : "Censo del conjunto"}</h1><p class="m">Sesión: ${esc(estado.correo || "")}</p></div>
-      <div class="row"><a class="btn sm ghost" href="mi-hogar.html">Mi hogar</a><button class="btn sm ghost" type="button" id="salir">Cerrar sesión</button></div>
+      <div class="row"><a class="btn sm ghost" href="mi-hogar.html?hogar=1">Mi hogar</a><button class="btn sm ghost" type="button" id="salir">Cerrar sesión</button></div>
     </div>
     <div class="pestanas no-imprimir" role="tablist">${tabs.map(([k, t]) =>
       `<button type="button" role="tab" data-tab="${k}" aria-selected="${k === pestana}">${t}</button>`).join("")}</div>

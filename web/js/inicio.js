@@ -97,6 +97,7 @@ async function iniciar() {
     <a href="documentos.html"><b>Documentos</b><span>Reglamento, manuales y políticas</span></a>
     <a href="zonas.html"><b>Zonas comunes</b><span>Horarios y reglas de uso</span></a>
     <a href="#contacto"><b>Contacto</b><span>Portería y administración</span></a>
+    ${sitio.acceso_residentes ? `<a href="mi-hogar.html"><b>Mi cuenta</b><span>Residentes y administración</span></a>` : ""}
   </nav>
 
   ${seccion(fot, galeria)}

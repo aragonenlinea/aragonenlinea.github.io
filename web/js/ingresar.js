@@ -7,10 +7,13 @@ const params = new URLSearchParams(location.search);
 // Solo se permite volver a páginas propias del sitio.
 const volver = /^[a-z-]+\.html$/.test(params.get("volver") || "") ? params.get("volver") : "mi-hogar.html";
 
+let enPruebas = false;
+
 function pasoCorreo(correo = "") {
   caja.innerHTML = `
     <h1>Ingresar</h1>
-    <p class="sub">Para propietarios y arrendatarios del conjunto. No necesita contraseña: le enviamos al correo un enlace y un código.</p>
+    <p class="sub">Para propietarios, arrendatarios y administración. No necesita contraseña: le enviamos al correo un enlace y un código.</p>
+    ${enPruebas ? `<div class="aviso info">La zona de residentes está en pruebas. El registro de las casas se abrirá cuando el Consejo apruebe la política de tratamiento de datos; la administración entregará entonces el código de cada casa.</div>` : ""}
     <form class="panel" id="fCorreo" novalidate>
       <label for="correo">Correo electrónico</label>
       <input id="correo" name="correo" type="email" autocomplete="email" inputmode="email" required value="${esc(correo)}">
@@ -62,7 +65,8 @@ function pasoCodigo(correo) {
 }
 
 async function iniciar() {
-  await montarPagina();
+  const sitio = await montarPagina();
+  enPruebas = !!sitio.residentes_en_pruebas;
   if (await sesionActual()) { location.replace(volver); return; }
   pasoCorreo();
 }
