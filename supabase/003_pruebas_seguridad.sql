@@ -54,6 +54,10 @@ begin
   $f$;
 
   -- ---------- Datos de prueba (como administrador de la base) ----------
+  -- Las pruebas usan las Casas 1, 2 y 3. Si ya tienen cuentas reales, se marcan como retiradas
+  -- SOLO durante la prueba (al final todo se deshace), para no mezclar datos reales con los de prueba.
+  update public.perfiles set estado = 'retirado' where unidad_id in (1, 2, 3) and estado in ('pendiente', 'activo');
+
   select version into version_activa from public.politicas where activa;
   if version_activa is null then
     raise exception 'No hay una política activa. Ejecute primero 002_datos_iniciales.sql.';
@@ -304,7 +308,7 @@ begin
 
   -- ---------- 5. Administración ----------
   perform pg_temp.como(u_admin);
-  select count(*) into n from public.habitantes;
+  select count(*) into n from public.habitantes where id in (hab_p1, hab_t1);   -- de dos casas distintas
   perform pg_temp.base();
   total := total + 1; if n <> 2 then fallas := array_append(fallas, '5a: la administración no ve todos los habitantes'); end if;
 
