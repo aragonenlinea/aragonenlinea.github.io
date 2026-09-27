@@ -1,6 +1,7 @@
 # Publica la carpeta web/ en GitHub Pages cada vez que se guarda un cambio en la rama main.
-# Antes de publicar revisa que los archivos de web/datos/ no tengan errores de escritura;
-# si alguno tiene error, NO publica y el sitio anterior sigue funcionando.
+# Antes de publicar revisa que los archivos de web/datos/ no tengan errores de escritura
+# y que los PDF no tengan datos personales (herramientas/revisar_pdfs.py);
+# si algo falla, NO publica y el sitio anterior sigue funcionando.
 name: Publicar sitio
 
 on:
@@ -36,6 +37,11 @@ jobs:
             fi
           done
           exit $error
+
+      - name: Revisar datos personales en los PDF
+        run: |
+          python3 -m pip install --quiet pymupdf
+          python3 herramientas/revisar_pdfs.py
 
       - uses: actions/configure-pages@v5
 

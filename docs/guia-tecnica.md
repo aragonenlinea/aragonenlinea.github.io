@@ -47,7 +47,7 @@ y abrir http://127.0.0.1:8000. Abrir `index.html` con doble clic no funciona: el
 
 ## Publicación
 
-Cada `push` a `main` ejecuta `publicar.yml`: valida todos los `web/datos/*.json` con `python3 -m json.tool` y, si pasan, sube `web/` a GitHub Pages (Settings → Pages → Source: GitHub Actions). El repositorio es público: **nunca** suba datos reales de personas, originales sin tapar ni archivos `.env`.
+Cada `push` a `main` ejecuta `publicar.yml`: valida todos los `web/datos/*.json` con `python3 -m json.tool`, revisa los PDF con `herramientas/revisar_pdfs.py` (metadatos, correos, celulares y cédulas no permitidos; lista blanca en `herramientas/datos_permitidos.json`) y, si todo pasa, sube `web/` a GitHub Pages (Settings → Pages → Source: GitHub Actions). El repositorio es público: **nunca** suba datos reales de personas, originales sin tapar ni archivos `.env`.
 
 Git: autor configurado solo en este repositorio como "Conjunto Residencial Aragón" con el correo privado `noreply` de GitHub, para no exponer correos personales en el historial.
 

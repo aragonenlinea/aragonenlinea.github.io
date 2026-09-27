@@ -123,6 +123,22 @@ Para retirar un documento: borre su bloque en `documentos.json` y luego borre el
 - **Si solo tiene el PDF:** pídale a la persona encargada de la parte técnica que lo tape con la herramienta `herramientas/tapar_pdf.py` (explicada en la guía técnica), que borra el texto de verdad.
 - Después de tapar, abra el PDF, busque el dato con Ctrl+F: si lo encuentra, **no está tapado**.
 
+### Revisión automática
+
+Antes de publicar, GitHub revisa todos los PDF y **no publica** si encuentra:
+- autor, título o asunto en los datos ocultos del archivo (Word los guarda solos, con el nombre de quien lo escribió);
+- correos o números de celular que no sean los institucionales del conjunto;
+- números con formato de cédula (12.345.678).
+
+**No detecta firmas escaneadas ni fotos de personas:** esas se revisan a mano.
+
+Si la revisión frena la publicación (X roja en **Actions**, paso "Revisar datos personales en los PDF"), el mensaje dice qué archivo, qué página y qué dato. Entonces:
+- si es un dato personal: tape el PDF (ver arriba) y súbalo de nuevo con el mismo nombre;
+- si solo son datos ocultos: la herramienta `herramientas/tapar_pdf.py` los borra;
+- si es un correo o teléfono **institucional** del conjunto: agréguelo en `herramientas/datos_permitidos.json`. Nunca agregue ahí datos de personas.
+
+Mientras tanto el sitio sigue mostrando la versión anterior, sin el PDF nuevo.
+
 ---
 
 ## 6. Eventos, contactos, zonas y normas
