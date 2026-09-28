@@ -50,6 +50,8 @@ En `web/datos/sitio.json` (ver *Manual de administración*, sección 2):
 
 Espere 1 o 2 minutos a que se publique y revise con **Ctrl + Shift + R**.
 
+En Supabase → **Authentication → URL Configuration → Redirect URLs**, borre `http://127.0.0.1:8000/**` (solo servía para probar en el PC). Debe quedar únicamente `https://aragonenlinea.github.io/**`.
+
 ### 1.5 Primer cargue de información real (administradora, en el panel)
 
 Siga este orden, porque cada paso depende del anterior:
