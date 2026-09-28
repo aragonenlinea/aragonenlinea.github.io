@@ -7,8 +7,16 @@ const SECCIONES = [
   ["estado-cuenta.html", "Estado de cuenta"],
   ["pqrs.html", "PQRS"],
   ["reservas.html", "Reservas"],
-  ["finanzas.html", "Informes financieros"]
+  ["finanzas.html", "Informes financieros"],
+  ["documentos-conjunto.html", "Documentos"]
 ];
+
+// Categorías de los documentos privados (deben coincidir con 018_documentos_privados.sql).
+export const CATEGORIAS_DOC = ["Actas de asamblea", "Actas de consejo", "Estados financieros", "Informes de gestión", "Contratos", "Pólizas", "Otros"];
+
+// 2.345.678 bytes → "2,2 MB"
+export const tamanoArchivo = b => !b ? "" : b >= 1048576 ? `${(b / 1048576).toLocaleString("es-CO", { maximumFractionDigits: 1 })} MB`
+  : `${Math.max(1, Math.round(b / 1024)).toLocaleString("es-CO")} KB`;
 
 // Pesos colombianos sin decimales: $1.250.000 (negativos con signo menos).
 export const pesos = v => {

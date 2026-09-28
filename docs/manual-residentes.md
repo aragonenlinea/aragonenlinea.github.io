@@ -79,7 +79,15 @@ El salón social se solicita con mínimo 10 días hábiles de anticipación y ad
 
 Son cifras informativas tomadas de los informes contables mensuales. Los estados financieros oficiales son los que firma la contadora y se presentan a la asamblea.
 
-## 9. Privacidad
+## 9. Documentos del conjunto (solo propietarios)
+
+1. **Mi cuenta** → **Documentos**.
+2. Actas de asamblea y de consejo, estados financieros, informes de gestión y contratos. Filtre por categoría o año, o busque por título.
+3. **Ver documento** lo abre aquí mismo, sin descargarlo. También puede descargarlo.
+
+Estos documentos son solo para los propietarios: los arrendatarios no los ven. Por favor no los reenvíe fuera de la comunidad.
+
+## 10. Privacidad
 
 - Nadie de otra casa ve sus datos.
 - El propietario no ve los teléfonos ni los habitantes que registre el arrendatario, y viceversa.

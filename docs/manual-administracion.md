@@ -122,7 +122,7 @@ Antes de publicar, GitHub revisa todos los PDF y **no publica** si encuentra:
 Si la revisión frena la publicación (X roja en **Actions**, paso "Revisar datos personales en los PDF"), el mensaje dice qué archivo, qué página y qué dato. Entonces:
 - si es un dato personal: tape el PDF (ver arriba) y súbalo de nuevo con el mismo nombre;
 - si solo son datos ocultos: la herramienta `herramientas/tapar_pdf.py` los borra;
-- si es un correo o teléfono **institucional** del conjunto: agréguelo en `herramientas/datos_permitidos.json`. Nunca agregue ahí datos de personas.
+- si es un correo o teléfono **institucional** del conjunto: agréguelo en `web/datos/datos_permitidos.json`. Nunca agregue ahí datos de personas.
 
 Mientras tanto el sitio sigue mostrando la versión anterior, sin el PDF nuevo.
 
@@ -241,7 +241,26 @@ Debajo aparece el cuadro de **cuentas por cobrar por antigüedad** (Casa, 1-30, 
 
 Los archivos con el presupuesto 2026 y los informes de enero a julio, tomados de los estados financieros, están en la carpeta `material-aragon\finanzas` del PC (fuera del repositorio).
 
-## 13. Cuentas y continuidad
+## 13. Documentos privados del conjunto
+
+Actas de asamblea y de consejo, estados financieros, informes de gestión, contratos y pólizas que **solo deben ver los propietarios** (no los arrendatarios ni el público). Se pueden marcar como **solo consejo** (por ejemplo, la relación de pagos con nombres de acreedores que el consejo revisa cada mes, RPH art. 63).
+
+**Quién los ve:** propietarios con cuenta activa, consejo (principales y suplentes) y administración, en *Mi cuenta → Documentos*. Los de "solo consejo", únicamente consejo y administración.
+
+**Pasos:** Panel → **Documentos** → elija el PDF (hasta 50 MB). La plataforma:
+
+1. **Borra sola los datos ocultos** del archivo (autor, título, programa con que se hizo).
+2. **Busca posibles datos personales**: correos y celulares que no sean del conjunto, y cédulas escritas junto a "C.C.", "cédula", "identificado con"… (no marca las cifras en pesos).
+3. Si encuentra algo, lo muestra con la página. Si es de una persona, **tápelo** y vuelva a cargar el archivo. Si no lo es (por ejemplo, el celular institucional), marque que lo revisó uno por uno: el número de hallazgos revisados queda registrado.
+4. Si el PDF es escaneado (imagen), la plataforma no lo puede leer: revíselo a ojo.
+
+Luego escriba título, categoría, fecha del documento y quién lo ve, marque la confirmación de revisión y **Publicar documento**. El archivo se guarda con un nombre aleatorio en un espacio privado de Supabase: cada vez que alguien lo abre, se crea un enlace que vence en 10 minutos.
+
+**Lo que la plataforma no detecta:** nombres de personas, firmas, fotos y números de cuenta. Esa revisión es suya. En los estados financieros, **tape los nombres del anexo de cartera** antes de subirlos (sección 5 y `herramientas/tapar_pdf.py`). Tachar con un marcador de PDF no sirve: el texto sigue debajo.
+
+**Retirar:** en la lista, *Retirar* oculta el documento de inmediato y borra el archivo; el registro queda en el historial.
+
+## 14. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.

@@ -248,6 +248,15 @@ begin
   perform pg_temp.base();
   total := total + 1; if not ok then fallas := array_append(fallas, '4d: un visitante anónimo importó cartera'); end if;
 
+  -- Datos inválidos: mensaje claro, no error técnico.
+  perform pg_temp.como(u_admin);
+  begin
+    r := public.importar_cartera(null, 'Prueba', 0, 'x.xlsx', '[]'::jsonb);
+    ok := not (r ->> 'ok')::boolean and r ->> 'mensaje' is not null;
+  exception when others then ok := false; end;
+  perform pg_temp.base();
+  total := total + 1; if not ok then fallas := array_append(fallas, '9a: un dato inválido produjo un error técnico en vez de un mensaje'); end if;
+
   if array_length(fallas, 1) is null then
     raise exception 'PRUEBAS CARTERA: % de % correctas. Todo bien. (Este mensaje en rojo es normal: deshace los datos de prueba.)', total, total;
   else

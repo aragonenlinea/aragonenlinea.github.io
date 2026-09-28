@@ -169,6 +169,17 @@ begin
   perform pg_temp.base();
   total := total + 1; if n <> 0 then fallas := array_append(fallas, '4a: los residentes siguen viendo un informe anulado'); end if;
 
+  -- ---------- 5. Datos inválidos: mensaje claro, no error técnico ----------
+  perform pg_temp.como(u_admin);
+  begin
+    r := public.importar_presupuesto(anio_p, current_date, null, 'p.xlsx', '[]'::jsonb);
+    ok := not (r ->> 'ok')::boolean and r ->> 'mensaje' is not null;
+    r := public.importar_informe_mes(anio_p, 13::smallint, 0, 0, null, 'i.xlsx', '[]'::jsonb);
+    ok := ok and not (r ->> 'ok')::boolean and r ->> 'mensaje' is not null;
+  exception when others then ok := false; end;
+  perform pg_temp.base();
+  total := total + 1; if not ok then fallas := array_append(fallas, '5a: un dato inválido produjo un error técnico en vez de un mensaje'); end if;
+
   if array_length(fallas, 1) is null then
     raise exception 'PRUEBAS FINANZAS: % de % correctas. Todo bien. (Este mensaje en rojo es normal: deshace los datos de prueba.)', total, total;
   else

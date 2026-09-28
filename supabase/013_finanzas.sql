@@ -143,9 +143,9 @@ begin
   if not (privado.es_admin() or privado.es_servicio()) then
     return jsonb_build_object('ok', false, 'mensaje', 'Solo la administración puede importar el presupuesto.');
   end if;
-  if p_anio is null or p_anio not between 2020 and 2100 then errores := errores || 'El año no es válido.'; end if;
-  if jsonb_typeof(p_rubros) <> 'array' or jsonb_array_length(p_rubros) = 0 then errores := errores || 'El archivo no tiene rubros.';
-  elsif jsonb_array_length(p_rubros) > 300 then errores := errores || 'El archivo tiene más de 300 rubros.'; end if;
+  if p_anio is null or p_anio not between 2020 and 2100 then errores := errores || 'El año no es válido.'::text; end if;
+  if jsonb_typeof(p_rubros) <> 'array' or jsonb_array_length(p_rubros) = 0 then errores := errores || 'El archivo no tiene rubros.'::text;
+  elsif jsonb_array_length(p_rubros) > 300 then errores := errores || 'El archivo tiene más de 300 rubros.'::text; end if;
   if array_length(errores, 1) is null then
     for r in select * from jsonb_array_elements(p_rubros) loop
       n := n + 1;
@@ -196,12 +196,12 @@ begin
   if not (privado.es_admin() or privado.es_servicio()) then
     return jsonb_build_object('ok', false, 'mensaje', 'Solo la administración puede importar informes.');
   end if;
-  if p_anio is null or p_mes is null or p_mes not between 1 and 12 then errores := errores || 'El año o el mes no son válidos.'; end if;
+  if p_anio is null or p_mes is null or p_mes not between 1 and 12 then errores := errores || 'El año o el mes no son válidos.'::text; end if;
   select id into pres from public.presupuestos where anio = p_anio and estado = 'publicado';
   if pres is null then errores := errores || format('Primero publique el presupuesto de %s.', p_anio); end if;
-  if p_total_ingresos is null or p_total_gastos is null then errores := errores || 'Escriba los totales de ingresos y gastos del informe contable.'; end if;
-  if jsonb_typeof(p_ejecucion) <> 'array' or jsonb_array_length(p_ejecucion) = 0 then errores := errores || 'La hoja de ejecución no tiene filas.'; end if;
-  if jsonb_typeof(coalesce(p_pagos, '[]')) <> 'array' then errores := errores || 'La hoja de pagos no es válida.'; end if;
+  if p_total_ingresos is null or p_total_gastos is null then errores := errores || 'Escriba los totales de ingresos y gastos del informe contable.'::text; end if;
+  if jsonb_typeof(p_ejecucion) <> 'array' or jsonb_array_length(p_ejecucion) = 0 then errores := errores || 'La hoja de ejecución no tiene filas.'::text; end if;
+  if jsonb_typeof(coalesce(p_pagos, '[]')) <> 'array' then errores := errores || 'La hoja de pagos no es válida.'::text; end if;
 
   if array_length(errores, 1) is null then
     for r in select * from jsonb_array_elements(p_ejecucion) loop

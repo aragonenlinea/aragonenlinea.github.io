@@ -4,6 +4,7 @@ import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from ".
 import { barraCuenta, pillPqrs, pillReserva, fechaHora, diasHabilesDesde } from "./cuenta.js";
 import { vistaCartera, indicadores as indicadoresCartera, manejarCarteraCambio, manejarCarteraEntrada, manejarCarteraClic, manejarCarteraEnvio } from "./cartera-admin.js";
 import { dibujar, activarRecuadros } from "./graficos.js";
+import { vistaDocumentos, manejarDocumentosCambio, manejarDocumentosClic, manejarDocumentosEnvio } from "./documentos-admin.js";
 import { vistaFinanzas, manejarFinanzasCambio, manejarFinanzasEntrada, manejarFinanzasClic, manejarFinanzasEnvio } from "./finanzas-admin.js";
 
 const caja = document.getElementById("admin");
@@ -19,7 +20,7 @@ const ROL = { propietario: "Propietario", arrendatario: "Arrendatario", administ
 
 function encabezado() {
   const tabs = estado.es_admin
-    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"], ["finanzas", "Finanzas"],
+    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"], ["finanzas", "Finanzas"], ["documentos", "Documentos"],
        ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
     : [["censo", "Censo"]];
   return `${barraCuenta(estado, estado.es_admin ? "Panel de administración" : "Censo del conjunto", "admin.html")}
@@ -305,7 +306,7 @@ async function pintarPestana() {
   document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === pestana));
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
-    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera, finanzas: vistaFinanzas,
+    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera, finanzas: vistaFinanzas, documentos: vistaDocumentos,
                      censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
     cont.innerHTML = await vistas[pestana]();
     dibujar(cont);
@@ -322,6 +323,7 @@ caja.addEventListener("click", async e => {
   try {
     if (await manejarCarteraClic(b, msg, pintarPestana)) return;
     if (await manejarFinanzasClic(b, msg, pintarPestana)) return;
+    if (await manejarDocumentosClic(b, msg, pintarPestana)) return;
     if (b.hasAttribute("data-agregar-turno")) {
       const cont = b.closest("form").querySelector("[data-turnos]");
       if (cont.querySelectorAll("[data-turno-fila]").length >= 8) { msg("Máximo 8 turnos por zona.", "error"); return; }
@@ -393,6 +395,7 @@ caja.addEventListener("submit", async e => {
   try {
     if (await manejarCarteraEnvio(f, msg, pintarPestana)) return;
     if (await manejarFinanzasEnvio(f, msg, pintarPestana)) return;
+    if (await manejarDocumentosEnvio(f, msg, pintarPestana)) return;
     if (f.dataset.responder) {
       const texto = (new FormData(f).get("texto") || "").trim();
       if (!texto) { msg("Escriba la respuesta.", "error"); return; }
@@ -486,7 +489,7 @@ caja.addEventListener("submit", async e => {
 });
 
 caja.addEventListener("change", async e => {
-  try { if (!(await manejarCarteraCambio(e, msg))) await manejarFinanzasCambio(e, msg, pintarPestana); } catch (err) { msg(err.message, "error"); }
+  try { if (!(await manejarCarteraCambio(e, msg)) && !(await manejarDocumentosCambio(e, msg))) await manejarFinanzasCambio(e, msg, pintarPestana); } catch (err) { msg(err.message, "error"); }
 });
 caja.addEventListener("input", e => { manejarCarteraEntrada(e) || manejarFinanzasEntrada(e); });
 

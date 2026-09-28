@@ -34,7 +34,7 @@ Plataforma web propia de gestión del Conjunto Residencial Aragón (Neiva, Huila
 
 - `residente`: propietario, arrendatario o residente autorizado de una unidad.
 - `administracion`: administrador y auxiliares.
-- `consejo`: lectura de indicadores e informes, sin datos personales detallados.
+- `consejo`: lectura de indicadores e informes, sin datos personales detallados. Excepción (decidida el 2026-09-28): en la pestaña del Consejo ve los datos personales que el RPH le exige revisar para cumplir sus funciones (relación de pagos con nombre del acreedor, hojas de vida para autorizar personal, cartera para decidir cobros), y nada más. Entran principales y suplentes.
 - `porteria`: validación de visitantes y consulta de placas.
 
 ## Modelo de datos (propuesta inicial, ajustar en la fase correspondiente)
@@ -51,7 +51,7 @@ Al importar: vista previa; validar que todas las unidades existan, que no haya r
 
 1. **Sitio público:** portada, comunicados, documentos, zonas comunes, directorio. Sin inicio de sesión ni datos personales. Publicado en GitHub Pages. **Aprobada el 2026-09-27.**
 2. **Acceso de residentes:** registro con autorización de datos, Mi hogar (contacto, habitantes, mascotas, vehículos con validación), PQRS, reservas. Panel de administración y censo. Entregas: 2a (Supabase, ingreso, autorización, Mi hogar, censo), 2b (PQRS y reservas).
-3. **Estado de cuenta:** plantilla de cartera, importación desde el panel, script de sincronización del PC, enlace al pago del banco.
+3. **Estado de cuenta y gestión:** 3a cartera, estado de cuenta, pago, informes financieros y tableros (**aprobada el 2026-09-27**); 3b script de sincronización del PC y documentos privados de copropietarios; 3c proveedores, contratos y pólizas (RPH arts. 34, 60.13, 63); 3d pestaña del Consejo (RPH arts. 57-58, 60, 63, 71-74: reuniones, informe mensual del administrador, solicitudes de autorización, compromisos y calendario de obligaciones).
 4. **Portería, visitantes y consultas:** autorización de visitantes por los residentes y su validación en portería, consulta de placas, encuestas a la comunidad. (Visitantes se movió de la Fase 2 a la 4 el 2026-09-27.)
 
 ## Decisiones tomadas
@@ -61,6 +61,7 @@ Al importar: vista previa; validar que todas las unidades existan, que no haya r
 - **Cuentas por casa:** una principal del propietario y una del arrendatario, esta última autorizada por el propietario (o por la administración con autorización escrita del propietario), con fecha de vencimiento opcional y revocable. El arrendatario no toma decisiones que corresponden al propietario: no autoriza ni retira accesos, no vota en encuestas, no ve el estado de cuenta salvo que el propietario lo habilite, no accede a documentos privados de copropietarios ni solicita obras de reforma; su trasteo requiere permiso del propietario.
 - **Política de tratamiento de datos:** el conjunto no tenía. Borrador en `docs/politica-tratamiento-datos.md`, pendiente de revisión y aprobación; sin ella no se abre el registro a residentes reales.
 - **Supabase:** región Estados Unidos (país con nivel adecuado de protección según la SIC; Brasil no está en esa lista). Plan gratuito: los proyectos inactivos una semana se pausan; se necesita una tarea programada que lo mantenga activo. El correo integrado de Supabase solo envía 2 correos por hora y solo a miembros del equipo: para residentes reales se requiere SMTP propio.
+- **Revisor fiscal:** el conjunto no tiene (2026-09-28). No se crea ese rol.
 - **Documentos publicados:** se revisan y tapan con `herramientas/tapar_pdf.py`; `herramientas/revisar_pdfs.py` frena la publicación si detecta datos personales.
 
 ## Estructura de carpetas

@@ -12,7 +12,7 @@ Busca en cada PDF de web/documentos/:
 No detecta firmas escaneadas ni fotos: eso sigue siendo revisión manual.
 
 La lista de correos, teléfonos y números permitidos está en
-herramientas/datos_permitidos.json (datos institucionales del conjunto).
+web/datos/datos_permitidos.json (datos institucionales del conjunto).
 
 Uso local:  python herramientas/revisar_pdfs.py
 """
@@ -25,7 +25,7 @@ import sys
 import pymupdf
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PERMITIDOS = json.load(open(os.path.join(RAIZ, "herramientas", "datos_permitidos.json"), encoding="utf-8"))
+PERMITIDOS = json.load(open(os.path.join(RAIZ, "web", "datos", "datos_permitidos.json"), encoding="utf-8"))
 
 CORREO = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 CELULAR = re.compile(r"(?<![\d.])3\d{2}[\s.-]?\d{3}[\s.-]?\d{4}(?![\d])")
@@ -81,7 +81,7 @@ def main():
     if con_problemas:
         print(f"\n{con_problemas} PDF con posibles datos personales. No se publica.")
         print("Tápelos con herramientas/tapar_pdf.py (también borra los datos ocultos) o, si el dato es")
-        print("institucional del conjunto, agréguelo a herramientas/datos_permitidos.json.")
+        print("institucional del conjunto, agréguelo a web/datos/datos_permitidos.json.")
         sys.exit(1)
     print(f"\n{len(archivos)} PDF revisados sin hallazgos.")
 

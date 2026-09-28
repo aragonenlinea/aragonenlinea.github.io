@@ -143,18 +143,18 @@ begin
     return jsonb_build_object('ok', false, 'mensaje', 'Solo la administración puede importar cartera.');
   end if;
   if p_fecha_corte is null or p_fecha_corte > privado.hoy() + 31 then
-    errores := errores || 'La fecha de corte falta o no es válida.';
+    errores := errores || 'La fecha de corte falta o no es válida.'::text;
   end if;
   if length(btrim(coalesce(p_periodo, ''))) < 3 then
-    errores := errores || 'Falta el periodo (por ejemplo: Septiembre 2026).';
+    errores := errores || 'Falta el periodo (por ejemplo: Septiembre 2026).'::text;
   end if;
   if p_total_informe is null then
-    errores := errores || 'Falta el total del informe contable.';
+    errores := errores || 'Falta el total del informe contable.'::text;
   end if;
   if jsonb_typeof(p_filas) <> 'array' or jsonb_array_length(p_filas) = 0 then
-    errores := errores || 'El archivo no tiene filas.';
+    errores := errores || 'El archivo no tiene filas.'::text;
   elsif jsonb_array_length(p_filas) > 40 then
-    errores := errores || 'El archivo tiene más de 40 filas.';
+    errores := errores || 'El archivo tiene más de 40 filas.'::text;
   end if;
 
   if array_length(errores, 1) is null then

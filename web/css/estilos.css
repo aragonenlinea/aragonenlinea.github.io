@@ -353,3 +353,17 @@ table.tabla-ejecucion .fila-total td{font-weight:800;border-top:2px solid var(--
 .t-3{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 30%,var(--surface))}
 .t-sc{border-color:var(--muted);background:color-mix(in srgb,var(--muted) 18%,var(--surface))}
 @media (max-width:560px){.mapa-casas{grid-template-columns:repeat(5,1fr)}}
+
+/* ---------- Documentos privados ---------- */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.p-sun{background:color-mix(in srgb,var(--sun) 28%,transparent);color:var(--sun-ink)}
+.lista-simple{margin:8px 0;padding-left:20px}
+.lista-simple li{margin:4px 0}
+.filtros-docs{display:flex;flex-direction:column;gap:8px;margin:8px 0 16px}
+.filtros-docs .filtros{margin:0}
+.filtros-docs input[type=search]{max-width:320px}
+.filtros-docs select{margin:0}
+.docs-privados{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.doc-privado h3{margin:6px 0 4px}
+.doc-privado .m{margin:0 0 10px}
+.doc-fecha{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}

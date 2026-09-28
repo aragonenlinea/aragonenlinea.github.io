@@ -110,6 +110,10 @@ Opcionales (columnas amarillas) para el cuadro de antigüedad: `mora_1_30, mora_
 
 **Pasos:** Panel → **Finanzas** → *2. Informe de cada mes* → archivo (si el nombre es tipo `informe_2026_08_agosto.xlsx`, el año y el mes se llenan solos) → escribir **total ingresos**, **total gastos** y, si el archivo trae hoja de pagos, **total pagos** del informe contable → todos deben decir *cuadra* → **Publicar informe**.
 
+### 2.4 Documentos del conjunto (cuando haya actas, estados financieros o informes)
+
+Panel → **Documentos** → elegir el PDF → revisar lo que la plataforma encuentre → título, categoría, fecha y quién lo ve (propietarios o **solo consejo**) → confirmar la revisión → **Publicar documento**. Los estados financieros se suben con el **anexo de cartera tapado** (sin nombres de deudores). Detalle en el *Manual de administración*, sección 13.
+
 ## Parte 3 · Si algo sale mal
 
 ### Me equivoqué y ya publiqué
