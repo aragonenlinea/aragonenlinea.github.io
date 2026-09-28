@@ -67,10 +67,15 @@ El salón social se solicita con mínimo 10 días hábiles de anticipación y ad
 ## 8. Informes financieros
 
 1. **Mi cuenta** → **Informes financieros**. Lo ven propietarios, arrendatarios con cuenta aprobada y el consejo.
-2. Arriba: cuánto se ha recibido y gastado en el año frente al presupuesto aprobado por la asamblea, y el porcentaje que se esperaría a la fecha (por ejemplo, a julio: 7 de 12 meses = 58,3 %).
-3. **Gastos por grupo:** cada barra muestra cuánto del presupuesto del año se ha gastado; la raya vertical marca lo esperado a la fecha. Las barras rojas con **▲** van más de 5 puntos por encima de lo esperado. Pase el mouse (o toque) sobre una barra para ver los valores.
-4. **Ejecución rubro por rubro, mes a mes:** la tabla completa, con el presupuesto, el porcentaje ejecutado y lo que falta por ejecutar.
-5. **Pagos realizados en el mes:** elija el mes. Los pagos a personas (administrador, contadora, abogado) aparecen por su rubro y sin nombre.
+2. Hay tres pestañas:
+   - **Tablero financiero:** gráficos de ingresos y gastos de cada mes, lo acumulado en el año frente al presupuesto (si la línea de gastos pasa por encima de la línea punteada, se gasta más rápido de lo aprobado), cuotas de administración por mes y los rubros de mayor gasto.
+   - **Cartera del conjunto:** cuánto se le debe al conjunto, cuántas casas están al día, qué tan vieja es la deuda y cómo cambia de un corte a otro. Solo totales: nunca aparecen casas ni nombres.
+   - **Detalle y pagos:** la tabla completa y los pagos del mes.
+   Toque cualquier barra o mes para ver los valores exactos.
+3. Arriba: cuánto se ha recibido y gastado en el año frente al presupuesto aprobado por la asamblea, y el porcentaje que se esperaría a la fecha (por ejemplo, a julio: 7 de 12 meses = 58,3 %).
+4. **Gastos por grupo** (en el tablero): cada barra muestra cuánto del presupuesto del año se ha gastado; la raya vertical marca lo esperado a la fecha. Las barras rojas con **▲** van más de 5 puntos por encima de lo esperado.
+5. **Ejecución rubro por rubro, mes a mes** (en Detalle): la tabla completa, con el presupuesto, el porcentaje ejecutado y lo que falta por ejecutar.
+6. **Pagos realizados en el mes** (en Detalle): elija el mes. Los pagos a personas (administrador, contadora, abogado) aparecen por su rubro y sin nombre.
 
 Son cifras informativas tomadas de los informes contables mensuales. Los estados financieros oficiales son los que firma la contadora y se presentan a la asamblea.
 

@@ -3,6 +3,7 @@ import { montarPagina, esc, fecha, hoyISO, cargar } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from "./supabase.js";
 import { barraCuenta, pillPqrs, pillReserva, fechaHora, diasHabilesDesde } from "./cuenta.js";
 import { vistaCartera, indicadores as indicadoresCartera, manejarCarteraCambio, manejarCarteraEntrada, manejarCarteraClic, manejarCarteraEnvio } from "./cartera-admin.js";
+import { dibujar, activarRecuadros } from "./graficos.js";
 import { vistaFinanzas, manejarFinanzasCambio, manejarFinanzasEntrada, manejarFinanzasClic, manejarFinanzasEnvio } from "./finanzas-admin.js";
 
 const caja = document.getElementById("admin");
@@ -307,6 +308,7 @@ async function pintarPestana() {
     const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera, finanzas: vistaFinanzas,
                      censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
     cont.innerHTML = await vistas[pestana]();
+    dibujar(cont);
   } catch (err) {
     aviso(cont, err.message, "error");
   }
@@ -487,6 +489,8 @@ caja.addEventListener("change", async e => {
   try { if (!(await manejarCarteraCambio(e, msg))) await manejarFinanzasCambio(e, msg, pintarPestana); } catch (err) { msg(err.message, "error"); }
 });
 caja.addEventListener("input", e => { manejarCarteraEntrada(e) || manejarFinanzasEntrada(e); });
+
+activarRecuadros(caja);
 
 async function iniciar() {
   await montarPagina();

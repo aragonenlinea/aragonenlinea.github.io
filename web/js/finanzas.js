@@ -1,9 +1,12 @@
-// Informes financieros: ejecución del presupuesto rubro por rubro y mes a mes, y pagos del mes.
+// Informes financieros: tablero con gráficos, cartera del conjunto (solo totales),
+// ejecución del presupuesto rubro por rubro y mes a mes, y pagos del mes.
 // Lo ven las cuentas activas (propietarios, arrendatarios), el consejo y la administración.
 // Los pagos a personas naturales se muestran solo por rubro, sin nombre (la base de datos lo exige).
 import { montarPagina, esc, fecha } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso } from "./supabase.js";
 import { barraCuenta, casasActivas, pesos } from "./cuenta.js";
+import { lugar, dibujar, columnas, lineas, leyenda, corto, activarRecuadros } from "./graficos.js";
+import { tableroCartera } from "./tablero-cartera.js";
 
 const caja = document.getElementById("finanzas");
 const MES_CORTO = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
@@ -15,8 +18,19 @@ let estado = null, presupuestos = [], anio = null, mesPagos = null;
 const pct = v => (v * 100).toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " %";
 const celda = v => v === null ? `<td class="num m">—</td>` : `<td class="num">${v ? pesos(v) : ""}</td>`;
 
+const PESTANAS = [["tablero", "Tablero financiero"], ["cartera", "Cartera del conjunto"], ["detalle", "Detalle y pagos"]];
+let vista = "tablero";
+
 async function pintar() {
-  let html = barraCuenta(estado, "Informes financieros", "finanzas.html");
+  let html = barraCuenta(estado, "Informes financieros", "finanzas.html")
+    + `<div class="pestanas no-imprimir" role="tablist">${PESTANAS.map(([k, t]) =>
+      `<button type="button" role="tab" data-vista="${k}" aria-selected="${k === vista}">${t}</button>`).join("")}</div>`;
+  if (vista === "cartera") {
+    caja.innerHTML = html + tableroCartera(await rpc("historial_cartera"))
+      + `<p class="m bloque">Solo totales del conjunto: aquí nunca aparecen casas ni nombres. El estado de cuenta de su casa está en <a href="estado-cuenta.html">Estado de cuenta</a>.</p>`;
+    dibujar(caja);
+    return;
+  }
   if (!presupuestos.length) {
     caja.innerHTML = html + `<div class="panel nota">La administración aún no ha publicado el presupuesto ni los informes mensuales.</div>`;
     return;
@@ -28,9 +42,6 @@ async function pintar() {
   ]);
   const ids = informes.map(i => i.id);
   const ejec = ids.length ? await consulta(sb.from("ejecucion_mensual").select("informe_id,mes,tipo,rubro,valor").in("informe_id", ids)) : [];
-  if (!informes.some(i => i.mes === mesPagos)) mesPagos = informes.at(-1)?.mes ?? null;
-  const infPagos = informes.find(i => i.mes === mesPagos);
-  const pagos = infPagos ? await consulta(sb.from("pagos_mes").select("fecha,rubro,beneficiario,concepto,valor").eq("informe_id", infPagos.id).order("fecha").order("id")) : [];
 
   html += presupuestos.length > 1 ? `<label for="fin-anio">Año</label><select id="fin-anio" class="selector-corto">${presupuestos.map(x =>
     `<option value="${x.anio}" ${x.anio === anio ? "selected" : ""}>${x.anio}</option>`).join("")}</select>` : "";
@@ -49,16 +60,67 @@ async function pintar() {
     if (valores[k]) valores[k][e.mes - 1] = Number(e.valor);
   }
 
-  html += resumen(p, rubros, valores, informes, ultimo)
-    + graficoGrupos(rubros, valores, ultimo)
-    + tablaEjecucion(p, rubros, valores, ultimo)
-    + tablaMeses(informes)
-    + seccionPagos(informes, infPagos, pagos)
-    + `<p class="m bloque">Cifras tomadas de los informes contables mensuales (lo causado en cada mes). Los estados financieros oficiales son los que firma la contadora y se presentan a la asamblea. Si ve una diferencia, radique una PQRS.</p>`;
+  if (vista === "tablero") {
+    html += resumen(p, rubros, valores, informes, ultimo) + tableroFinanciero(rubros, valores, ultimo) + graficoGrupos(rubros, valores, ultimo);
+  } else {
+    if (!informes.some(i => i.mes === mesPagos)) mesPagos = ultimo;
+    const infPagos = informes.find(i => i.mes === mesPagos);
+    const pagos = await consulta(sb.from("pagos_mes").select("fecha,rubro,beneficiario,concepto,valor").eq("informe_id", infPagos.id).order("fecha").order("id"));
+    html += tablaEjecucion(p, rubros, valores, ultimo) + tablaMeses(informes) + seccionPagos(informes, infPagos, pagos);
+  }
+  html += `<p class="m bloque">Cifras tomadas de los informes contables mensuales (lo causado en cada mes). Los estados financieros oficiales son los que firma la contadora y se presentan a la asamblea. Si ve una diferencia, radique una PQRS.</p>`;
   caja.innerHTML = html;
-  // Anchos de las barras por JavaScript: la política de seguridad de la página no permite estilos en línea.
-  caja.querySelectorAll("[data-ancho]").forEach(e => { e.style.width = e.dataset.ancho + "%"; });
-  caja.querySelectorAll("[data-izq]").forEach(e => { e.style.left = e.dataset.izq + "%"; });
+  dibujar(caja);
+}
+
+// Gráficos del tablero: ingresos y gastos por mes, acumulado frente al presupuesto,
+// cuotas de administración por mes y los rubros de mayor gasto.
+function tableroFinanciero(rubros, valores, ultimo) {
+  const meses = MES_CORTO.slice(0, ultimo);
+  const porMes = tipo => Array.from({ length: ultimo }, (_, m) => rubros.filter(r => r.tipo === tipo)
+    .reduce((a, r) => valores[r.tipo + "|" + r.rubro][m] === null ? a : (a ?? 0) + valores[r.tipo + "|" + r.rubro][m], null));
+  const ing = porMes("ingreso"), gas = porMes("gasto");
+  const nombreMes = i => MES[i][0].toUpperCase() + MES[i].slice(1);
+
+  const serIng = { nombre: "Ingresos", clase: "c1" }, serGas = { nombre: "Gastos", clase: "c2" };
+  const g1 = `<div class="panel"><h3>Ingresos y gastos de cada mes</h3>${leyenda([serIng, serGas])}
+    ${lugar(columnas({ titulo: "Ingresos y gastos por mes", categorias: meses, series: [{ ...serIng, valores: ing }, { ...serGas, valores: gas }],
+      tip: i => ing[i] === null ? `${nombreMes(i)}: sin informe` : `${nombreMes(i)}: ingresos ${pesos(ing[i])} · gastos ${pesos(gas[i])} · ${ing[i] - gas[i] >= 0 ? "excedente" : "déficit"} ${pesos(Math.abs(ing[i] - gas[i]))}` }))}
+    <p class="m">Los meses con más gasto que ingreso cierran en déficit. Toque un mes para ver los valores.</p></div>`;
+
+  const pGas = presupuestoTipo(rubros, "gasto"), pIng = presupuestoTipo(rubros, "ingreso");
+  const acu = arr => { let s = 0; return MES_CORTO.map((_, m) => m < ultimo ? (s += arr[m] || 0) : null); };
+  const aIng = acu(ing), aGas = acu(gas);
+  const aPres = MES_CORTO.map((_, m) => Math.round(pGas * (m + 1) / 12));
+  const serPres = { nombre: "Gasto permitido por el presupuesto", clase: "c-pres", discontinua: true };
+  const g2 = `<div class="panel"><h3>Lo acumulado en el año frente al presupuesto</h3>${leyenda([{ nombre: "Ingresos acumulados", clase: "c1" }, { nombre: "Gastos acumulados", clase: "c2" }, serPres])}
+    ${lugar(lineas({ titulo: "Acumulado del año frente al presupuesto", categorias: MES_CORTO,
+      series: [{ ...serPres, valores: aPres }, { nombre: "Ingresos acumulados", clase: "c1", valores: aIng }, { nombre: "Gastos acumulados", clase: "c2", valores: aGas }],
+      tip: i => `${nombreMes(i)}: ` + (i < ultimo ? `ingresos ${pesos(aIng[i])} · gastos ${pesos(aGas[i])} · ` : "") + `presupuesto de gasto a la fecha ${pesos(aPres[i])}` }))}
+    <p class="m">Si la línea de gastos pasa por encima de la línea punteada, se está gastando más rápido de lo aprobado. Presupuesto del año: gastos ${pesos(pGas)}, ingresos ${pesos(pIng)}.</p></div>`;
+
+  const sinTildes = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const cuota = rubros.find(r => r.tipo === "ingreso" && /cuotas? de administracion/i.test(sinTildes(r.rubro)));
+  let g3 = "";
+  if (cuota) {
+    const v = valores["ingreso|" + cuota.rubro].slice(0, ultimo);
+    const ref = Math.round(Number(cuota.valor_anual) / 12);
+    g3 = `<div class="panel"><h3>Cuotas de administración de cada mes</h3>${leyenda([{ nombre: "Cuotas del mes", clase: "c1" }, { nombre: `Presupuesto mensual (${corto(ref)})`, clase: "c-pres", discontinua: true }])}
+      ${lugar(columnas({ titulo: "Cuotas de administración por mes", categorias: meses, series: [{ nombre: "Cuotas", clase: "c1", valores: v }],
+        referencia: { valor: ref }, tip: i => v[i] === null ? `${nombreMes(i)}: sin informe` : `${nombreMes(i)}: ${pesos(v[i])} (presupuesto mensual ${pesos(ref)})` }))}
+      <p class="m">Valor registrado en el informe contable de cada mes frente a lo presupuestado.</p></div>`;
+  }
+
+  const totalGas = aGas[ultimo - 1] || 0;
+  const top = rubros.filter(r => r.tipo === "gasto").map(r => ({ r, v: acumulado(valores["gasto|" + r.rubro], ultimo) }))
+    .filter(x => x.v > 0).sort((a, b) => b.v - a.v).slice(0, 8);
+  const g4 = !top.length ? "" : `<div class="panel"><h3>¿En qué se va la plata?</h3><p class="m">Los ${top.length} rubros de mayor gasto en ${anio}, hasta ${MES[ultimo - 1]}.</p>
+    <div class="barras">${top.map(({ r, v }) => `<div class="barra-fila" tabindex="0" data-tip="${esc(`${r.rubro}: ${pesos(v)} · ${pct(v / totalGas)} del gasto · presupuesto del año ${pesos(r.valor_anual)}`)}">
+      <div class="barra-nombre">${esc(r.rubro)}</div>
+      <div class="barra-pista"><div class="barra-valor c2" data-ancho="${v / top[0].v * 100}"></div></div>
+      <div class="barra-texto">${pesos(v)} · ${pct(v / totalGas)} del gasto</div></div>`).join("")}</div></div>`;
+
+  return `<div class="grid g2 bloque-sm">${g1}${g2}</div><div class="grid g2 bloque">${g3}${g4}</div>`;
 }
 
 const acumulado = (arr, hasta) => arr.slice(0, hasta).reduce((a, v) => a + (v || 0), 0);
@@ -73,9 +135,11 @@ function resumen(p, rubros, valores, informes, ultimo) {
     <p class="m">${p.aprobado_en ? `Aprobado el ${fecha(p.aprobado_en)}. ` : ""}${esc(p.nota || "")}</p>
     ${faltan.length ? `<div class="aviso info">Falta el informe de: ${faltan.map(m => MES[m - 1]).join(", ")}.</div>` : ""}
     <div class="kpis">
-      <div class="panel kpi"><div class="n">${pesos(ing)}</div><div class="l">Ingresos a ${MES[ultimo - 1]} · ${pIng ? pct(ing / pIng) : "—"} del presupuesto del año</div></div>
-      <div class="panel kpi"><div class="n">${pesos(gas)}</div><div class="l">Gastos a ${MES[ultimo - 1]} · ${pGas ? pct(gas / pGas) : "—"} del presupuesto del año</div></div>
-      <div class="panel kpi"><div class="n">${pesos(ing - gas)}</div><div class="l">${ing - gas >= 0 ? "Excedente" : "Déficit"} acumulado (ingresos − gastos)</div></div>
+      <div class="panel kpi"><div class="n">${pesos(ing)}</div><div class="l">Ingresos a ${MES[ultimo - 1]} · ${pIng ? pct(ing / pIng) : "—"} del presupuesto del año</div>
+        ${pIng ? `<div class="tendencia ${ing / pIng >= ultimo / 12 ? "bien" : "mal"}">${ing / pIng >= ultimo / 12 ? "▲ Por encima" : "▼ Por debajo"} de lo esperado</div>` : ""}</div>
+      <div class="panel kpi"><div class="n">${pesos(gas)}</div><div class="l">Gastos a ${MES[ultimo - 1]} · ${pGas ? pct(gas / pGas) : "—"} del presupuesto del año</div>
+        ${pGas ? `<div class="tendencia ${gas / pGas <= ultimo / 12 ? "bien" : "mal"}">${gas / pGas <= ultimo / 12 ? "▼ Dentro" : "▲ Por encima"} de lo esperado</div>` : ""}</div>
+      <div class="panel kpi destacado"><div class="n">${pesos(ing - gas)}</div><div class="l">${ing - gas >= 0 ? "Excedente" : "Déficit"} acumulado (ingresos − gastos)</div></div>
       <div class="panel kpi"><div class="n">${pct(ultimo / 12)}</div><div class="l">Lo esperado a la fecha (${ultimo} de 12 meses)</div></div>
     </div>`;
 }
@@ -176,28 +240,14 @@ function seccionPagos(informes, inf, pagos) {
   return `<div class="panel bloque"><h2>Pagos realizados en el mes</h2>${selector}${cuerpo}</div>`;
 }
 
-// Recuadro con el detalle al pasar el mouse (o al enfocar con el teclado) sobre una barra.
-const tip = document.createElement("div");
-tip.className = "tip"; tip.setAttribute("role", "tooltip"); tip.hidden = true;
-document.body.appendChild(tip);
-function mostrarTip(el, x, y) {
-  tip.textContent = el.dataset.tip; tip.hidden = false;
-  const ancho = tip.offsetWidth;
-  tip.style.left = Math.max(8, Math.min(x + 12, window.innerWidth - ancho - 8)) + "px";
-  tip.style.top = (y + 16 + window.scrollY) + "px";
-}
-caja.addEventListener("mousemove", e => {
-  const el = e.target.closest("[data-tip]");
-  if (el) mostrarTip(el, e.clientX, e.clientY); else tip.hidden = true;
+activarRecuadros(caja);
+
+caja.addEventListener("click", async e => {
+  const b = e.target.closest("[data-vista]");
+  if (!b || b.dataset.vista === vista) return;
+  vista = b.dataset.vista;
+  try { await pintar(); } catch (err) { aviso(caja, err.message, "error"); }
 });
-caja.addEventListener("mouseleave", () => { tip.hidden = true; });
-caja.addEventListener("focusin", e => {
-  const el = e.target.closest("[data-tip]");
-  if (!el) return;
-  const r = el.getBoundingClientRect();
-  mostrarTip(el, r.left, r.bottom - 8);
-});
-caja.addEventListener("focusout", () => { tip.hidden = true; });
 
 caja.addEventListener("change", async e => {
   if (e.target.id === "fin-anio") { anio = +e.target.value; mesPagos = null; }

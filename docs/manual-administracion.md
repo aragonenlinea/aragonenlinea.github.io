@@ -215,7 +215,9 @@ Si publicó un archivo equivocado: **Anular** en el historial (los residentes vu
 
 **Nunca publique** el anexo de cartera de los estados financieros tal como viene: trae nombres de deudores.
 
-La pestaña muestra el cuadro de **cuentas por cobrar por antigüedad** (Casa, 1-30, 31-90, 91-180, 181-360, más de 360 días, total y porcentajes), igual al de los estados financieros pero sin nombres. Para llenarlo, use las columnas amarillas opcionales de la plantilla (`mora_1_30` … `mora_mas_360`); si no las llena, las casas salen en *Sin clasificar*.
+Arriba, la pestaña muestra el **tablero de cartera**: cartera total y su cambio frente al corte anterior, casas al día, antigüedad de la deuda, evolución corte a corte y el **mapa de las 40 casas** (cada casa coloreada según su deuda más vieja; al tocarla se ve el saldo). El mapa solo lo ve la administración. Los residentes y el consejo ven el mismo tablero **sin el mapa** (solo totales) en *Informes financieros → Cartera del conjunto*.
+
+Debajo aparece el cuadro de **cuentas por cobrar por antigüedad** (Casa, 1-30, 31-90, 91-180, 181-360, más de 360 días, total y porcentajes), igual al de los estados financieros pero sin nombres. Para llenarlo, use las columnas amarillas opcionales de la plantilla (`mora_1_30` … `mora_mas_360`); si no las llena, las casas salen en *Sin clasificar*.
 
 ## 12. Informes financieros (presupuesto y gastos del mes)
 

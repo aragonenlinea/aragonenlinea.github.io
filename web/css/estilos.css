@@ -295,3 +295,61 @@ table.tabla-ejecucion .fila-total td{font-weight:800;border-top:2px solid var(--
 .marca-leyenda{display:inline-block;width:2px;height:14px;background:var(--ink);vertical-align:middle;margin:0 4px}
 .tip{position:absolute;z-index:50;max-width:320px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;font-size:.85rem;box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
 @media (max-width:560px){.barra-fila{grid-template-columns:1fr}.barra-texto{grid-column:1}}
+/* ---------- Tableros (gráficos) ----------
+   Colores de los gráficos validados para daltonismo (verde y ocre separados también en modo oscuro).
+   Rampa r1-r5: antigüedad de la deuda, de la más reciente (clara) a la más vieja (intensa). */
+:root{
+  --c1:#138A76; --c2:#D08E00; --c-pres:#5B6862;
+  --r1:#BFE3DB; --r2:#7FC4B6; --r3:#3E9D8C; --r4:#1B6F62; --r5:#0B3F37; --r0:#B8C2BD;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --c1:#2FA18C; --c2:#BD8A1A; --c-pres:#9AA9A2;
+    --r1:#24473F; --r2:#2F6E63; --r3:#4A9A8B; --r4:#74C3B3; --r5:#B5E6DB; --r0:#4A5550;
+  }
+}
+:root[data-theme="dark"]{
+  --c1:#2FA18C; --c2:#BD8A1A; --c-pres:#9AA9A2;
+  --r1:#24473F; --r2:#2F6E63; --r3:#4A9A8B; --r4:#74C3B3; --r5:#B5E6DB; --r0:#4A5550;
+}
+.c1{--serie:var(--c1)} .c2{--serie:var(--c2)} .c-pres{--serie:var(--c-pres)}
+.r1{--serie:var(--r1)} .r2{--serie:var(--r2)} .r3{--serie:var(--r3)} .r4{--serie:var(--r4)} .r5{--serie:var(--r5)} .r0{--serie:var(--r0)}
+.grafico-svg{width:100%;min-height:120px}
+.grafico-svg svg{display:block;max-width:100%;height:auto;overflow:visible}
+.grafico-svg .m{fill:var(--serie)}
+.grafico-svg .seg{stroke:var(--surface);stroke-width:2px}
+.grafico-svg .rejilla{stroke:var(--line);stroke-width:1}
+.grafico-svg .rejilla.cero{stroke:var(--muted)}
+.grafico-svg .eje{fill:var(--muted);font-size:11px;font-family:inherit}
+.grafico-svg .valor{fill:var(--ink);font-size:12px;font-weight:700;font-family:inherit}
+.grafico-svg .linea{fill:none;stroke:var(--serie);stroke-width:2px;stroke-linejoin:round;stroke-linecap:round}
+.grafico-svg .linea.discontinua{stroke-dasharray:6 5}
+.grafico-svg .punto{fill:var(--serie);stroke:var(--surface);stroke-width:2px}
+.grafico-svg .referencia{stroke:var(--c-pres);stroke-width:2px;stroke-dasharray:6 5}
+.grafico-svg .zona{fill:transparent;cursor:pointer}
+.grafico-svg .zona:hover{fill:var(--primary-soft);fill-opacity:.45}
+.leyenda{display:flex;flex-wrap:wrap;gap:6px 16px;margin:4px 0 8px;font-size:13px;color:var(--muted)}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--serie)}
+.sw.sw-linea{height:0;width:18px;border-radius:0;background:none;border-top:2px dashed var(--serie)}
+.barra-valor.c2,.barra-valor.r1,.barra-valor.r2,.barra-valor.r3,.barra-valor.r4,.barra-valor.r5,.barra-valor.r0{background:var(--serie)}
+.kpi.destacado{background:var(--primary);border-color:var(--primary)}
+.kpi.destacado .n,.kpi.destacado .l,.kpi.destacado .tendencia{color:var(--en-primary)}
+.kpi .n small{font-size:16px;font-weight:700;color:var(--muted)}
+.tendencia{margin-top:6px;font-size:12px;font-weight:700;color:var(--muted)}
+.tendencia.bien{color:var(--ok)}
+.tendencia.mal{color:var(--bad)}
+.medidor{margin-top:8px;height:8px;border-radius:4px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.medidor div{height:100%;background:var(--ok);border-radius:0 4px 4px 0}
+/* Mapa de las 40 casas (solo administración) */
+.mapa-casas{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
+.casa-mapa{border:2px solid var(--line);border-radius:var(--r-sm);padding:6px 4px;text-align:center;cursor:pointer;min-height:54px;display:flex;flex-direction:column;justify-content:center}
+.casa-mapa b{font-size:16px}
+.casa-mapa span{font-size:11px;color:var(--ink)}
+.casilla{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;border:2px solid var(--line);font-style:normal;font-size:11px;font-weight:800}
+.t-ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--surface))}
+.t-1{border-color:var(--sun);background:color-mix(in srgb,var(--sun) 22%,var(--surface))}
+.t-2{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 28%,var(--surface))}
+.t-3{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 30%,var(--surface))}
+.t-sc{border-color:var(--muted);background:color-mix(in srgb,var(--muted) 18%,var(--surface))}
+@media (max-width:560px){.mapa-casas{grid-template-columns:repeat(5,1fr)}}

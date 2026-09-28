@@ -5,6 +5,7 @@
 import { esc, fecha } from "./comun.js";
 import { sb, rpc, consulta, aviso } from "./supabase.js";
 import { pesos } from "./cuenta.js";
+import { tableroCartera } from "./tablero-cartera.js";
 
 // Librería para leer Excel en el navegador (versión fija, CDN oficial de SheetJS).
 const SHEETJS = "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
@@ -134,15 +135,15 @@ function validar(nombreArchivo, crudas) {
 
 // ---------- Vista ----------
 export async function vistaCartera() {
-  const [res, hist, pago] = await Promise.all([
-    rpc("resumen_cartera"),
+  const [historial, hist, pago] = await Promise.all([
+    rpc("historial_cartera"),
     consulta(sb.from("cartera_importaciones").select("*").order("creado_en", { ascending: false }).limit(24)),
     consulta(sb.from("configuracion_pagos").select("*").eq("id", 1).maybeSingle())
   ]);
   const vigente = hist.filter(h => h.estado === "publicada").sort((a, b) => b.fecha_corte.localeCompare(a.fecha_corte) || b.id - a.id)[0];
   const detalle = vigente ? await consulta(sb.from("cartera_unidad").select("*").eq("importacion_id", vigente.id).order("unidad_id")) : [];
 
-  return `${indicadores(res)}
+  return `${tableroCartera(historial, detalle)}
   <div class="grid g2">
     <div class="panel">
       <h2>Importar cartera</h2>
