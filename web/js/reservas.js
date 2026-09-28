@@ -1,7 +1,7 @@
 // Reservas de zonas comunes para residentes. Se ven los turnos ocupados, nunca quién los ocupa.
 import { montarPagina, esc, fecha, hoyISO } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, datosForm } from "./supabase.js";
-import { barraCuenta, casaElegida, recordarCasa, selectorCasa, casasActivas, pillReserva } from "./cuenta.js";
+import { barraCuenta, soloResidentes, casaElegida, recordarCasa, selectorCasa, casasActivas, pillReserva } from "./cuenta.js";
 
 const caja = document.getElementById("reservas");
 let estado = null, perfil = null, zonas = [];
@@ -148,6 +148,7 @@ async function iniciar() {
   caja.innerHTML = `<p class="m">Cargando…</p>`;
   try {
     estado = await rpc("mi_estado");
+    if (soloResidentes(estado)) return;   // administración y consejo: al panel
     if (!estado.autorizacion_vigente) { location.replace("mi-hogar.html?hogar=1"); return; }
     perfil = casaElegida(estado);
     zonas = await consulta(sb.from("zonas_reservables").select("*").eq("activa", true).order("nombre"));

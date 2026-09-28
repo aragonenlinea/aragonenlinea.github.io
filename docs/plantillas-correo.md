@@ -36,6 +36,24 @@ Su acceso a Aragón en línea
 
 **Cuerpo:** el mismo de arriba.
 
+## Reset Password (¿Olvidó su contraseña?)
+
+**Asunto:**
+
+```
+Crear una contraseña nueva · Aragón en línea
+```
+
+**Cuerpo:**
+
+```html
+<h2>Aragón en línea · Conjunto Residencial Aragón</h2>
+<p>Recibimos una solicitud para crear una contraseña nueva para esta cuenta.</p>
+<p><a href="{{ .ConfirmationURL }}">Crear mi contraseña nueva</a></p>
+<p>El enlace sirve una sola vez y vence en una hora.</p>
+<p>Si usted no lo pidió, ignore este mensaje: su contraseña actual sigue igual.</p>
+```
+
 ---
 
 ## Configuración del envío (SMTP con el Gmail del proyecto)

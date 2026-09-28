@@ -1,7 +1,7 @@
 // Estado de cuenta de la casa. La plataforma no cobra: "Pagar" solo abre el enlace del banco.
 import { montarPagina, esc, fecha, enlaceSeguro } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso } from "./supabase.js";
-import { barraCuenta, casaElegida, recordarCasa, selectorCasa, casasActivas, pesos } from "./cuenta.js";
+import { barraCuenta, soloResidentes, casaElegida, recordarCasa, selectorCasa, casasActivas, pesos } from "./cuenta.js";
 
 const caja = document.getElementById("estado-cuenta");
 let estado = null, perfil = null;
@@ -103,6 +103,7 @@ async function iniciar() {
   caja.innerHTML = `<p class="m">Cargando…</p>`;
   try {
     estado = await rpc("mi_estado");
+    if (soloResidentes(estado)) return;   // administración y consejo: al panel
     if (!estado.autorizacion_vigente) { location.replace("mi-hogar.html?hogar=1"); return; }
     perfil = casaElegida(estado);
     await pintar();

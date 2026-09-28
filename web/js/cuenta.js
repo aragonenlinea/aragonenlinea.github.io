@@ -24,16 +24,31 @@ export const pesos = v => {
   return (n < 0 ? "−$" : "$") + Math.abs(n).toLocaleString("es-CO");
 };
 
+// Secciones que no tienen que ver con una casa: las únicas que ve una cuenta institucional.
+const GENERALES = ["finanzas.html", "documentos-conjunto.html"];
+
+// Cuenta de administración o consejo (siempre aparte de la cuenta de la casa).
+export const esInstitucional = estado => !!(estado.es_admin || estado.es_consejo || estado.institucional);
+
 // Barra superior: título, sesión, navegación entre secciones y botón de salir.
+// Las cuentas de administración y consejo no ven Mi hogar, Estado de cuenta, PQRS ni Reservas.
 export function barraCuenta(estado, titulo, actual) {
-  const nav = SECCIONES.map(([h, t]) =>
-    `<a class="btn sm ${h === actual ? "" : "ghost"}" href="${h}${h === "mi-hogar.html" ? "?hogar=1" : ""}" ${h === actual ? 'aria-current="page"' : ""}>${t}</a>`).join("");
-  const panel = estado.es_admin || estado.es_consejo
-    ? `<a class="btn sm ${actual === "admin.html" ? "" : "ghost"}" href="admin.html">${estado.es_admin ? "Panel de administración" : "Censo del conjunto"}</a>` : "";
+  const institucional = esInstitucional(estado);
+  const boton = (h, t) => `<a class="btn sm ${h === actual ? "" : "ghost"}" href="${h}" ${h === actual ? 'aria-current="page"' : ""}>${t}</a>`;
+  const nav = SECCIONES.filter(([h]) => !institucional || GENERALES.includes(h)).map(([h, t]) => boton(h, t)).join("");
+  const panel = estado.es_admin || estado.es_consejo ? boton("admin.html", estado.es_admin ? "Panel de administración" : "Censo del conjunto") : "";
+  const clave = institucional ? "" : boton("contrasena.html", "Mi contraseña");
   return `<div class="cuenta-barra no-imprimir">
       <div><h1>${esc(titulo)}</h1><p class="m">Sesión: ${esc(estado.correo || "")}</p></div>
-      <div class="row">${nav}${panel}<button class="btn sm ghost" type="button" data-salir>Cerrar sesión</button></div>
+      <div class="row">${nav}${panel}${clave}<button class="btn sm ghost" type="button" data-salir>Cerrar sesión</button></div>
     </div>`;
+}
+
+// Páginas de la casa (Mi hogar, Estado de cuenta, PQRS, Reservas): una cuenta institucional va al panel.
+export function soloResidentes(estado) {
+  if (!esInstitucional(estado)) return false;
+  location.replace("admin.html");
+  return true;
 }
 
 // Cerrar sesión desde cualquier página que use la barra.

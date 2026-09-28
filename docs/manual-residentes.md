@@ -6,6 +6,15 @@ La zona de residentes le permite mantener al día los datos de su casa. **No nec
 
 ## 1. Ingresar
 
+- **Con contraseña (lo normal):** Ingresar → correo y contraseña → **Entrar**.
+- **La primera vez** todavía no tiene contraseña: Ingresar → **Entrar con código al correo** → escriba el código que le llega. Cuando la administración apruebe su casa, en *Mi hogar* aparece **Crear mi contraseña**.
+- **¿Olvidó su contraseña?** En Ingresar, escriba su correo → **¿Olvidó su contraseña?** → le llega un enlace para crear una nueva (sirve una vez y vence en una hora).
+- **Cambiar la contraseña:** *Mi cuenta* → **Mi contraseña**.
+- Use al menos 8 caracteres, con letras y números, y no la repita en otros servicios.
+- Si la administración **suspende** su acceso, lo verá con el motivo al entrar. Comuníquese con ella.
+
+### Detalle del primer ingreso
+
 1. Entre a **https://aragonenlinea.github.io/ingresar.html**.
 2. Escriba su correo y presione **Enviarme el acceso**.
 3. Le llega un correo de *Aragón en línea* (revise también "correo no deseado"). Puede:

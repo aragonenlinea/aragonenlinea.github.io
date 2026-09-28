@@ -11,6 +11,8 @@ where u.email = 'aragonenlinea.neiva@gmail.com'
   and not exists (select 1 from public.perfiles p where p.user_id = u.id and p.unidad_id is null
                   and p.estado in ('pendiente', 'activo'));
 
+-- IMPORTANTE (022): las cuentas de administración y consejo son INSTITUCIONALES, aparte de la de su casa.
+-- Use un correo que la persona NO use para su casa. Si ese correo ya tiene una casa, la base de datos lo rechaza.
 -- Para dar acceso al CONSEJO (solo ve el censo, sin datos personales), use esto cambiando el correo y el nombre:
 -- insert into public.perfiles (user_id, rol, estado, nombre, correo, revisado_en)
 -- select id, 'consejo', 'activo', 'Nombre del consejero', email, now() from auth.users where email = 'correo@ejemplo.com';

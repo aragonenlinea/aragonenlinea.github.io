@@ -260,7 +260,17 @@ Luego escriba título, categoría, fecha del documento y quién lo ve, marque la
 
 **Retirar:** en la lista, *Retirar* oculta el documento de inmediato y borra el archivo; el registro queda en el historial.
 
-## 14. Cuentas y continuidad
+## 14. Cuentas de administración y consejo, contraseñas y suspensión
+
+- **Cuentas institucionales aparte.** La administración y el consejo usan una cuenta **solo para su cargo**, con un correo distinto al de su casa. La plataforma no deja que una cuenta institucional registre una casa, ni que una cuenta con casa reciba cargo. Si la administradora o un consejero es propietario o residente, entra a lo de su casa con su **cuenta personal**, como cualquier vecino. Así, quien tenga acceso a la cuenta de una casa nunca llega al panel.
+- **Las cuentas institucionales entran siempre con el código** que llega al correo, sin contraseña. Si una llegara a tener contraseña, pierde sus permisos hasta que el administrador de la página se la quite (guía técnica). Active la **verificación en dos pasos del Gmail institucional**: es la llave del panel.
+- La cuenta institucional solo ve *Informes financieros*, *Documentos* y el *Panel*; no ve Mi hogar, Estado de cuenta, PQRS ni Reservas.
+- **Residentes:** entran con correo y contraseña. La primera vez usan el código; al quedar aprobados crean su contraseña en *Mi hogar*. Si la olvidan, la recuperan solos desde Ingresar.
+- **Suspender** (Panel → *Cuentas*): corta el acceso por una causa motivada. Escriba el motivo (mínimo 10 caracteres): la persona lo ve al entrar. **Reactivar** lo devuelve. No puede suspender su propia cuenta.
+- **Retirar**: definitivo (venta de la casa, fin del contrato). También sirve para una cuenta suspendida.
+- Para dar acceso a un consejero: primero él entra una vez al sitio **con el correo que usará solo para el consejo**; luego se corre `supabase/004_primer_administrador.sql` con ese correo.
+
+## 15. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.

@@ -37,6 +37,10 @@ export function mensajeError(error) {
     case "P0001": return m;
     case "PGRST301": case "PGRST303": return "Su sesión venció. Vuelva a ingresar.";
   }
+  if (/invalid login credentials/i.test(m)) return "Correo o contraseña incorrectos. Si todavía no ha creado su contraseña, entre con el código al correo.";
+  if (/should be different from the old/i.test(m)) return "La contraseña nueva debe ser distinta de la anterior.";
+  if (/reauthenticat/i.test(m)) return "Por seguridad, cierre sesión, entre de nuevo con el código al correo y vuelva a intentarlo.";
+  if (/password.*(should|characters|weak)|weak.?password/i.test(m)) return "La contraseña es muy débil: use al menos 8 caracteres, con letras y números.";
   if (/rate limit|too many/i.test(m)) return "Se enviaron demasiados correos. Espere unos minutos e intente de nuevo.";
   if (/expired|invalid.*(otp|token)/i.test(m)) return "El código no es válido o ya venció. Pida uno nuevo.";
   return "Ocurrió un error: " + m;
@@ -67,6 +71,7 @@ export const ETIQUETA_ESTADO = {
   rechazado: ["Rechazado", "p-bad"],
   activo: ["Activa", "p-ok"],
   retirado: ["Retirada", "p-bad"],
+  suspendido: ["Suspendida", "p-bad"],
   vencido: ["Vencida", "p-bad"]
 };
 export const pillEstado = e => {

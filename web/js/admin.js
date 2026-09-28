@@ -271,16 +271,21 @@ function tarjetasCodigos(codigos) {
 // ---------- Cuentas ----------
 async function vistaCuentas() {
   const [perfiles, invs] = await Promise.all([
-    consulta(sb.from("perfiles").select("id,unidad_id,rol,estado,nombre,correo,vence_el,creado_en").in("estado", ["activo", "pendiente"]).order("unidad_id", { nullsFirst: true })),
+    consulta(sb.from("perfiles").select("id,unidad_id,rol,estado,nombre,correo,vence_el,creado_en,motivo_rechazo").in("estado", ["activo", "pendiente", "suspendido"]).order("unidad_id", { nullsFirst: true })),
     consulta(sb.from("invitaciones").select("unidad_id,correo,contrato_hasta,vence_el").eq("rol", "arrendatario").is("usada_en", null).is("anulada_en", null).gt("vence_el", new Date().toISOString()))
   ]);
-  return `<div class="panel"><h2>Cuentas</h2><div class="tablewrap"><table>
+  return `<div class="panel"><h2>Cuentas</h2>
+      <p class="m"><b>Suspender</b>: corta el acceso por una causa motivada (la persona ve el motivo) y se puede reactivar. <b>Retirar</b>: definitivo, por ejemplo por venta de la casa o fin del contrato.</p>
+      <div class="tablewrap"><table>
       <thead><tr><th>Casa</th><th>Rol</th><th>Nombre</th><th>Correo</th><th>Estado</th><th></th></tr></thead>
       <tbody>${perfiles.map(p => {
         const vencido = p.vence_el && p.vence_el < hoyISO();
         return `<tr><td>${p.unidad_id ? "Casa " + esc(p.unidad_id) : "—"}</td><td>${ROL[p.rol]}</td><td>${esc(p.nombre)}</td><td>${esc(p.correo)}</td>
-          <td>${pillEstado(vencido ? "vencido" : p.estado)}${p.vence_el ? `<div class="m">hasta ${fecha(p.vence_el)}</div>` : ""}</td>
-          <td>${p.rol === "administracion" ? "" : `<button class="btn sm peligro" type="button" data-retirar-perfil="${p.id}">Retirar</button>`}</td></tr>`;
+          <td>${pillEstado(vencido ? "vencido" : p.estado)}${p.vence_el ? `<div class="m">hasta ${fecha(p.vence_el)}</div>` : ""}${p.estado === "suspendido" && p.motivo_rechazo ? `<div class="m">Motivo: ${esc(p.motivo_rechazo)}</div>` : ""}</td>
+          <td class="row">${p.rol === "administracion" ? "" : `
+            ${p.estado === "activo" ? `<button class="btn sm ghost" type="button" data-suspender-perfil="${p.id}">Suspender</button>` : ""}
+            ${p.estado === "suspendido" ? `<button class="btn sm" type="button" data-reactivar-perfil="${p.id}">Reactivar</button>` : ""}
+            <button class="btn sm peligro" type="button" data-retirar-perfil="${p.id}">Retirar</button>`}</td></tr>`;
       }).join("")}</tbody></table></div></div>
     <div class="grid g2 bloque">
       <div class="panel"><h2>Invitaciones de arrendatario pendientes</h2><div class="list">${invs.map(i => `<div class="item"><div>
@@ -372,6 +377,17 @@ caja.addEventListener("click", async e => {
       if (!aprobar && motivo === null) return;
       await consulta(sb.from(tabla).update({ estado: aprobar ? "validado" : "rechazado", motivo_rechazo: motivo }).eq("id", id));
       msg(aprobar ? "Registro validado." : "Registro rechazado."); await pintarPestana(); return;
+    }
+    if (b.dataset.suspenderPerfil) {
+      const motivo = prompt("¿Suspender esta cuenta? Escriba el motivo (la persona lo verá; mínimo 10 caracteres):");
+      if (motivo === null) return;
+      const r = await rpc("admin_suspender_perfil", { p_perfil: b.dataset.suspenderPerfil, p_motivo: motivo });
+      msg(r.mensaje, r.ok ? "ok" : "error"); await pintarPestana(); return;
+    }
+    if (b.dataset.reactivarPerfil) {
+      if (!confirm("¿Reactivar esta cuenta? La persona volverá a entrar normalmente.")) return;
+      const r = await rpc("admin_reactivar_perfil", { p_perfil: b.dataset.reactivarPerfil });
+      msg(r.mensaje, r.ok ? "ok" : "error"); await pintarPestana(); return;
     }
     if (b.dataset.retirarPerfil) {
       const motivo = prompt("¿Retirar esta cuenta? Escriba el motivo (por ejemplo, venta de la casa):");
@@ -502,7 +518,9 @@ async function iniciar() {
     estado = await rpc("mi_estado");
   } catch (err) { aviso(caja, err.message, "error"); return; }
   if (!estado.es_admin && !estado.es_consejo) {
-    caja.innerHTML = `<div class="panel"><h1>Sin acceso</h1><p>Esta sección es para la administración y el consejo.</p><a class="btn" href="mi-hogar.html">Ir a Mi hogar</a></div>`;
+    caja.innerHTML = estado.institucional && estado.tiene_contrasena
+      ? `<div class="panel error"><h1>Cuenta sin permisos</h1><p>Esta cuenta de administración o del consejo tiene una contraseña. Por seguridad, las cuentas institucionales solo funcionan cuando entran con el código al correo y no tienen contraseña, así que quedó sin permisos.</p><p>Pídale al administrador de la página que le quite la contraseña (guía técnica, "Cuenta institucional con contraseña").</p></div>`
+      : `<div class="panel"><h1>Sin acceso</h1><p>Esta sección es para la administración y el consejo, con su cuenta institucional.</p><a class="btn" href="mi-hogar.html">Ir a Mi hogar</a></div>`;
     return;
   }
   if (!estado.autorizacion_vigente) {

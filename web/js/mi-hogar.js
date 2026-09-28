@@ -1,7 +1,7 @@
 // Mi hogar: autorización de datos, registro con código, datos del hogar y acceso del arrendatario.
 import { montarPagina, esc, fecha, hoyISO, enlaceSeguro } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from "./supabase.js";
-import { barraCuenta as barraComun, casaElegida, recordarCasa } from "./cuenta.js";
+import { barraCuenta as barraComun, casaElegida, recordarCasa, soloResidentes } from "./cuenta.js";
 
 const caja = document.getElementById("cuenta");
 let estado = null;          // respuesta de mi_estado()
@@ -241,13 +241,8 @@ async function pintar() {
   const activos = deCasa.filter(p => p.estado === "activo" && !p.vencido);
   const inv = estado.invitacion_arrendatario;
 
-  // Administración o consejo sin casa: "Mi cuenta" lleva directo al panel.
-  // (El botón "Mi hogar" del panel usa ?hogar=1 para quedarse aquí y poder registrar una casa.)
-  if ((estado.es_admin || estado.es_consejo) && !deCasa.length && !inv
-      && !new URLSearchParams(location.search).has("hogar")) {
-    location.replace("admin.html");
-    return;
-  }
+  // Administración y consejo usan una cuenta aparte, sin casa: "Mi cuenta" los lleva al panel.
+  if (soloResidentes(estado)) return;
   if (inv && !deCasa.some(p => p.unidad_id === inv.unidad_id && ["pendiente", "activo"].includes(p.estado))) {
     html += vistaInvitacion(inv);
   }
@@ -259,6 +254,9 @@ async function pintar() {
     for (const p of deCasa.filter(p => p.estado === "rechazado")) {
       html += `<div class="aviso error">Su registro de la Casa ${esc(p.unidad_id)} fue rechazado${p.motivo_rechazo ? ": " + esc(p.motivo_rechazo) : "."} Comuníquese con la administración.</div>`;
     }
+    for (const p of deCasa.filter(p => p.estado === "suspendido")) {
+      html += `<div class="aviso error">Su acceso a la Casa ${esc(p.unidad_id)} está suspendido${p.motivo_rechazo ? ": " + esc(p.motivo_rechazo) : "."} Comuníquese con la administración.</div>`;
+    }
     for (const p of deCasa.filter(p => p.vencido && p.estado === "activo")) {
       html += `<div class="aviso error">Su acceso como arrendatario de la Casa ${esc(p.unidad_id)} venció el ${fecha(p.vence_el)}. Si el contrato se renovó, pídale al propietario que lo autorice de nuevo.</div>`;
     }
@@ -267,14 +265,17 @@ async function pintar() {
     for (const u of retiradas) {
       html += `<div class="aviso error">Su acceso a la Casa ${esc(u)} fue retirado. Si cree que es un error, comuníquese con la administración.</div>`;
     }
-    const conAviso = retiradas.length || deCasa.some(p => p.vencido && p.estado === "activo");
+    const conAviso = retiradas.length || deCasa.some(p => (p.vencido && p.estado === "activo") || p.estado === "suspendido");
     if (!deCasa.some(p => p.estado === "pendiente") && !inv && !conAviso) {
-      html += vistaCodigo(estado.es_admin || estado.es_consejo ? "¿También es propietario? Registre su casa" : "Registre su casa");
+      html += vistaCodigo("Registre su casa");
     }
     caja.innerHTML = html;
     return;
   }
 
+  if (!estado.tiene_contrasena) {
+    html += `<div class="aviso info">Ya puede <b>crear su contraseña</b> para entrar con su correo y contraseña, sin esperar el código. <a href="contrasena.html">Crear mi contraseña</a></div>`;
+  }
   const actual = activos.find(p => p.unidad_id === casaActual) || casaElegida(estado) || activos[0];
   casaActual = actual.unidad_id;
   recordarCasa(casaActual);

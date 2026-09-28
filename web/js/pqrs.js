@@ -1,7 +1,7 @@
 // PQRS del residente: radicar y seguir sus solicitudes. Cada cuenta ve solo las suyas.
 import { montarPagina, esc, fecha } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, datosForm } from "./supabase.js";
-import { barraCuenta, casaElegida, recordarCasa, selectorCasa, casasActivas, pillPqrs, fechaHora } from "./cuenta.js";
+import { barraCuenta, soloResidentes, casaElegida, recordarCasa, selectorCasa, casasActivas, pillPqrs, fechaHora } from "./cuenta.js";
 
 const caja = document.getElementById("pqrs");
 let estado = null;
@@ -109,6 +109,7 @@ async function iniciar() {
   caja.innerHTML = `<p class="m">Cargando…</p>`;
   try {
     estado = await rpc("mi_estado");
+    if (soloResidentes(estado)) return;   // administración y consejo: al panel
     if (!estado.autorizacion_vigente) { location.replace("mi-hogar.html?hogar=1"); return; }
     perfil = casaElegida(estado);
     await pintar();

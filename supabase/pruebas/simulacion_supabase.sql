@@ -17,7 +17,8 @@ create table auth.users (
   id uuid primary key,
   email text unique,
   aud text,
-  role text
+  role text,
+  encrypted_password text default ''   -- vacío = cuenta sin contraseña (entra con código al correo)
 );
 
 create function auth.jwt() returns jsonb language sql stable as $$
