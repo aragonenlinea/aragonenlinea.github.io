@@ -3,6 +3,7 @@ import { montarPagina, esc, fecha, hoyISO, cargar } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from "./supabase.js";
 import { barraCuenta, pillPqrs, pillReserva, fechaHora, diasHabilesDesde } from "./cuenta.js";
 import { vistaCartera, indicadores as indicadoresCartera, manejarCarteraCambio, manejarCarteraEntrada, manejarCarteraClic, manejarCarteraEnvio } from "./cartera-admin.js";
+import { vistaFinanzas, manejarFinanzasCambio, manejarFinanzasEntrada, manejarFinanzasClic, manejarFinanzasEnvio } from "./finanzas-admin.js";
 
 const caja = document.getElementById("admin");
 let estado = null;
@@ -17,7 +18,7 @@ const ROL = { propietario: "Propietario", arrendatario: "Arrendatario", administ
 
 function encabezado() {
   const tabs = estado.es_admin
-    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"],
+    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"], ["finanzas", "Finanzas"],
        ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
     : [["censo", "Censo"]];
   return `${barraCuenta(estado, estado.es_admin ? "Panel de administración" : "Censo del conjunto", "admin.html")}
@@ -303,7 +304,7 @@ async function pintarPestana() {
   document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === pestana));
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
-    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera,
+    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera, finanzas: vistaFinanzas,
                      censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
     cont.innerHTML = await vistas[pestana]();
   } catch (err) {
@@ -318,6 +319,7 @@ caja.addEventListener("click", async e => {
   if (!b) return;
   try {
     if (await manejarCarteraClic(b, msg, pintarPestana)) return;
+    if (await manejarFinanzasClic(b, msg, pintarPestana)) return;
     if (b.hasAttribute("data-agregar-turno")) {
       const cont = b.closest("form").querySelector("[data-turnos]");
       if (cont.querySelectorAll("[data-turno-fila]").length >= 8) { msg("Máximo 8 turnos por zona.", "error"); return; }
@@ -388,6 +390,7 @@ caja.addEventListener("submit", async e => {
   boton.disabled = true;
   try {
     if (await manejarCarteraEnvio(f, msg, pintarPestana)) return;
+    if (await manejarFinanzasEnvio(f, msg, pintarPestana)) return;
     if (f.dataset.responder) {
       const texto = (new FormData(f).get("texto") || "").trim();
       if (!texto) { msg("Escriba la respuesta.", "error"); return; }
@@ -481,9 +484,9 @@ caja.addEventListener("submit", async e => {
 });
 
 caja.addEventListener("change", async e => {
-  try { await manejarCarteraCambio(e, msg); } catch (err) { msg(err.message, "error"); }
+  try { if (!(await manejarCarteraCambio(e, msg))) await manejarFinanzasCambio(e, msg, pintarPestana); } catch (err) { msg(err.message, "error"); }
 });
-caja.addEventListener("input", e => { manejarCarteraEntrada(e); });
+caja.addEventListener("input", e => { manejarCarteraEntrada(e) || manejarFinanzasEntrada(e); });
 
 async function iniciar() {
   await montarPagina();

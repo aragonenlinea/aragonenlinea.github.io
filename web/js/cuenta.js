@@ -6,7 +6,8 @@ const SECCIONES = [
   ["mi-hogar.html", "Mi hogar"],
   ["estado-cuenta.html", "Estado de cuenta"],
   ["pqrs.html", "PQRS"],
-  ["reservas.html", "Reservas"]
+  ["reservas.html", "Reservas"],
+  ["finanzas.html", "Informes financieros"]
 ];
 
 // Pesos colombianos sin decimales: $1.250.000 (negativos con signo menos).

@@ -50,7 +50,7 @@ export function leerMonto(v) {
   return Number.isNaN(n) ? NaN : (negativo ? -n : n);
 }
 
-function leerFecha(v) {
+export function leerFecha(v) {
   if (!v) return null;
   if (v instanceof Date && !isNaN(v)) return new Date(v.getTime() - v.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   const s = String(v).trim();

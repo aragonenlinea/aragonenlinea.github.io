@@ -274,3 +274,24 @@ footer{background:var(--surface);border-top:1px solid var(--line);color:var(--mu
   .barra,.demo,footer,.filtros{display:none}
   body{background:#fff;color:#000}
 }
+
+/* Informes financieros */
+select.selector-corto{max-width:240px;margin-bottom:16px}
+table.tabla-ejecucion td:first-child,table.tabla-ejecucion th:first-child{min-width:220px}
+table.tabla-ejecucion .fila-tipo th{background:var(--primary-soft);color:var(--primary);text-transform:uppercase;letter-spacing:.04em}
+table.tabla-ejecucion .fila-grupo td{font-weight:700}
+table.tabla-ejecucion tr:not(.fila-grupo):not(.fila-total):not(.fila-tipo) td:first-child{padding-left:22px}
+table.tabla-ejecucion .fila-total td{font-weight:800;border-top:2px solid var(--line)}
+.alerta-txt{color:var(--bad);font-weight:700}
+.grafico .barras{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+.barra-fila{display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:4px 12px;align-items:center;padding:4px;border-radius:var(--r-sm);outline-offset:2px}
+.barra-fila:hover{background:var(--primary-soft)}
+.barra-nombre{font-weight:700;font-size:.9rem}
+.barra-pista{position:relative;height:14px;background:var(--bg);border:1px solid var(--line);border-radius:4px}
+.barra-valor{height:100%;background:var(--primary);border-radius:0 4px 4px 0}
+.barra-valor.alto{background:var(--bad)}
+.barra-esperado{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);transform:translateX(-1px)}
+.barra-texto{grid-column:2;font-size:.85rem;color:var(--muted)}
+.marca-leyenda{display:inline-block;width:2px;height:14px;background:var(--ink);vertical-align:middle;margin:0 4px}
+.tip{position:absolute;z-index:50;max-width:320px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;font-size:.85rem;box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
+@media (max-width:560px){.barra-fila{grid-template-columns:1fr}.barra-texto{grid-column:1}}

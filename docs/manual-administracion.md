@@ -215,7 +215,29 @@ Si publicó un archivo equivocado: **Anular** en el historial (los residentes vu
 
 **Nunca publique** el anexo de cartera de los estados financieros tal como viene: trae nombres de deudores.
 
-## 12. Cuentas y continuidad
+La pestaña muestra el cuadro de **cuentas por cobrar por antigüedad** (Casa, 1-30, 31-90, 91-180, 181-360, más de 360 días, total y porcentajes), igual al de los estados financieros pero sin nombres. Para llenarlo, use las columnas amarillas opcionales de la plantilla (`mora_1_30` … `mora_mas_360`); si no las llena, las casas salen en *Sin clasificar*.
+
+## 12. Informes financieros (presupuesto y gastos del mes)
+
+**Quién los ve:** propietarios, arrendatarios con cuenta aprobada, consejo y administración (en *Mi cuenta → Informes financieros*). El público no.
+
+**Una vez al año, después de la asamblea:**
+
+1. Panel → **Finanzas** → *plantilla de presupuesto*. Una fila por rubro: `tipo` (ingreso o gasto), `grupo` (como en el informe contable: HONORARIOS, SERVICIOS…), `rubro` y `valor_anual` aprobado. Incluya **todos** los rubros que puedan tener movimiento en el año, aunque sea con valor 0.
+2. Cargue el archivo en *1. Presupuesto del año*, revise la vista previa, escriba la fecha de la asamblea y **Publicar presupuesto**. Si se equivocó, publique de nuevo: el anterior queda anulado en el historial.
+
+**Cada mes, cuando la contadora entregue el informe:**
+
+1. *plantilla de informe mensual*: hoja **Ejecucion** con lo causado en el mes por rubro (mismos nombres del presupuesto; descuentos en negativo) y, si quiere, hoja **Pagos** con lo pagado en el mes (flujo de caja).
+2. Cargue el archivo en *2. Informe de cada mes*. Si el nombre del archivo tiene el año y el mes (ej.: `informe_2026_07_julio.xlsx`), se llenan solos.
+3. Escriba los totales de **ingresos**, **gastos** y **pagos** del informe contable. Deben decir *cuadra*.
+4. **Publicar informe**. Si ya había uno de ese mes, queda reemplazado (el anterior, anulado en el historial).
+
+**Datos personales en los pagos:** en *beneficiario* solo se escriben empresas o entidades (SAS, LTDA, S.A., E.S.P., DIAN, bancos…). Los pagos a **personas** (administrador, contadora, abogado, todero) se identifican por el rubro (ej.: *Honorarios administrador*) y el beneficiario se deja **vacío**. Si escribe un nombre de persona, la plataforma no deja publicar.
+
+Los archivos con el presupuesto 2026 y los informes de enero a julio, tomados de los estados financieros, están en la carpeta `material-aragon\finanzas` del PC (fuera del repositorio).
+
+## 13. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.

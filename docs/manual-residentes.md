@@ -42,7 +42,7 @@ Una vez al año, presione **Confirmar que mis datos están al día**.
 
 1. **Mi cuenta** → **Estado de cuenta**.
 2. Verá el último corte: saldo anterior, cuota de administración, intereses y pagos, y el saldo por pagar (o a favor), además de los cortes anteriores.
-3. **Pagar** abre la página del banco (PSE). También puede pagar en Davivienda con el convenio 01660018 y como referencia el número de su casa. La plataforma no recibe pagos ni guarda datos bancarios.
+3. Hay dos botones de pago: **PSE** (desde cualquier banco) y el **botón del banco del convenio** (Davivienda, convenio 01660018, referencia = número de su casa). Debajo de cada botón se ve la dirección a la que lleva: verifique que sea la del banco. La plataforma no recibe pagos ni guarda datos bancarios, y nunca le pedirá claves.
 4. Los pagos hechos después de la fecha de corte aparecen en el siguiente estado de cuenta.
 
 El arrendatario solo ve el estado de cuenta si el propietario se lo permite (en *Mi hogar → Acceso del arrendatario*).
@@ -64,7 +64,17 @@ Solo usted y la administración ven sus solicitudes. El propietario y el arrenda
 
 El salón social se solicita con mínimo 10 días hábiles de anticipación y admite hasta 50 personas. Las casas con más de dos meses de mora no pueden usar el salón ni la zona BBQ.
 
-## 8. Privacidad
+## 8. Informes financieros
+
+1. **Mi cuenta** → **Informes financieros**. Lo ven propietarios, arrendatarios con cuenta aprobada y el consejo.
+2. Arriba: cuánto se ha recibido y gastado en el año frente al presupuesto aprobado por la asamblea, y el porcentaje que se esperaría a la fecha (por ejemplo, a julio: 7 de 12 meses = 58,3 %).
+3. **Gastos por grupo:** cada barra muestra cuánto del presupuesto del año se ha gastado; la raya vertical marca lo esperado a la fecha. Las barras rojas con **▲** van más de 5 puntos por encima de lo esperado. Pase el mouse (o toque) sobre una barra para ver los valores.
+4. **Ejecución rubro por rubro, mes a mes:** la tabla completa, con el presupuesto, el porcentaje ejecutado y lo que falta por ejecutar.
+5. **Pagos realizados en el mes:** elija el mes. Los pagos a personas (administrador, contadora, abogado) aparecen por su rubro y sin nombre.
+
+Son cifras informativas tomadas de los informes contables mensuales. Los estados financieros oficiales son los que firma la contadora y se presentan a la asamblea.
+
+## 9. Privacidad
 
 - Nadie de otra casa ve sus datos.
 - El propietario no ve los teléfonos ni los habitantes que registre el arrendatario, y viceversa.
