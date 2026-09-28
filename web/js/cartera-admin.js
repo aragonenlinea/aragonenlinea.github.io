@@ -154,10 +154,15 @@ export async function vistaCartera() {
     <div class="panel">
       <h2>Configuración del pago</h2>
       <form id="fPago" novalidate>
-        <label for="pg-url">Enlace de pago PSE / botón del banco (https://...)</label>
+        <label for="pg-url">Botón 1 · Enlace de pago por PSE, cualquier banco (https://...)</label>
         <input id="pg-url" name="url_pago" type="url" maxlength="500" value="${esc(pago?.url_pago || "")}" placeholder="https://...">
-        <label for="pg-boton">Texto del botón</label>
-        <input id="pg-boton" name="texto_boton" maxlength="40" value="${esc(pago?.texto_boton || "Pagar")}">
+        <label for="pg-boton">Texto del botón 1</label>
+        <input id="pg-boton" name="texto_boton" maxlength="40" value="${esc(pago?.texto_boton || "Pagar por PSE (cualquier banco)")}">
+        <label for="pg-banco">Botón 2 · Enlace del banco del convenio (https://...)</label>
+        <input id="pg-banco" name="url_banco" type="url" maxlength="500" value="${esc(pago?.url_banco || "")}" placeholder="https://...">
+        <label for="pg-boton2">Texto del botón 2</label>
+        <input id="pg-boton2" name="texto_boton_banco" maxlength="40" value="${esc(pago?.texto_boton_banco || "Pagar en Davivienda")}">
+        <p class="m">Use solo enlaces oficiales que le entregue el banco. Antes de guardar, ábralos y confirme que llevan a la página del banco (con candado y el nombre del banco en la dirección).</p>
         <label for="pg-inst">Instrucciones (use {casa} para el número de la casa)</label>
         <textarea id="pg-inst" name="instrucciones" maxlength="1500">${esc(pago?.instrucciones || "")}</textarea>
         <label for="pg-pronto">Aviso de pronto pago</label>
@@ -174,11 +179,52 @@ export async function vistaCartera() {
       <td>${h.estado === "publicada" ? (h.id === vigente?.id ? `<span class="pill p-ok">Vigente</span>` : `<span class="pill p-info">Publicada</span>`) : `<span class="pill p-bad">Anulada</span>`}</td>
       <td>${h.estado === "publicada" ? `<button class="btn sm peligro" type="button" data-anular-imp="${h.id}">Anular</button>` : ""}</td></tr>`).join("")
       || `<tr><td colspan="9" class="m">Aún no se ha importado cartera.</td></tr>`}</tbody></table></div></div>
-  ${vigente ? `<div class="panel bloque"><h2>Detalle por casa · corte ${fecha(vigente.fecha_corte)}</h2><div class="tablewrap"><table>
-    <thead><tr><th>Casa</th>${MONTOS.map(k => `<th class="num">${ETIQ[k]}</th>`).join("")}<th class="num">Más de 90 días</th></tr></thead>
-    <tbody>${detalle.map(d => `<tr><td>Casa ${d.unidad_id}</td>${MONTOS.map(k => `<td class="num">${pesos(d[k])}</td>`).join("")}
-      <td class="num">${pesos((d.mora_91_180 || 0) + (d.mora_181_360 || 0) + (d.mora_mas_360 || 0))}</td></tr>`).join("")}</tbody>
-  </table></div><p class="m">Detalle solo para la administración. El consejo ve únicamente los totales.</p></div>` : ""}`;
+  ${vigente ? `<div class="panel bloque"><h2>Cuentas por cobrar por antigüedad · corte ${fecha(vigente.fecha_corte)}</h2>
+    ${cuadroEdades(detalle)}
+    <p class="m">Detalle por casa solo para la administración, sin nombres. El consejo ve únicamente los totales.</p>
+    <details><summary>Ver detalle por concepto (todas las casas del archivo)</summary><div class="tablewrap"><table>
+      <thead><tr><th>Casa</th>${MONTOS.map(k => `<th class="num">${ETIQ[k]}</th>`).join("")}</tr></thead>
+      <tbody>${detalle.map(d => `<tr><td>Casa ${d.unidad_id}</td>${MONTOS.map(k => `<td class="num">${pesos(d[k])}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table></div></details></div>` : ""}`;
+}
+
+// Cuadro como el de cuentas por cobrar de los estados financieros: casas con saldo, por antigüedad.
+const COLS_EDAD = [["mora_1_30", "1-30 días"], ["mora_31_90", "31-90 días"], ["mora_91_180", "91-180 días"],
+                   ["mora_181_360", "181-360 días"], ["mora_mas_360", "Más de 360 días"]];
+const sinEdad = d => COLS_EDAD.every(([k]) => d[k] === null || d[k] === undefined);
+
+function cuadroEdades(detalle) {
+  const deudoras = detalle.filter(d => Number(d.saldo_total) > 0);
+  if (!deudoras.length) return `<div class="aviso ok">Ninguna casa tiene saldo pendiente en este corte.</div>`;
+  const hayNoClasif = deudoras.some(sinEdad);
+  const suma = k => deudoras.reduce((a, d) => a + Number(d[k] || 0), 0);
+  const total = suma("saldo_total");
+  const noClasif = deudoras.filter(sinEdad).reduce((a, d) => a + Number(d.saldo_total), 0);
+  const pct = v => total ? (v * 100 / total).toLocaleString("es-CO", { maximumFractionDigits: 2 }) + " %" : "";
+  return `<div class="tablewrap"><table class="cuadro-edades">
+    <thead><tr><th>Casa</th>${COLS_EDAD.map(([, t]) => `<th class="num">${t}</th>`).join("")}${hayNoClasif ? `<th class="num">Sin clasificar</th>` : ""}<th class="num">Total</th></tr></thead>
+    <tbody>${deudoras.map(d => `<tr><td>Casa ${d.unidad_id}</td>
+      ${COLS_EDAD.map(([k]) => `<td class="num">${Number(d[k]) ? pesos(d[k]) : ""}</td>`).join("")}
+      ${hayNoClasif ? `<td class="num">${sinEdad(d) ? pesos(d.saldo_total) : ""}</td>` : ""}
+      <td class="num"><b>${pesos(d.saldo_total)}</b></td></tr>`).join("")}</tbody>
+    <tfoot>
+      <tr><th>Total</th>${COLS_EDAD.map(([k]) => `<th class="num">${pesos(suma(k))}</th>`).join("")}${hayNoClasif ? `<th class="num">${pesos(noClasif)}</th>` : ""}<th class="num">${pesos(total)}</th></tr>
+      <tr><td class="m">% del total</td>${COLS_EDAD.map(([k]) => `<td class="num m">${pct(suma(k))}</td>`).join("")}${hayNoClasif ? `<td class="num m">${pct(noClasif)}</td>` : ""}<td class="num m">100 %</td></tr>
+    </tfoot></table></div>`;
+}
+
+// Totales por antigüedad (administración y consejo): sin casas.
+function totalesEdades(res) {
+  const e = res.edades;
+  if (!e) return "";
+  const filas = [...COLS_EDAD.map(([k, t]) => [t, Number(e[k] || 0)]), ...(Number(e.sin_clasificar) ? [["Sin clasificar", Number(e.sin_clasificar)]] : [])];
+  const total = filas.reduce((a, [, v]) => a + v, 0);
+  if (!total) return "";
+  return `<div class="panel bloque-sm"><h3>Cartera por antigüedad</h3><div class="tablewrap"><table>
+    <thead><tr>${filas.map(([t]) => `<th class="num">${t}</th>`).join("")}<th class="num">Total</th></tr></thead>
+    <tbody><tr>${filas.map(([, v]) => `<td class="num">${pesos(v)}</td>`).join("")}<td class="num"><b>${pesos(total)}</b></td></tr>
+      <tr>${filas.map(([, v]) => `<td class="num m">${(v * 100 / total).toLocaleString("es-CO", { maximumFractionDigits: 2 })} %</td>`).join("")}<td class="num m">100 %</td></tr></tbody>
+  </table></div></div>`;
 }
 
 export function indicadores(res) {
@@ -190,7 +236,7 @@ export function indicadores(res) {
     <div class="panel kpi"><div class="n">${res.casas_mora_mas_90}</div><div class="l">Casas con deuda de más de 90 días</div></div>
     <div class="panel kpi"><div class="n">${pesos(res.cartera_mas_360)}</div><div class="l">Cartera de más de 360 días</div></div>
     <div class="panel kpi"><div class="n">${pesos(res.saldos_a_favor)}</div><div class="l">Saldos a favor (anticipos)</div></div>
-  </div>`;
+  </div>${totalesEdades(res)}`;
 }
 
 function htmlPrevia() {
@@ -271,9 +317,13 @@ export async function manejarCarteraEnvio(f, msg, repintar) {
   if (f.id === "fPago") {
     const d = Object.fromEntries(new FormData(f));
     const url = (d.url_pago || "").trim();
-    if (url && !/^https:\/\/\S+$/.test(url)) { msg("El enlace de pago debe empezar por https://", "error"); return true; }
+    const urlBanco = (d.url_banco || "").trim();
+    if ((url && !/^https:\/\/\S+$/.test(url)) || (urlBanco && !/^https:\/\/\S+$/.test(urlBanco))) {
+      msg("Los enlaces de pago deben empezar por https://", "error"); return true;
+    }
     await consulta(sb.from("configuracion_pagos").update({
-      url_pago: url || null, texto_boton: (d.texto_boton || "Pagar").trim() || "Pagar",
+      url_pago: url || null, texto_boton: (d.texto_boton || "Pagar por PSE").trim() || "Pagar por PSE",
+      url_banco: urlBanco || null, texto_boton_banco: (d.texto_boton_banco || "Pagar en Davivienda").trim() || "Pagar en Davivienda",
       instrucciones: (d.instrucciones || "").trim() || null, aviso_pronto_pago: (d.aviso_pronto_pago || "").trim() || null,
       actualizado_en: new Date().toISOString()
     }).eq("id", 1));

@@ -5,7 +5,7 @@
 -- Crea datos de PRUEBA, prueba las validaciones de la importación y quién ve qué,
 -- y al final DESHACE TODO. El resultado sale en ROJO a propósito:
 --   "PRUEBAS CARTERA: NN de NN correctas" → todo bien.
--- Requiere haber aplicado 001 a 010.
+-- Requiere haber aplicado 001 a 010 y 012.
 -- =====================================================================
 do $$
 declare
@@ -194,6 +194,29 @@ begin
   get diagnostics n = row_count;
   perform pg_temp.base();
   total := total + 1; if n <> 1 then fallas := array_append(fallas, '3c: la administración no pudo configurar el enlace de pago'); end if;
+
+  -- Requiere 012: segundo botón (banco del convenio) y totales por antigüedad.
+  perform pg_temp.como(u_p1);
+  update public.configuracion_pagos set url_banco = 'https://sitio-falso.example' where id = 1;
+  get diagnostics n = row_count;
+  perform pg_temp.base();
+  total := total + 1; if n <> 0 then fallas := array_append(fallas, '3d: un residente cambió el enlace del banco'); end if;
+
+  perform pg_temp.como(u_admin);
+  begin
+    update public.configuracion_pagos set url_banco = 'javascript:alert(1)' where id = 1;
+    ok := false;
+  exception when others then ok := true; end;
+  perform pg_temp.base();
+  total := total + 1; if not ok then fallas := array_append(fallas, '3e: se aceptó un enlace del banco que no es https'); end if;
+
+  perform pg_temp.como(u_cons);
+  r := public.resumen_cartera();
+  perform pg_temp.base();
+  total := total + 1;
+  if r -> 'edades' is null or (r -> 'edades' ->> 'sin_clasificar')::bigint <> 1212000 then
+    fallas := array_append(fallas, '3f: los totales por antigüedad no son correctos: ' || coalesce((r -> 'edades')::text, 'vacío'));
+  end if;
 
   -- ---------- 4. Anular y script ----------
   perform pg_temp.como(u_p2);

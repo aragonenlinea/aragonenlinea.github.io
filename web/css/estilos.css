@@ -217,6 +217,10 @@ form.panel h3{font-size:15px;margin:18px 0 0}
 .texto-lineas{white-space:pre-line}
 tr.fila-error td{background:color-mix(in srgb,var(--bad) 10%,transparent)}
 td.error-txt{color:var(--bad);font-size:13px;white-space:normal;min-width:180px}
+.pagos{display:flex;flex-direction:column;gap:12px;margin:12px 0}
+.pagos .m{margin-top:4px}
+table.cuadro-edades tfoot th,table.cuadro-edades tfoot td{border-bottom:0}
+details summary{cursor:pointer;font-weight:700;color:var(--primary);margin:14px 0 8px}
 .resumen-import{display:flex;gap:8px 20px;flex-wrap:wrap;margin:12px 0}
 .bloque-sm .btn{margin-top:4px}
 select#casa{max-width:320px;margin-bottom:16px}

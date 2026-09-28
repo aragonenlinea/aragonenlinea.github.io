@@ -17,6 +17,21 @@ const CONCEPTOS = [
 const EDADES = [["mora_1_30", "1 a 30 días"], ["mora_31_90", "31 a 90 días"], ["mora_91_180", "91 a 180 días"],
                 ["mora_181_360", "181 a 360 días"], ["mora_mas_360", "Más de 360 días"]];
 
+// Botones de pago: solo abren la página del banco (no se envía ningún dato del residente).
+// Se muestra la dirección a la que llevan para que la persona verifique que es el banco.
+function botonesPago(pago) {
+  const opciones = [[pago?.url_pago, pago?.texto_boton || "Pagar por PSE (cualquier banco)"],
+                    [pago?.url_banco, pago?.texto_boton_banco || "Pagar en Davivienda"]]
+    .map(([u, t]) => [enlaceSeguro(u || ""), t])
+    .filter(([u]) => /^https:\/\//.test(u));
+  if (!opciones.length) return "";
+  const dominio = u => { try { return new URL(u).hostname; } catch (e) { return ""; } };
+  return `<div class="pagos">${opciones.map(([u, t], i) => `<div>
+      <a class="btn ${i ? "ghost" : ""}" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(t)}</a>
+      <div class="m">Lo lleva a <b>${esc(dominio(u))}</b></div></div>`).join("")}</div>
+    <p class="m">Se abre la página del banco en otra pestaña. Verifique que la dirección sea la del banco y que tenga el candado. La plataforma no recibe pagos, no ve sus datos bancarios y nunca le pedirá claves.</p>`;
+}
+
 async function pintar() {
   let html = barraCuenta(estado, "Estado de cuenta", "estado-cuenta.html");
   if (!perfil) {
@@ -63,8 +78,7 @@ async function pintar() {
       ${saldo > 0 ? `<div class="kpi"><div class="n">${pesos(saldo)}</div><div class="l">Saldo por pagar</div></div>`
         : `<div class="aviso ok">${saldo < 0 ? `Tiene un saldo a favor de ${pesos(-saldo)}.` : "Está al día. ¡Gracias!"}</div>`}
       ${pago?.aviso_pronto_pago ? `<div class="aviso info">${esc(pago.aviso_pronto_pago)}</div>` : ""}
-      ${url ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(pago.texto_boton || "Pagar")}</a>
-        <p class="m">Se abre la página del banco. La plataforma no recibe pagos ni guarda datos bancarios.</p>` : ""}
+      ${botonesPago(pago)}
       ${instrucciones ? `<h3>Cómo pagar</h3><p class="texto-lineas">${esc(instrucciones)}</p>` : ""}
     </div>
   </div>
