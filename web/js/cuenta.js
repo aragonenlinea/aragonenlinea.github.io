@@ -4,9 +4,16 @@ import { sb } from "./supabase.js";
 
 const SECCIONES = [
   ["mi-hogar.html", "Mi hogar"],
+  ["estado-cuenta.html", "Estado de cuenta"],
   ["pqrs.html", "PQRS"],
   ["reservas.html", "Reservas"]
 ];
+
+// Pesos colombianos sin decimales: $1.250.000 (negativos con signo menos).
+export const pesos = v => {
+  const n = Math.round(Number(v) || 0);
+  return (n < 0 ? "−$" : "$") + Math.abs(n).toLocaleString("es-CO");
+};
 
 // Barra superior: título, sesión, navegación entre secciones y botón de salir.
 export function barraCuenta(estado, titulo, actual) {

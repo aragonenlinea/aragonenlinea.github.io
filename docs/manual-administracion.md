@@ -190,13 +190,32 @@ Entre al sitio → **Mi cuenta** con el correo que tiene el rol de administraci�
 - **Reservas:** solicitudes de salón social y zona BBQ. Antes de aprobar, verifique que la casa esté a paz y salvo (el Manual no permite usar el salón ni la BBQ con más de dos meses de mora). El alquiler se cobra en la administración: la plataforma no recibe pagos. Una reserva aprobada se puede *Anular* con motivo.
 - **Zonas:** turnos, horarios, tarifas, anticipación mínima (días hábiles), hasta cuántos días adelante se puede reservar, capacidad y reglas de cada zona que se reserva. Ajústelos según lo aprobado por la asamblea, el consejo o el manual de convivencia; los cambios se ven de inmediato en Reservas y en la página pública de Zonas comunes. *Agregar turno* / *Quitar* (no se puede quitar un turno con reservas vigentes). *Nueva zona* crea otra zona reservable (por ejemplo, el polideportivo para eventos). Desmarcar *Activa* deja de aceptar reservas nuevas sin borrar el historial. Las demás descripciones de la página de zonas (reglas detalladas, zonas que no se reservan) siguen en `web/datos/zonas.json`.
 - **Comunicados:** ver la sección 3.
+- **Cartera:** ver la sección 11.
 - **Censo:** resumen de las 40 casas y de las PQRS, sin nombres ni teléfonos. Es lo único que ve el consejo.
 - **Códigos de invitación:** marque las casas (el botón "Marcar casas sin propietario" ayuda), genere e **imprima de inmediato**; los códigos no se vuelven a mostrar. Generar uno nuevo anula el anterior sin usar. Entregue cada código en sobre cerrado al propietario.
 - **Cuentas:** todas las cuentas activas. *Retirar* se usa, por ejemplo, cuando se vende una casa. También puede autorizar a un arrendatario **solo con autorización escrita del propietario**, que debe archivar.
 
 Para dar acceso a una persona del consejo o de la administración, se usa el archivo `supabase/004_primer_administrador.sql` en Supabase (pida ayuda técnica).
 
-## 11. Cuentas y continuidad
+## 11. Cartera y estado de cuenta
+
+**Quién:** la contadora entrega el archivo de cartera; la **administración lo revisa y lo publica** (el administrador es quien cobra las cuotas y presenta los informes, según el Reglamento, art. 60; el consejo aprueba los balances mensuales, art. 58). El consejo ve los totales en su panel.
+
+**Cada mes:**
+
+1. Descargue la **plantilla** desde el panel (pestaña **Cartera** → *plantilla de cartera*) o use el archivo que le entregue la contadora con las mismas columnas. Una fila por casa, **sin nombres de personas**. Saldos a favor en negativo.
+2. Panel → **Cartera** → *Archivo* → elija el Excel (o CSV).
+3. Revise la **vista previa**: las filas con errores salen en rojo con la explicación. Si hay errores, corrija el archivo y cárguelo de nuevo.
+4. Escriba el **total de la cartera según el informe contable**. Debe decir *Cuadra*.
+5. **Publicar cartera**. Los residentes lo ven de inmediato en *Mi cuenta → Estado de cuenta*.
+
+Si publicó un archivo equivocado: **Anular** en el historial (los residentes vuelven a ver el corte anterior) y publique el correcto. Nada se borra: queda el historial.
+
+**Configuración del pago** (misma pestaña): enlace de PSE o botón de pago del banco, texto del botón, instrucciones (convenio Davivienda 01660018; referencia 1 = número de casa, que se escribe como `{casa}`) y aviso de pronto pago. **La plataforma no cobra ni guarda datos bancarios**: el botón solo abre la página del banco.
+
+**Nunca publique** el anexo de cartera de los estados financieros tal como viene: trae nombres de deudores.
+
+## 12. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.

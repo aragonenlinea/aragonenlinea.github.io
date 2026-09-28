@@ -2,6 +2,7 @@
 import { montarPagina, esc, fecha, hoyISO, cargar } from "./comun.js";
 import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from "./supabase.js";
 import { barraCuenta, pillPqrs, pillReserva, fechaHora, diasHabilesDesde } from "./cuenta.js";
+import { vistaCartera, indicadores as indicadoresCartera, manejarCarteraCambio, manejarCarteraEntrada, manejarCarteraClic, manejarCarteraEnvio } from "./cartera-admin.js";
 
 const caja = document.getElementById("admin");
 let estado = null;
@@ -16,7 +17,7 @@ const ROL = { propietario: "Propietario", arrendatario: "Arrendatario", administ
 
 function encabezado() {
   const tabs = estado.es_admin
-    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"],
+    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"],
        ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
     : [["censo", "Censo"]];
   return `${barraCuenta(estado, estado.es_admin ? "Panel de administración" : "Censo del conjunto", "admin.html")}
@@ -58,7 +59,7 @@ async function vistaPendientes() {
 
 // ---------- Censo ----------
 async function vistaCenso() {
-  const [filas, pq] = await Promise.all([rpc("censo"), rpc("resumen_pqrs")]);
+  const [filas, pq, car] = await Promise.all([rpc("censo"), rpc("resumen_pqrs"), rpc("resumen_cartera")]);
   const suma = k => filas.reduce((a, f) => a + Number(f[k] || 0), 0);
   const conProp = filas.filter(f => f.propietario === "activo").length;
   const conArr = filas.filter(f => f.arrendatario === "activo").length;
@@ -69,7 +70,7 @@ async function vistaCenso() {
       <div class="panel kpi"><div class="n">${pq.respondidas}</div><div class="l">Respondidas</div></div>
       <div class="panel kpi"><div class="n ${pq.abiertas_mas_15_dias_habiles ? "alerta-dias" : ""}">${pq.abiertas_mas_15_dias_habiles}</div><div class="l">Abiertas hace más de 15 días hábiles</div></div>
     </div>` : "";
-  return `${kpisPqrs}<h2>Casas</h2><div class="kpis">
+  return `${indicadoresCartera(car)}${kpisPqrs}<h2>Casas</h2><div class="kpis">
       <div class="panel kpi"><div class="n">${conProp}/40</div><div class="l">Casas con propietario registrado</div></div>
       <div class="panel kpi"><div class="n">${conArr}</div><div class="l">Casas con arrendatario con acceso</div></div>
       <div class="panel kpi"><div class="n">${alDia}/40</div><div class="l">Casas con datos confirmados en el último año</div></div>
@@ -302,7 +303,7 @@ async function pintarPestana() {
   document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === pestana));
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
-    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados,
+    const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera,
                      censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas };
     cont.innerHTML = await vistas[pestana]();
   } catch (err) {
@@ -316,6 +317,7 @@ caja.addEventListener("click", async e => {
   const b = e.target.closest("button");
   if (!b) return;
   try {
+    if (await manejarCarteraClic(b, msg, pintarPestana)) return;
     if (b.hasAttribute("data-agregar-turno")) {
       const cont = b.closest("form").querySelector("[data-turnos]");
       if (cont.querySelectorAll("[data-turno-fila]").length >= 8) { msg("Máximo 8 turnos por zona.", "error"); return; }
@@ -385,6 +387,7 @@ caja.addEventListener("submit", async e => {
   const boton = f.querySelector("button[type=submit]");
   boton.disabled = true;
   try {
+    if (await manejarCarteraEnvio(f, msg, pintarPestana)) return;
     if (f.dataset.responder) {
       const texto = (new FormData(f).get("texto") || "").trim();
       if (!texto) { msg("Escriba la respuesta.", "error"); return; }
@@ -476,6 +479,11 @@ caja.addEventListener("submit", async e => {
     if (document.body.contains(boton)) boton.disabled = false;
   }
 });
+
+caja.addEventListener("change", async e => {
+  try { await manejarCarteraCambio(e, msg); } catch (err) { msg(err.message, "error"); }
+});
+caja.addEventListener("input", e => { manejarCarteraEntrada(e); });
 
 async function iniciar() {
   await montarPagina();

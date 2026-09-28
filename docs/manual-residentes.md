@@ -38,7 +38,16 @@ Lo que agregue queda **pendiente de validación** hasta que la administración l
 
 Una vez al año, presione **Confirmar que mis datos están al día**.
 
-## 5. PQRS (peticiones, quejas, reclamos y sugerencias)
+## 5. Estado de cuenta
+
+1. **Mi cuenta** → **Estado de cuenta**.
+2. Verá el último corte: saldo anterior, cuota de administración, intereses y pagos, y el saldo por pagar (o a favor), además de los cortes anteriores.
+3. **Pagar** abre la página del banco (PSE). También puede pagar en Davivienda con el convenio 01660018 y como referencia el número de su casa. La plataforma no recibe pagos ni guarda datos bancarios.
+4. Los pagos hechos después de la fecha de corte aparecen en el siguiente estado de cuenta.
+
+El arrendatario solo ve el estado de cuenta si el propietario se lo permite (en *Mi hogar → Acceso del arrendatario*).
+
+## 6. PQRS (peticiones, quejas, reclamos y sugerencias)
 
 1. **Mi cuenta** → **PQRS**.
 2. Elija el tipo, escriba el asunto y la descripción → **Radicar**. Recibe un número de radicado (ejemplo: `PQ-2026-0001`).
@@ -46,7 +55,7 @@ Una vez al año, presione **Confirmar que mis datos están al día**.
 
 Solo usted y la administración ven sus solicitudes. El propietario y el arrendatario no ven las del otro.
 
-## 6. Reservas de zonas comunes
+## 7. Reservas de zonas comunes
 
 1. **Mi cuenta** → **Reservas**.
 2. Elija la zona (salón social o zona BBQ), la fecha y un turno libre. Los turnos ocupados aparecen bloqueados (no se muestra quién los reservó).
@@ -55,7 +64,7 @@ Solo usted y la administración ven sus solicitudes. El propietario y el arrenda
 
 El salón social se solicita con mínimo 10 días hábiles de anticipación y admite hasta 50 personas. Las casas con más de dos meses de mora no pueden usar el salón ni la zona BBQ.
 
-## 7. Privacidad
+## 8. Privacidad
 
 - Nadie de otra casa ve sus datos.
 - El propietario no ve los teléfonos ni los habitantes que registre el arrendatario, y viceversa.

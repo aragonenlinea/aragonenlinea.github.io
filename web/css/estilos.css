@@ -213,6 +213,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .turno-fila label{margin-top:0}
 @media (max-width:700px){.turno-fila{grid-template-columns:1fr}}
 form.panel h3{font-size:15px;margin:18px 0 0}
+.panel h3{font-size:15px;margin:18px 0 6px}
+.texto-lineas{white-space:pre-line}
+tr.fila-error td{background:color-mix(in srgb,var(--bad) 10%,transparent)}
+td.error-txt{color:var(--bad);font-size:13px;white-space:normal;min-width:180px}
+.resumen-import{display:flex;gap:8px 20px;flex-wrap:wrap;margin:12px 0}
 .bloque-sm .btn{margin-top:4px}
 select#casa{max-width:320px;margin-bottom:16px}
 @media print{

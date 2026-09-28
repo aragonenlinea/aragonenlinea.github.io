@@ -82,6 +82,8 @@ Si el recuadro de la firma pisa el nombre impreso debajo, reduzca `y1` hasta jus
   7. `007_pqrs_reservas_comunicados.sql`: PQRS con radicado y conversación, zonas reservables y reservas (un turno no se reserva dos veces; la disponibilidad no revela quién reservó), y comunicados.
   8. `008_pruebas_pqrs_reservas.sql`: 41 pruebas de la entrega 2b (mismo formato que 003; requiere 009).
   9. `009_zonas_editables.sql`: la administración edita `zonas_reservables` (validaciones de turnos y rangos); el público lee las zonas activas.
+  10. `010_cartera.sql`: `cartera_importaciones` (historial; publicada/anulada), `cartera_unidad` (una fila por casa y corte, con chequeo de cuadre), `configuracion_pagos` y `importar_cartera` (valida todo en el servidor y guarda todo o nada; la acepta la administración o la clave de servicio del script). Propietario ve su casa; arrendatario solo con `puede_ver_cuenta`; consejo solo `resumen_cartera`.
+  11. `011_pruebas_cartera.sql`: 25 pruebas de validación y acceso de la cartera.
   Los cambios futuros van en archivos nuevos (`005_...`), nunca editando los ya aplicados.
 - **Modelo:** `perfiles` une usuario, casa y rol (`propietario`, `arrendatario`, `administracion`, `consejo`). Una cuenta de propietario y una de arrendatario por casa (índices únicos). Los registros de Mi hogar pertenecen al perfil que los creó; un disparador los devuelve a *pendiente* ante cualquier cambio que no haga la administración. Las funciones `privado.*` alimentan las reglas RLS; las `public.*` son la API que llama el sitio y responden `{ok, mensaje}`.
 - **Códigos de invitación:** 8 caracteres sin letras ambiguas; solo se guarda su huella SHA-256; 10 intentos fallidos por hora como máximo.
@@ -89,6 +91,7 @@ Si el recuadro de la firma pisa el nombre impreso debajo, reduzca `y1` hasta jus
 - **Fechas:** `privado.hoy()` da la fecha de Colombia (UTC-5 fijo, sin horario de verano). Los días hábiles cuentan lunes a viernes sin festivos (`privado.dias_habiles_entre`).
 - **Comunicados:** tabla `comunicados` en Supabase. El sitio público los lee con una consulta REST directa (`cargarComunicados` en `comun.js`), sin cargar la librería; por eso `index.html` y `comunicados.html` permiten conectarse a Supabase. El visitante anónimo tiene una regla RLS propia: no puede evaluar funciones del esquema `privado`.
 - **Zonas reservables:** tabla `zonas_reservables` (turnos en JSON, anticipación en días hábiles, capacidad, reglas), editable desde el panel (pestaña Zonas). La página pública de zonas combina `web/datos/zonas.json` (descripción) con esa tabla para las entradas que tienen `zona_reservable` (`cargarZonas` en `comun.js`); si Supabase no responde, usa el texto del JSON.
+- **Cartera en el panel:** `js/cartera-admin.js` lee Excel/CSV en el navegador con SheetJS (versión fija desde `cdn.sheetjs.com`, permitido solo en `admin.html`), acepta nombres de columna alternativos, montos con formato colombiano y negativos entre paréntesis, y muestra la vista previa con los mismos chequeos que `importar_cartera`. Plantilla y ejemplo de prueba en `plantillas/`.
 - **Mantener activo:** `.github/workflows/mantener-activo.yml` consulta Supabase a diario (el plan gratuito pausa tras una semana sin uso).
 - **Correos:** SMTP de Gmail con contraseña de aplicación y plantillas en español: ver `docs/plantillas-correo.md`.
 
