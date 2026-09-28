@@ -180,8 +180,12 @@ begin
   perform pg_temp.base();
   total := total + 1; if not ok then fallas := array_append(fallas, '3g: se aceptó un archivo con nombre no aleatorio'); end if;
 
+  -- Supabase además bloquea con un error todo borrado directo por SQL (storage.protect_delete):
+  -- cualquiera de las dos cosas (error o nada borrado) sirve, lo importante es que el archivo siga ahí.
   perform pg_temp.como(u_p1);
-  delete from storage.objects where bucket_id = 'privados' and name = ruta_a;
+  begin
+    delete from storage.objects where bucket_id = 'privados' and name = ruta_a;
+  exception when others then null; end;
   perform pg_temp.base();
   select count(*) into n from storage.objects where bucket_id = 'privados' and name = ruta_a;
   total := total + 1; if n <> 1 then fallas := array_append(fallas, '3h: un propietario borró un archivo privado'); end if;

@@ -27,6 +27,18 @@ create table if not exists storage.objects (
   unique (bucket_id, name)
 );
 
+-- Como en Supabase: el borrado directo por SQL está prohibido; solo el servicio de Storage
+-- (que activa storage.allow_delete_query) puede borrar filas de storage.objects.
+create or replace function storage.protect_delete() returns trigger language plpgsql as $$
+begin
+  if coalesce(current_setting('storage.allow_delete_query', true), '') <> 'true' then
+    raise exception 'Direct deletion from storage tables is not allowed. Use the Storage API instead.' using errcode = '42501';
+  end if;
+  return old;
+end $$;
+drop trigger if exists protect_objects_delete on storage.objects;
+create trigger protect_objects_delete before delete on storage.objects for each statement execute function storage.protect_delete();
+
 alter table storage.objects enable row level security;
 alter table storage.buckets enable row level security;
 grant select, insert, update, delete on storage.objects to anon, authenticated, service_role;

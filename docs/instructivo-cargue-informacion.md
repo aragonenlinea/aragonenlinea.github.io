@@ -37,6 +37,7 @@ En Supabase → SQL Editor, **en este orden**:
 1. `supabase/006_limpiar_datos_prueba.sql` → borra las cuentas de prueba (`aragonenlinea.neiva+…`) con sus casas, Mi hogar, PQRS y reservas.
 2. `supabase/017_limpiar_cartera_finanzas_prueba.sql` → borra **toda** la cartera, presupuestos e informes del ejercicio. Al final debe mostrar **0** en todo.
 3. En el panel → **Comunicados**: elimine los comunicados de prueba que no deban quedar.
+4. En el panel → **Documentos**: **Retire** los documentos de prueba. Supabase no permite borrar archivos con SQL (por seguridad), así que el 017 no los toca: al retirarlos desde el panel se borra también el archivo.
 
 > Estos dos archivos **no se pueden deshacer**. Úselos solo una vez, antes de cargar la información real.
 
