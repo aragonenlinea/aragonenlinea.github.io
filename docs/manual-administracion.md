@@ -6,6 +6,8 @@
 
 Este manual es para la administración y el consejo. No hay que saber programar: todo se hace desde el navegador.
 
+**Para pasar de la prueba a la información real y para los cargues de cada mes (cartera, presupuesto, informes), use el [Instructivo de cargue de información](instructivo-cargue-informacion.md).**
+
 ---
 
 ## 1. Cómo funciona, en una frase

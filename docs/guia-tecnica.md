@@ -89,6 +89,7 @@ Si el recuadro de la firma pisa el nombre impreso debajo, reduzca `y1` hasta jus
   14. `014_pruebas_finanzas.sql`: 18 pruebas del módulo financiero (usa el año 2099).
   15. `015_tablero_cartera.sql`: `historial_cartera()`, totales de los últimos 24 cortes publicados (sin casas) para el tablero; la ven las cuentas activas, el consejo y la administración.
   16. `016_pruebas_tablero.sql`: 9 pruebas del tablero de cartera.
+  17. `017_limpiar_cartera_finanzas_prueba.sql`: borra toda la cartera, presupuestos e informes del ejercicio. Solo una vez, antes de cargar la información real (ver `docs/instructivo-cargue-informacion.md`).
   Los cambios futuros van en archivos nuevos (`005_...`), nunca editando los ya aplicados.
 - **Modelo:** `perfiles` une usuario, casa y rol (`propietario`, `arrendatario`, `administracion`, `consejo`). Una cuenta de propietario y una de arrendatario por casa (índices únicos). Los registros de Mi hogar pertenecen al perfil que los creó; un disparador los devuelve a *pendiente* ante cualquier cambio que no haga la administración. Las funciones `privado.*` alimentan las reglas RLS; las `public.*` son la API que llama el sitio y responden `{ok, mensaje}`.
 - **Códigos de invitación:** 8 caracteres sin letras ambiguas; solo se guarda su huella SHA-256; 10 intentos fallidos por hora como máximo.
