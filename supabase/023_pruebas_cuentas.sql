@@ -4,14 +4,14 @@
 -- Cómo usarlo: Supabase → SQL Editor → New query → pegar TODO → Run.
 -- Crea datos de PRUEBA y al final DESHACE TODO. El resultado sale en ROJO a propósito:
 --   "PRUEBAS CUENTAS: NN de NN correctas" → todo bien.
--- Requiere haber aplicado 001 a 022.
+-- Requiere haber aplicado 001 a 024.
 -- =====================================================================
 do $$
 declare
   u_admin  uuid := '00000000-0000-4000-8000-00000000a101';
-  u_admin2 uuid := '00000000-0000-4000-8000-00000000a102';   -- administración CON contraseña
-  u_cons   uuid := '00000000-0000-4000-8000-00000000a103';   -- consejo CON contraseña
-  u_p1     uuid := '00000000-0000-4000-8000-00000000a111';   -- propietario casa 1 (con contraseña, como los residentes)
+  u_admin2 uuid := '00000000-0000-4000-8000-00000000a102';   -- administración que entra CON contraseña
+  u_cons   uuid := '00000000-0000-4000-8000-00000000a103';   -- consejo que entra CON contraseña
+  u_p1     uuid := '00000000-0000-4000-8000-00000000a111';   -- propietario casa 1 (entra con contraseña, como los residentes)
   u_p1b    uuid := '00000000-0000-4000-8000-00000000a112';   -- otra persona que quiere ser propietaria de la casa 1
   u_x      uuid := '00000000-0000-4000-8000-00000000a199';
   perfil_p1 uuid; perfil_admin uuid;
@@ -34,6 +34,17 @@ begin
       end if;
     end $b$;
   $f$;
+  -- Sesión abierta con contraseña (Supabase lo anota en el dato "amr" del token).
+  execute $f$
+    create function pg_temp.como_clave(p_user uuid) returns void language plpgsql as $b$
+    begin
+      perform set_config('request.jwt.claims',
+        json_build_object('sub', p_user, 'role', 'authenticated', 'email', (select email from auth.users where id = p_user),
+                          'amr', json_build_array(json_build_object('method', 'password', 'timestamp', 1)))::text, true);
+      perform set_config('request.jwt.claim.sub', p_user::text, true);
+      set local role authenticated;
+    end $b$;
+  $f$;
   execute $f$
     create function pg_temp.base() returns void language plpgsql as $b$
     begin
@@ -52,8 +63,8 @@ begin
     (u_p1,     'pcta.casa1@aragon.test', 'authenticated', 'authenticated'),
     (u_p1b,    'pcta.casa1b@aragon.test', 'authenticated', 'authenticated'),
     (u_x,      'pcta.otro@aragon.test', 'authenticated', 'authenticated');
-  -- "Contraseña" de prueba (solo importa que no esté vacía).
-  update auth.users set encrypted_password = '$2a$10$contrasenaDePruebaNoReal' where id in (u_admin2, u_cons, u_p1);
+  -- Como hace Supabase: toda cuenta tiene por dentro una contraseña (aleatoria si se creó con código).
+  update auth.users set encrypted_password = '$2a$10$contrasenaAleatoriaDePrueba' where id in (u_admin, u_admin2, u_cons, u_p1);
   insert into public.perfiles (user_id, unidad_id, rol, estado, nombre, correo) values
     (u_admin, null, 'administracion', 'activo', 'Admin cuentas', 'pcta.admin@aragon.test'),
     (u_admin2, null, 'administracion', 'activo', 'Admin con clave', 'pcta.admin2@aragon.test'),
@@ -69,27 +80,37 @@ begin
   perform pg_temp.como(u_admin);
   r := public.mi_estado();
   perform pg_temp.base();
-  total := total + 1; if not (r ->> 'es_admin')::boolean or (r ->> 'tiene_contrasena')::boolean or not (r ->> 'institucional')::boolean then
-    fallas := array_append(fallas, '1a: la administración sin contraseña no quedó reconocida: ' || r::text); end if;
+  total := total + 1; if not (r ->> 'es_admin')::boolean or (r ->> 'sesion_con_contrasena')::boolean or not (r ->> 'institucional')::boolean then
+    fallas := array_append(fallas, '1a: la administración que entró con código no quedó reconocida: ' || r::text); end if;
 
-  perform pg_temp.como(u_admin2);
+  perform pg_temp.como_clave(u_admin2);
   r := public.mi_estado();
   select count(*) into n from public.perfiles where unidad_id = 1;
   perform pg_temp.base();
   total := total + 1; if (r ->> 'es_admin')::boolean or n <> 0 then
-    fallas := array_append(fallas, '1b: una cuenta de administración con contraseña conservó sus permisos'); end if;
+    fallas := array_append(fallas, '1b: la administración que entró con contraseña conservó sus permisos'); end if;
 
-  perform pg_temp.como(u_cons);
+  perform pg_temp.como_clave(u_cons);
   r := public.mi_estado();
   perform pg_temp.base();
-  total := total + 1; if (r ->> 'es_consejo')::boolean then fallas := array_append(fallas, '1c: una cuenta del consejo con contraseña conservó sus permisos'); end if;
+  total := total + 1; if (r ->> 'es_consejo')::boolean then fallas := array_append(fallas, '1c: el consejo que entró con contraseña conservó sus permisos'); end if;
 
-  perform pg_temp.como(u_p1);
+  perform pg_temp.como_clave(u_p1);
   r := public.mi_estado();
   select count(*) into n from public.habitantes where unidad_id = 1;
   perform pg_temp.base();
   total := total + 1; if not (r ->> 'tiene_contrasena')::boolean or n <> 1 then
-    fallas := array_append(fallas, '1d: el propietario con contraseña perdió el acceso a su casa'); end if;
+    fallas := array_append(fallas, '1d: el propietario que entró con contraseña perdió el acceso a su casa'); end if;
+
+  -- Constancia de contraseña creada (para no volver a invitarlo a crearla).
+  perform pg_temp.como(u_x);
+  r := public.mi_estado();
+  ok := not (r ->> 'tiene_contrasena')::boolean;
+  r := public.registrar_contrasena();
+  r := public.mi_estado();
+  perform pg_temp.base();
+  total := total + 1; if not ok or not (r ->> 'tiene_contrasena')::boolean then
+    fallas := array_append(fallas, '1e: no quedó la constancia de la contraseña creada'); end if;
 
   -- ---------- 2. Cuentas separadas ----------
   begin
@@ -155,7 +176,9 @@ begin
   perform pg_temp.como(u_admin);
   r := public.admin_suspender_perfil(perfil_p1, 'Segunda suspensión de prueba');
   perform pg_temp.base();
-  insert into public.perfiles (user_id, unidad_id, rol, estado, nombre, correo) values (u_p1b, 1, 'propietario', 'activo', 'Nuevo propietario', 'pcta.casa1b@aragon.test');
+  begin   -- si la suspensión anterior falló, esto choca: la prueba 3h lo reporta en vez de detenerse
+    insert into public.perfiles (user_id, unidad_id, rol, estado, nombre, correo) values (u_p1b, 1, 'propietario', 'activo', 'Nuevo propietario', 'pcta.casa1b@aragon.test');
+  exception when unique_violation then null; end;
   perform pg_temp.como(u_admin);
   r := public.admin_reactivar_perfil(perfil_p1);
   perform pg_temp.base();

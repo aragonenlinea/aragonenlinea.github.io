@@ -518,8 +518,8 @@ async function iniciar() {
     estado = await rpc("mi_estado");
   } catch (err) { aviso(caja, err.message, "error"); return; }
   if (!estado.es_admin && !estado.es_consejo) {
-    caja.innerHTML = estado.institucional && estado.tiene_contrasena
-      ? `<div class="panel error"><h1>Cuenta sin permisos</h1><p>Esta cuenta de administración o del consejo tiene una contraseña. Por seguridad, las cuentas institucionales solo funcionan cuando entran con el código al correo y no tienen contraseña, así que quedó sin permisos.</p><p>Pídale al administrador de la página que le quite la contraseña (guía técnica, "Cuenta institucional con contraseña").</p></div>`
+    caja.innerHTML = estado.institucional && estado.sesion_con_contrasena
+      ? `<div class="panel error"><h1>Entre con el código al correo</h1><p>Usted entró con contraseña. Por seguridad, las cuentas de administración y del consejo solo tienen permisos cuando se entra con el código que llega al correo institucional.</p><p>Cierre sesión y, en Ingresar, use <b>Entrar con código al correo</b>.</p><button class="btn" type="button" data-salir>Cerrar sesión</button></div>`
       : `<div class="panel"><h1>Sin acceso</h1><p>Esta sección es para la administración y el consejo, con su cuenta institucional.</p><a class="btn" href="mi-hogar.html">Ir a Mi hogar</a></div>`;
     return;
   }

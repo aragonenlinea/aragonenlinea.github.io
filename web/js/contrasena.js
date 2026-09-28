@@ -1,7 +1,7 @@
 // Crear o cambiar la contraseña de un residente.
 // Llega aquí: (1) desde Mi hogar, ya con sesión, la primera vez; (2) desde "Mi contraseña";
 // (3) desde el enlace de "¿Olvidó su contraseña?" que envía Supabase (abre la sesión solo).
-// Las cuentas de administración y consejo no usan contraseña: si tuvieran, pierden sus permisos.
+// Las cuentas de administración y consejo no usan contraseña: si entran con una, no tienen permisos.
 import { montarPagina, esc } from "./comun.js";
 import { sb, sesionActual, rpc, mensajeError, aviso } from "./supabase.js";
 import { barraCuenta, esInstitucional } from "./cuenta.js";
@@ -37,6 +37,7 @@ function formulario(estado) {
     const { error } = await sb.auth.updateUser({ password: nueva });
     b.disabled = false;
     if (error) { aviso(msg, mensajeError(error), "error"); return; }
+    try { await rpc("registrar_contrasena"); } catch (e) { /* solo sirve para no volver a mostrar el aviso de Mi hogar */ }
     f.innerHTML = `<div class="aviso ok">Contraseña guardada. Desde ahora entre con su correo y su contraseña.</div>
       <div class="acciones-form"><a class="btn" href="mi-hogar.html">Ir a Mi hogar</a></div>`;
   });
@@ -56,7 +57,7 @@ async function iniciar() {
     if (esInstitucional(estado)) {
       caja.innerHTML = barraCuenta(estado, "Contraseña", "contrasena.html") + `<div class="panel nota angosto">
         <p>Las cuentas de <b>administración y del consejo</b> no usan contraseña: entran siempre con el código que llega al correo institucional.</p>
-        <p>Así, aunque alguien averigüe una contraseña, no puede entrar al panel sin acceso a ese correo. Si esta cuenta tuviera contraseña, perdería sus permisos.</p>
+        <p>Así, aunque alguien averigüe una contraseña, no puede entrar al panel sin acceso a ese correo: una sesión abierta con contraseña no tiene permisos de administración ni de consejo.</p>
         <a class="btn" href="admin.html">Ir al panel</a></div>`;
       return;
     }
