@@ -53,24 +53,71 @@ export async function revisarPdf(archivo) {
   const bytes = await doc.save({ useObjectStreams: false });
 
   // 2. Texto de cada página
+  const { hallazgos, paginasImagen, paginas } = await buscarDatos(bytes);
+  return { bytes, paginas, hallazgos, paginasSinTexto: paginasImagen.length, paginasImagen, metadatos };
+}
+
+export async function cargarPdfjs() {
   const pdfjs = await import(`${PDFJS}/pdf.min.mjs`);
   pdfjs.GlobalWorkerOptions.workerSrc = `${PDFJS}/pdf.worker.min.mjs`;
+  return pdfjs;
+}
+
+// Busca correos, celulares y cédulas en el texto de cada página y guarda dónde están
+// (recuadros en coordenadas de la página a escala 1, con el origen arriba a la izquierda),
+// para poder taparlos después. Las páginas casi sin texto se reportan como imagen.
+const regla = document.createElement("canvas").getContext("2d");
+regla.font = "100px Arial, Helvetica, sans-serif";
+const medir = s => regla.measureText(s).width;
+
+export async function buscarDatos(bytes) {
+  const pdfjs = await cargarPdfjs();
   const tarea = pdfjs.getDocument({ data: bytes.slice(), isEvalSupported: false });
   const pdf = await tarea.promise;
   const ok = await listaPermitidos();
-  const hallazgos = [];
-  let paginasSinTexto = 0;
+  const hallazgos = [], paginasImagen = [];
   for (let n = 1; n <= pdf.numPages; n++) {
-    const contenido = await (await pdf.getPage(n)).getTextContent();
-    const texto = contenido.items.map(i => i.str + (i.hasEOL ? "\n" : " ")).join("");
-    if (texto.replace(/\s/g, "").length < 20) { paginasSinTexto++; continue; }
-    const vistos = new Set();
-    const agregar = (tipo, valor) => { const k = tipo + valor; if (!vistos.has(k)) { vistos.add(k); hallazgos.push({ pagina: n, tipo, valor }); } };
-    for (const [c] of texto.matchAll(CORREO)) if (!ok.correos.has(c.toLowerCase())) agregar("correo", c);
-    for (const [t] of texto.matchAll(CELULAR)) if (!ok.telefonos.has(digitos(t))) agregar("celular", t.trim());
-    for (const m of texto.matchAll(CEDULA)) if (!ok.numeros.has(digitos(m[1]))) agregar("cédula", m[0].replace(/\s+/g, " ").trim());
+    const pagina = await pdf.getPage(n);
+    const vista = pagina.getViewport({ scale: 1 });
+    const items = (await pagina.getTextContent()).items;
+    // Texto de la página y en qué posición del texto empieza cada pedazo.
+    let texto = "";
+    const rangos = [];
+    for (const it of items) {
+      rangos.push({ ini: texto.length, fin: texto.length + it.str.length, it });
+      texto += it.str + (it.hasEOL ? "\n" : " ");
+    }
+    if (texto.replace(/\s/g, "").length < 20) { paginasImagen.push(n); continue; }
+    // Recuadro del texto entre las posiciones ini y fin. Dentro de cada pedazo, la posición se estima
+    // midiendo el texto con una letra común (las letras no ocupan todas lo mismo) y con un margen.
+    const cajas = (ini, fin) => rangos.filter(r => r.fin > ini && r.ini < fin && r.it.str.length).map(r => {
+      const [a, b, c, d, e, f] = r.it.transform;
+      const alto = Math.hypot(c, d) || r.it.height || 10;
+      const ancho = r.it.width || alto * r.it.str.length * 0.5;
+      const total = medir(r.it.str) || 1;
+      const x1 = e + ancho * medir(r.it.str.slice(0, Math.max(ini, r.ini) - r.ini)) / total;
+      const x2 = e + ancho * medir(r.it.str.slice(0, Math.min(fin, r.fin) - r.ini)) / total;
+      const margen = alto * 0.35;
+      // Esquinas del recuadro (en PDF el origen está abajo; en pantalla, arriba). PDF.js 6 solo convierte puntos.
+      const [p, q] = vista.convertToViewportPoint(x1 - margen, f - alto * 0.3);
+      const [s, u] = vista.convertToViewportPoint(x2 + margen, f + alto * 1.05);
+      return [Math.min(p, s), Math.min(q, u), Math.max(p, s), Math.max(q, u)];
+    });
+    const porValor = new Map();
+    const agregar = (tipo, valor, ini, fin) => {
+      const k = tipo + "|" + valor;
+      if (!porValor.has(k)) { const h = { pagina: n, tipo, valor, cajas: [] }; porValor.set(k, h); hallazgos.push(h); }
+      porValor.get(k).cajas.push(...cajas(ini, fin));
+    };
+    for (const m of texto.matchAll(CORREO)) if (!ok.correos.has(m[0].toLowerCase())) agregar("correo", m[0], m.index, m.index + m[0].length);
+    for (const m of texto.matchAll(CELULAR)) if (!ok.telefonos.has(digitos(m[0]))) agregar("celular", m[0].trim(), m.index, m.index + m[0].length);
+    for (const m of texto.matchAll(CEDULA)) {
+      if (ok.numeros.has(digitos(m[1]))) continue;
+      const ini = m.index + m[0].lastIndexOf(m[1]);
+      agregar("cédula", m[0].replace(/\s+/g, " ").trim(), ini, ini + m[1].length);
+    }
   }
   const paginas = pdf.numPages;
   await tarea.destroy();
-  return { bytes, paginas, hallazgos, paginasSinTexto, metadatos };
+  return { hallazgos, paginasImagen, paginas };
 }

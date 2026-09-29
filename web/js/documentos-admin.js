@@ -6,8 +6,9 @@ import { esc, fecha, hoyISO } from "./comun.js";
 import { sb, rpc, consulta, aviso } from "./supabase.js";
 import { CATEGORIAS_DOC, tamanoArchivo } from "./cuenta.js";
 import { revisarPdf } from "./revisar-pdf.js";
+import { abrirTapado } from "./tapar-pdf.js";
 
-let previa = null;   // { nombre, bytes, paginas, hallazgos, paginasSinTexto, metadatos }
+let previa = null;   // { nombre, bytes, paginas, hallazgos, paginasImagen, metadatos, tapadas, recuadros, original }
 
 export async function vistaDocumentos() {
   const docs = await consulta(sb.from("documentos_privados")
@@ -25,12 +26,13 @@ export async function vistaDocumentos() {
       <h2>Antes de subir</h2>
       <ul class="lista-simple">
         <li>Tape <b>nombres de deudores</b> (por ejemplo, el anexo de cartera de los estados financieros), cédulas, teléfonos, correos, direcciones, firmas y cuentas bancarias de personas.</li>
-        <li>Use <code>herramientas/tapar_pdf.py</code> o pídale el documento ya tapado a quien lo elabora. Tachar con un marcador en el PDF <b>no</b> sirve: el texto sigue debajo.</li>
+        <li>Use el botón <b>Tapar datos</b> que aparece al cargar el PDF: marque con recuadros lo que se debe ocultar y la plataforma genera un PDF donde eso ya no existe. Tachar con un marcador en otro programa <b>no</b> sirve: el texto sigue debajo.</li>
         <li>La plataforma borra sola los datos ocultos del archivo (autor, programa) y le avisa si encuentra correos, celulares o cédulas. Los nombres y las firmas no los puede detectar: esa revisión es suya.</li>
         <li>Los arrendatarios no ven estos documentos.</li>
       </ul>
     </div>
   </div>
+  <div id="doc-tapar" class="panel bloque" hidden></div>
   <div class="panel bloque"><h2>Documentos</h2><div class="tablewrap"><table>
     <thead><tr><th>Fecha</th><th>Título</th><th>Categoría</th><th>Lo ven</th><th class="num">Págs.</th><th class="num">Tamaño</th><th>Subido</th><th>Estado</th><th></th></tr></thead>
     <tbody>${docs.map(d => `<tr><td>${fecha(d.fecha)}</td><td>${esc(d.titulo)}${d.hallazgos ? ` <span class="pill p-info" title="Posibles datos personales revisados y confirmados al publicar">${d.hallazgos} revisado(s)</span>` : ""}</td>
@@ -46,14 +48,19 @@ export async function vistaDocumentos() {
 
 function htmlPrevia() {
   const p = previa;
-  const escaneado = p.paginasSinTexto === p.paginas;
+  const tapadas = p.tapadas || [];
+  const imagenes = (p.paginasImagen || []).filter(n => !tapadas.includes(n));   // escaneadas, no tapadas aquí
+  const escaneado = imagenes.length === p.paginas;
   return `<div class="resumen-import"><div><b>${esc(p.nombre)}</b></div><div>${p.paginas} página(s)</div><div>${tamanoArchivo(p.bytes.length)}</div></div>
     ${p.metadatos.length ? `<div class="aviso ok">Se borraron los datos ocultos del archivo (${esc(p.metadatos.join(" · "))}).</div>` : ""}
-    ${p.hallazgos.length ? `<div class="aviso error"><b>Posibles datos personales (${p.hallazgos.length}).</b> Revise cada uno. Si es un dato de una persona, tápelo y vuelva a cargar el archivo.
+    ${tapadas.length ? `<div class="aviso ok">Se taparon ${p.recuadros} recuadro(s) en ${tapadas.length === 1 ? "la página" : "las páginas"} ${tapadas.join(", ")}. ${tapadas.length === 1 ? "Esa página quedó" : "Esas páginas quedaron"} como imagen: lo tapado ya no existe en el archivo.
+        <div class="row"><button class="btn sm ghost" type="button" data-tapar-doc>Tapar algo más</button><button class="btn sm ghost" type="button" data-deshacer-tapado>Deshacer el tapado</button></div></div>` : ""}
+    ${p.hallazgos.length ? `<div class="aviso error"><b>Posibles datos personales (${p.hallazgos.length}).</b> Revise cada uno. Si es un dato de una persona, use <b>Tapar datos</b>.
         <ul class="lista-simple">${p.hallazgos.slice(0, 30).map(h => `<li>Página ${h.pagina}: ${esc(h.tipo)} «${esc(h.valor)}»</li>`).join("")}</ul>
         ${p.hallazgos.length > 30 ? `<p>… y ${p.hallazgos.length - 30} más.</p>` : ""}</div>`
-      : `<div class="aviso ok">No se encontraron correos, celulares ni cédulas${p.paginasSinTexto ? " en las páginas con texto" : ""}.</div>`}
-    ${p.paginasSinTexto ? `<div class="aviso info">${escaneado ? "El PDF es escaneado (imagen): la plataforma no puede leerlo." : `${p.paginasSinTexto} página(s) son imagen y no se pudieron leer.`} Revíselo página por página antes de publicar.</div>` : ""}
+      : `<div class="aviso ok">No se encontraron correos, celulares ni cédulas${imagenes.length ? " en las páginas con texto" : ""}.</div>`}
+    ${imagenes.length ? `<div class="aviso info">${escaneado ? "El PDF es escaneado (imagen): la plataforma no puede leerlo." : `${imagenes.length} página(s) son imagen y no se pudieron leer.`} Revíselo página por página antes de publicar.</div>` : ""}
+    ${tapadas.length ? "" : `<div class="acciones-form"><button class="btn ${p.hallazgos.length ? "" : "ghost"}" type="button" data-tapar-doc>Tapar datos${p.hallazgos.length ? "" : " (nombres, firmas…)"}</button></div>`}
     <form id="fDocumento" novalidate>
       <label for="doc-titulo">Título</label>
       <input id="doc-titulo" name="titulo" maxlength="150" required placeholder="Ej.: Acta de asamblea ordinaria 2026">
@@ -68,7 +75,7 @@ function htmlPrevia() {
       <textarea id="doc-desc" name="descripcion" maxlength="500" placeholder="Ej.: Incluye el informe de gestión y la aprobación del presupuesto."></textarea>
       <label class="check"><input type="checkbox" name="revisado"> Revisé el documento y se taparon los datos personales (nombres de deudores, cédulas, teléfonos, firmas, cuentas bancarias).</label>
       ${p.hallazgos.length ? `<label class="check"><input type="checkbox" name="hallazgos_ok"> Revisé uno por uno los ${p.hallazgos.length} posibles datos personales de arriba: ninguno es de una persona.</label>` : ""}
-      ${p.paginasSinTexto ? `<label class="check"><input type="checkbox" name="imagenes_ok"> Revisé a ojo las páginas que son imagen.</label>` : ""}
+      ${imagenes.length ? `<label class="check"><input type="checkbox" name="imagenes_ok"> Revisé a ojo las páginas que son imagen.</label>` : ""}
       <div class="acciones-form"><button class="btn" type="submit">Publicar documento</button>
         <button class="btn ghost" type="button" data-descartar-doc>Descartar</button></div>
     </form>`;
@@ -92,8 +99,38 @@ export async function manejarDocumentosCambio(e, msg) {
   return true;
 }
 
+// Abre el editor de tapado a todo el ancho y, al aplicar, vuelve a revisar el PDF resultante.
+async function tapar() {
+  const zona = document.getElementById("doc-tapar");
+  const cont = document.getElementById("doc-previa");
+  zona.hidden = false;
+  zona.scrollIntoView({ behavior: "smooth", block: "start" });
+  zona.innerHTML = `<p class="m">Abriendo el documento…</p>`;
+  const pendientes = previa.tapadas?.length ? [] : previa.hallazgos;   // la primera vez, los hallazgos vienen marcados
+  await abrirTapado(zona, previa.bytes, pendientes, async res => {
+    zona.hidden = true; zona.innerHTML = "";
+    if (!res) { cont.innerHTML = htmlPrevia(); return; }
+    aviso(cont, "Revisando el PDF tapado…");
+    const r = await revisarPdf(new File([res.bytes], previa.nombre, { type: "application/pdf" }));
+    previa = { ...previa, ...r, metadatos: previa.metadatos, original: previa.original || previa.bytes,
+      tapadas: [...new Set([...(previa.tapadas || []), ...res.paginasTapadas])].sort((a, b) => a - b),
+      recuadros: (previa.recuadros || 0) + res.recuadros };
+    cont.innerHTML = htmlPrevia();
+    cont.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 export async function manejarDocumentosClic(b, msg, repintar) {
   if (b.hasAttribute("data-descartar-doc")) { previa = null; await repintar(); return true; }
+  if (b.hasAttribute("data-tapar-doc")) { await tapar(); return true; }
+  if (b.hasAttribute("data-deshacer-tapado")) {
+    const cont = document.getElementById("doc-previa");
+    aviso(cont, "Volviendo al documento original…");
+    const r = await revisarPdf(new File([previa.original], previa.nombre, { type: "application/pdf" }));
+    previa = { nombre: previa.nombre, ...r, metadatos: previa.metadatos };
+    cont.innerHTML = htmlPrevia();
+    return true;
+  }
   if (b.dataset.retirarDoc) {
     if (!confirm("¿Retirar este documento? Nadie lo volverá a ver y el archivo se borra. El registro queda en el historial.")) return true;
     const r = await rpc("retirar_documento", { p_id: +b.dataset.retirarDoc });

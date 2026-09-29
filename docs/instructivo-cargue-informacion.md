@@ -115,7 +115,7 @@ Opcionales (columnas amarillas) para el cuadro de antigüedad: `mora_1_30, mora_
 
 ### 2.4 Documentos del conjunto (cuando haya actas, estados financieros o informes)
 
-Panel → **Documentos** → elegir el PDF → revisar lo que la plataforma encuentre → título, categoría, fecha y quién lo ve (propietarios o **solo consejo**) → confirmar la revisión → **Publicar documento**. Los estados financieros se suben con el **anexo de cartera tapado** (sin nombres de deudores). Detalle en el *Manual de administración*, sección 13.
+Panel → **Documentos** → elegir el PDF → revisar lo que la plataforma encuentre → **Tapar datos** si hay algo de personas (nombres, cédulas, teléfonos, firmas) → título, categoría, fecha y quién lo ve (propietarios o **solo consejo**) → confirmar la revisión → **Publicar documento**. Los estados financieros se suben con el **anexo de cartera tapado** (sin nombres de deudores). Detalle en el *Manual de administración*, sección 13.
 
 ## Parte 3 · Si algo sale mal
 

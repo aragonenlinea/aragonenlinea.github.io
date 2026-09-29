@@ -251,12 +251,21 @@ Actas de asamblea y de consejo, estados financieros, informes de gestión, contr
 
 1. **Borra sola los datos ocultos** del archivo (autor, título, programa con que se hizo).
 2. **Busca posibles datos personales**: correos y celulares que no sean del conjunto, y cédulas escritas junto a "C.C.", "cédula", "identificado con"… (no marca las cifras en pesos).
-3. Si encuentra algo, lo muestra con la página. Si es de una persona, **tápelo** y vuelva a cargar el archivo. Si no lo es (por ejemplo, el celular institucional), marque que lo revisó uno por uno: el número de hallazgos revisados queda registrado.
+3. Si encuentra algo, lo muestra con la página. Si es de una persona, use **Tapar datos** (abajo). Si no lo es (por ejemplo, el celular de una empresa), marque que lo revisó uno por uno: el número de hallazgos revisados queda registrado.
 4. Si el PDF es escaneado (imagen), la plataforma no lo puede leer: revíselo a ojo.
 
 Luego escriba título, categoría, fecha del documento y quién lo ve, marque la confirmación de revisión y **Publicar documento**. El archivo se guarda con un nombre aleatorio en un espacio privado de Supabase: cada vez que alguien lo abre, se crea un enlace que vence en 10 minutos.
 
-**Lo que la plataforma no detecta:** nombres de personas, firmas, fotos y números de cuenta. Esa revisión es suya. En los estados financieros, **tape los nombres del anexo de cartera** antes de subirlos (sección 5 y `herramientas/tapar_pdf.py`). Tachar con un marcador de PDF no sirve: el texto sigue debajo.
+**Tapar datos (en el mismo panel, sin instalar nada):**
+
+1. Después de cargar el PDF, presione **Tapar datos**. Se abren las páginas con los datos encontrados **ya marcados** en negro.
+2. **Arrastre el mouse** sobre todo lo demás que no se deba publicar: nombres de personas (por ejemplo, los deudores del anexo de cartera), firmas, fotos, números de cuenta. Para **quitar** un recuadro, haga clic sobre él.
+3. **Aplicar tapado.** La plataforma arma un PDF nuevo: las páginas con recuadros se convierten en imagen con el negro encima, así que **lo tapado deja de existir en el archivo** (no queda escondido debajo). Las demás páginas quedan iguales.
+4. El PDF tapado se revisa otra vez solo. Puede **Tapar algo más** o **Deshacer el tapado** (vuelve al original). Todo ocurre en su computador: el original sin tapar nunca se sube.
+
+En las páginas tapadas ya no se puede seleccionar ni buscar texto, y el archivo pesa un poco más. Tachar con un marcador en otro programa **no** sirve: el texto sigue debajo.
+
+**Lo que la plataforma no detecta sola:** nombres de personas, firmas, fotos y números de cuenta. Esa revisión es suya, con la herramienta de tapar. (`herramientas/tapar_pdf.py` sigue disponible para el administrador de la página: tapa por palabras y en lote.)
 
 **Retirar:** en la lista, *Retirar* oculta el documento de inmediato y borra el archivo; el registro queda en el historial.
 
