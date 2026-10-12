@@ -284,7 +284,7 @@ const sumar = (f, per) => { if (!f) return null; const x = new Date(f + "T00:00:
 function vistaObligaciones() {
   const activas = d.obligaciones.filter(o => o.activa);
   return `<div class="row espacio"><h2>Calendario de obligaciones</h2>${esAdmin() ? `<button class="btn sm" type="button" data-nuevo="obligacion">Nueva obligación</button>` : ""}</div>
-    <p class="m">Precargadas las del RPH y la Ley 675. Las fechas de las pólizas están en <a href="proveedores.html">Proveedores y pólizas</a>.</p>
+    <p class="m">Precargadas las del RPH y la Ley 675. Las fechas de las pólizas están en <a href="polizas.html">Pólizas</a>.</p>
     ${edicion?.tipo === "obligacion" ? formObligacion() : ""}
     <div class="tablewrap"><table><thead><tr><th>Obligación</th><th>Fuente</th><th>Responsable</th><th>Próxima fecha</th><th>Última vez</th>${esAdmin() ? "<th></th>" : ""}</tr></thead><tbody>${activas.map(o => {
       const s = o.proxima_fecha ? semaforo(o.proxima_fecha) : null;

@@ -37,7 +37,7 @@ export function barraCuenta(estado, titulo, actual) {
   const boton = (h, t) => `<a class="btn sm ${h === actual ? "" : "ghost"}" href="${h}" ${h === actual ? 'aria-current="page"' : ""}>${t}</a>`;
   const nav = SECCIONES.filter(([h]) => !institucional || GENERALES.includes(h)).map(([h, t]) => boton(h, t)).join("");
   const panel = estado.es_admin || estado.es_consejo
-    ? boton("consejo.html", "Mesa del Consejo") + boton("proveedores.html", "Proveedores y pólizas")
+    ? boton("consejo.html", "Mesa del Consejo") + boton("polizas.html", "Pólizas") + boton("proveedores.html", "Proveedores y contratos")
       + boton("admin.html", estado.es_admin ? "Panel de administración" : "Censo del conjunto") : "";
   const clave = institucional ? "" : boton("contrasena.html", "Mi contraseña");
   return `<div class="cuenta-barra no-imprimir">

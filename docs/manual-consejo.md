@@ -13,7 +13,8 @@ Para los integrantes del consejo (principales y suplentes). Todo se basa en el R
 En el menú de su cuenta:
 
 - **Mesa del Consejo:** reuniones, informe mensual del administrador, solicitudes de autorización, compromisos, obligaciones e integrantes. La pestaña **Pendientes** resume lo que requiere atención.
-- **Proveedores y pólizas:** contratos, pólizas y sus vencimientos.
+- **Pólizas:** pólizas del conjunto y de los contratistas, con el cuadro «Garantías exigidas vs. pólizas contratadas» (Ley 675, RPH y exigencias del conjunto) y sus vencimientos.
+- **Proveedores y contratos:** proveedores, sus documentos (RUT, seguridad social…) y los contratos con sus vencimientos.
 - **Informes financieros** y **Documentos** (incluidos los marcados «solo consejo»).
 - **Censo del conjunto:** resumen de las 40 casas, sin datos personales.
 

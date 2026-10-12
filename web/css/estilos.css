@@ -410,3 +410,10 @@ tr.fila-detalle > td{background:var(--bg);padding:14px}
 .docs-proveedor li{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .docs-proveedor-form{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 14px}
 .docs-proveedor-form legend{font-weight:700;padding:0 6px}
+
+/* Pólizas: garantías exigidas, coberturas y subida de PDF en formularios */
+.tabla-garantias td:first-child{min-width:180px}
+.fila-cobertura{border-bottom:1px dashed var(--line);padding-bottom:8px;margin-bottom:8px}
+.fila-cobertura .row{flex-wrap:nowrap}
+.subida{border:1px dashed var(--line);border-radius:var(--r-sm);padding:10px 14px;margin-top:8px}
+.bloque-sm h3{margin:0}

@@ -4,7 +4,7 @@ import { sb, exigirSesion, rpc, consulta, aviso, pillEstado, datosForm } from ".
 import { barraCuenta, pillPqrs, pillReserva, fechaHora, diasHabilesDesde } from "./cuenta.js";
 import { vistaCartera, indicadores as indicadoresCartera, manejarCarteraCambio, manejarCarteraEntrada, manejarCarteraClic, manejarCarteraEnvio } from "./cartera-admin.js";
 import { dibujar, activarRecuadros } from "./graficos.js";
-import { vistaProveedores, resumenProveedores, manejarProveedoresClic, manejarProveedoresEnvio, manejarProveedoresCambio } from "./proveedores-admin.js";
+import { vistaPolizas, vistaProveedores, resumenProveedores, despuesDePintar as despuesProveedores, manejarProveedoresClic, manejarProveedoresEnvio, manejarProveedoresCambio } from "./proveedores-admin.js";
 import { vistaDocumentos, manejarDocumentosCambio, manejarDocumentosClic, manejarDocumentosEnvio } from "./documentos-admin.js";
 import { vistaFinanzas, manejarFinanzasCambio, manejarFinanzasEntrada, manejarFinanzasClic, manejarFinanzasEnvio } from "./finanzas-admin.js";
 
@@ -21,7 +21,7 @@ const ROL = { propietario: "Propietario", arrendatario: "Arrendatario", administ
 
 function encabezado() {
   const tabs = estado.es_admin
-    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"], ["finanzas", "Finanzas"], ["documentos", "Documentos"], ["proveedores", "Proveedores y pólizas"],
+    ? [["pendientes", "Pendientes"], ["pqrs", "PQRS"], ["reservas", "Reservas"], ["zonas", "Zonas"], ["comunicados", "Comunicados"], ["cartera", "Cartera"], ["finanzas", "Finanzas"], ["documentos", "Documentos"], ["polizas", "Pólizas"], ["proveedores", "Proveedores y contratos"],
        ["censo", "Censo"], ["codigos", "Códigos de invitación"], ["cuentas", "Cuentas"]]
     : [["censo", "Censo"]];
   return `${barraCuenta(estado, estado.es_admin ? "Panel de administración" : "Censo del conjunto", "admin.html")}
@@ -314,9 +314,10 @@ async function pintarPestana() {
   cont.innerHTML = `<p class="m">Cargando…</p>`;
   try {
     const vistas = { pendientes: vistaPendientes, pqrs: vistaPqrs, reservas: vistaReservas, zonas: vistaZonas, comunicados: vistaComunicados, cartera: vistaCartera, finanzas: vistaFinanzas, documentos: vistaDocumentos,
-                     censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas, proveedores: vistaProveedores };
+                     censo: vistaCenso, codigos: vistaCodigos, cuentas: vistaCuentas, polizas: vistaPolizas, proveedores: vistaProveedores };
     cont.innerHTML = await vistas[pestana]();
     dibujar(cont);
+    despuesProveedores(cont);
   } catch (err) {
     aviso(cont, err.message, "error");
   }

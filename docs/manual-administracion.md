@@ -284,22 +284,37 @@ En las páginas tapadas ya no se puede seleccionar ni buscar texto, y el archivo
 - **Retirar**: definitivo (venta de la casa, fin del contrato). También sirve para una cuenta suspendida.
 - Para dar acceso a un consejero: primero él entra una vez al sitio **con el correo que usará solo para el consejo**; luego se corre `supabase/004_primer_administrador.sql` con ese correo.
 
-## 15. Proveedores, contratos y pólizas
+## 15. Pólizas, proveedores y contratos
 
-Herramienta de control para el **consejo y la administración** (nadie más la ve). El consejo la consulta en *Mi cuenta → Proveedores y pólizas*; la administración la mantiene en **Panel → Proveedores y pólizas**.
+Herramienta de control para el **consejo y la administración** (nadie más la ve). Son dos pestañas del panel: **Pólizas** y **Proveedores y contratos**. El consejo las consulta (sin editar) en *Mi cuenta → Pólizas* y *Mi cuenta → Proveedores y contratos*.
 
-- **Proveedores:** empresa (con NIT y contacto de la empresa) o **persona natural**, que se registra **solo por el servicio** (por ejemplo, "Mantenimiento de piscina"): la plataforma no guarda su nombre, cédula ni teléfono; esos datos quedan en el contrato físico.
-- **Documentos del proveedor:** RUT, Cámara de Comercio, planilla de seguridad social (PILA), licencias o permisos (por ejemplo, la de la Superintendencia de Vigilancia para empresas de seguridad), experiencia o referencias. Se suben en **Documentos** con la categoría **«Proveedores»** (de preferencia «solo consejo») y luego, en **Editar** el proveedor, se agregan con su tipo y, si aplica, su **fecha de vencimiento**. Un documento vencido o que vence en 30 días aparece en los avisos. No se guardan certificados bancarios.
-- **Contratos:** proveedor, objeto, inicio y terminación, valor mensual y total, **rubro del presupuesto** (junto al contrato se ve cuánto se ha ejecutado de ese rubro en el año), quién supervisa, pólizas exigidas al contratista y el **PDF del contrato**.
-- **Pólizas:** del conjunto o de un contratista: tipo, aseguradora, número, valor asegurado, prima, vigencia y PDF.
-- **PDF:** primero se sube en la pestaña **Documentos** (con Tapar datos y el sello «Original firmado»), de preferencia como «solo consejo»; luego se elige en el contrato o la póliza.
-- **Nada se borra:** un proveedor se marca *inactivo*; un contrato, *terminado* o *anulado*; una póliza, *anulada*.
-- **Salario mínimo:** escríbalo cada año (decreto del Gobierno) en el recuadro de Avisos; con él se revisa que la póliza de manejo cubra 4 salarios mínimos (RPH art. 63).
+**Subir documentos desde el mismo formulario.** En la póliza, el contrato y el proveedor hay un recuadro para subir el PDF ahí mismo. Pasa por lo mismo que en la pestaña Documentos: se borran los datos ocultos, se buscan correos, celulares y cédulas, se puede usar **Tapar datos y firmas** (recuadro negro o sello «Original firmado»), hay que marcar que se revisó y queda guardado en Documentos como «solo consejo». También se puede elegir un PDF que ya esté en Documentos.
+
+### Pestaña Pólizas
+
+- **Registrar póliza:** tipo, aseguradora, número, vigencia, valor total, prima, si es del conjunto o de un contratista, y el PDF.
+- **Aseguradora:** se elige de la lista. Si es nueva, elija *Otra aseguradora (registrarla)* y escriba nombre, NIT y contacto: queda guardada en la base general de proveedores con el servicio «Seguros». Al guardar una póliza nueva, el formulario sigue abierto para subir los **documentos de la aseguradora** (RUT, Cámara de Comercio…).
+- **Coberturas:** copie de la carátula cada amparo con su valor asegurado (incendio, terremoto, actos malintencionados, terrorismo, manejo, cumplimiento, salarios y prestaciones, responsabilidad civil…). Con ellos se arma el cuadro de garantías. Las pólizas viejas sin coberturas se comparan según su tipo, con su valor total.
+- **Salario mínimo y avalúo:** escriba cada año el salario mínimo (decreto del Gobierno) y el valor y la fecha del último avalúo de los bienes comunes. Sin ellos el cuadro dice «Sin dato».
+- **Cuadro «Garantías exigidas vs. pólizas contratadas»:** una tabla para las pólizas del conjunto y una para cada contratista con contrato vigente. Por cada garantía muestra el resultado (**Cumple**, **No cumple** con lo que falta, **Sin dato**, **No contratada** si solo es recomendada), lo exigido en pesos, lo contratado y la fuente.
+- **Garantías exigidas** (precargadas, con su fuente):
+  - Conjunto: incendio y terremoto por el 100 % del avalúo (Ley 675 art. 15; RPH art. 34); actos malintencionados y terrorismo (RPH art. 34); manejo por 4 salarios mínimos (RPH art. 63); y las recomendadas del RPH art. 34 parágrafo 2 (responsabilidad civil, sustracción, equipo electrónico, rotura de vidrios).
+  - Vigilancia: responsabilidad civil por uso de armas, mínimo 400 salarios mínimos (Decreto Ley 356 de 1994).
+  - Todos los contratistas: cumplimiento 10 % y salarios y prestaciones 5 % del valor del contrato, calidad del servicio y responsabilidad civil. **Son exigencias del conjunto**, tomadas como referencia de la contratación estatal (Decreto 1082 de 2015), no obligaciones legales: el consejo las ajusta. Para calcularlas, el contrato debe tener valor total (o valor mensual y fecha de terminación).
+  - Para cambiar una, use **Editar** y anote en la fuente el acta del consejo. No se borran: se desactivan.
+
+### Pestaña Proveedores y contratos
+
+- **Proveedores:** empresa (con NIT y contacto de la empresa) o **persona natural**, que se registra **solo por el servicio** (por ejemplo, "Mantenimiento de piscina"): la plataforma no guarda su nombre, cédula ni teléfono; esos datos quedan en el contrato físico. Al guardar uno nuevo, el formulario sigue abierto para subir sus documentos.
+- **Documentos del proveedor:** RUT, Cámara de Comercio, planilla de seguridad social (PILA), licencias o permisos (por ejemplo, la de la Superintendencia de Vigilancia), experiencia o referencias. En el formulario del proveedor elija el tipo y, si aplica, la **fecha de vencimiento**, y suba el PDF. Un documento vencido o que vence en 30 días aparece en los avisos. No se guardan certificados bancarios.
+- **Contratos:** proveedor, objeto, inicio y terminación, valor mensual y total, **rubro del presupuesto** (se ve cuánto se ha ejecutado del rubro en el año), quién supervisa, pólizas exigidas según el contrato y el **PDF del contrato**.
+
+**Nada se borra:** un proveedor se marca *inactivo*; un contrato, *terminado* o *anulado*; una póliza, *anulada*; una garantía exigida, *desactivada*.
 
 **Avisos** (también aparecen en la pestaña *Pendientes*):
 
-- **Urgente:** falta una póliza que exige el RPH (áreas comunes, manejo, responsabilidad civil); la de manejo está por debajo de 4 salarios mínimos; una póliza o un contrato vence en 30 días o menos o ya venció; un contrato terminó pero sigue marcado como vigente.
-- **Pronto:** vence en 31 a 60 días.
+- **Urgente:** una garantía del conjunto no cumple lo que exige la ley o el RPH; a un contratista le falta una garantía de ley (por ejemplo, la de armas de la vigilancia); una póliza, un contrato o un documento de proveedor vence en 30 días o menos o ya venció; un contrato terminó pero sigue marcado como vigente.
+- **Pronto:** vence en 31 a 60 días; a un contratista le falta una garantía que exige el conjunto; falta el salario mínimo o el avalúo.
 
 ## 16. Mesa del Consejo (lo que le corresponde a la administración)
 
