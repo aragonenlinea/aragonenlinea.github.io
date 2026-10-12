@@ -259,7 +259,10 @@ Luego escriba título, categoría, fecha del documento y quién lo ve, marque la
 **Tapar datos (en el mismo panel, sin instalar nada):**
 
 1. Después de cargar el PDF, presione **Tapar datos**. Se abren las páginas con los datos encontrados **ya marcados** en negro.
-2. **Arrastre el mouse** sobre todo lo demás que no se deba publicar: nombres de personas (por ejemplo, los deudores del anexo de cartera), firmas, fotos, números de cuenta. Para **quitar** un recuadro, haga clic sobre él.
+2. Elija la herramienta y **arrastre el mouse** sobre lo que no se deba publicar:
+   - **Recuadro negro:** nombres de personas (por ejemplo, los deudores del anexo de cartera), cédulas, teléfonos, fotos, números de cuenta.
+   - **Sello «Original firmado»:** sobre las **firmas**. Queda un sello verde con ese texto en lugar de la firma, para que se sepa que el original sí está firmado.
+   Para **quitar** un recuadro o un sello, haga clic sobre él.
 3. **Aplicar tapado.** La plataforma arma un PDF nuevo: las páginas con recuadros se convierten en imagen con el negro encima, así que **lo tapado deja de existir en el archivo** (no queda escondido debajo). Las demás páginas quedan iguales.
 4. El PDF tapado se revisa otra vez solo. Puede **Tapar algo más** o **Deshacer el tapado** (vuelve al original). Todo ocurre en su computador: el original sin tapar nunca se sube.
 

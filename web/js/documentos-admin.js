@@ -26,7 +26,7 @@ export async function vistaDocumentos() {
       <h2>Antes de subir</h2>
       <ul class="lista-simple">
         <li>Tape <b>nombres de deudores</b> (por ejemplo, el anexo de cartera de los estados financieros), cédulas, teléfonos, correos, direcciones, firmas y cuentas bancarias de personas.</li>
-        <li>Use el botón <b>Tapar datos</b> que aparece al cargar el PDF: marque con recuadros lo que se debe ocultar y la plataforma genera un PDF donde eso ya no existe. Tachar con un marcador en otro programa <b>no</b> sirve: el texto sigue debajo.</li>
+        <li>Use el botón <b>Tapar datos</b> que aparece al cargar el PDF: marque con recuadros negros lo que se debe ocultar y ponga el sello <b>«Original firmado»</b> sobre las firmas. La plataforma genera un PDF donde eso ya no existe. Tachar con un marcador en otro programa <b>no</b> sirve: el texto sigue debajo.</li>
         <li>La plataforma borra sola los datos ocultos del archivo (autor, programa) y le avisa si encuentra correos, celulares o cédulas. Los nombres y las firmas no los puede detectar: esa revisión es suya.</li>
         <li>Los arrendatarios no ven estos documentos.</li>
       </ul>

@@ -8,6 +8,24 @@ import { cargarPdfjs } from "./revisar-pdf.js";
 const PDFLIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
 const CALIDAD = 2;          // escala de la imagen de las páginas tapadas (2 ≈ 144 puntos por pulgada)
 const MINIMO = 6;           // tamaño mínimo (en pantalla) de un recuadro dibujado
+const SELLO = "ORIGINAL FIRMADO";   // texto del sello que reemplaza las firmas
+const VERDE = "#0F4C45";
+
+// Sello sobre fondo blanco, con borde y el texto ajustado al tamaño del recuadro.
+function dibujarSello(ctx, x, y, w, h, grosor) {
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = VERDE; ctx.lineWidth = grosor;
+  ctx.strokeRect(x + grosor / 2, y + grosor / 2, w - grosor, h - grosor);
+  const dosLineas = h > w * 0.45;            // recuadro alto: ORIGINAL / FIRMADO
+  const lineas = dosLineas ? ["ORIGINAL", "FIRMADO"] : [SELLO];
+  let tam = Math.min(h * (dosLineas ? 0.32 : 0.5), 200);
+  ctx.font = `800 ${tam}px Arial, Helvetica, sans-serif`;
+  const ancho = Math.max(...lineas.map(l => ctx.measureText(l).width));
+  if (ancho > w * 0.86) tam *= (w * 0.86) / ancho;
+  ctx.font = `800 ${tam}px Arial, Helvetica, sans-serif`;
+  ctx.fillStyle = VERDE; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  lineas.forEach((l, i) => ctx.fillText(l, x + w / 2, y + h / 2 + (i - (lineas.length - 1) / 2) * tam * 1.1));
+}
 
 /**
  * Muestra el editor dentro de `cont`.
@@ -28,7 +46,11 @@ export async function abrirTapado(cont, bytes, hallazgos, alTerminar) {
   cont.innerHTML = `<div class="tapar">
       <div class="tapar-barra">
         <div><b>Tapar datos</b> · <span id="tapar-cuenta"></span>
-          <p class="m">Arrastre el mouse sobre lo que se debe tapar (nombres, firmas, cédulas, teléfonos, cuentas). Para quitar un recuadro, haga clic sobre él. Los datos encontrados ya vienen marcados.</p></div>
+          <p class="m">Elija la herramienta y arrastre el mouse sobre lo que se debe tapar. Para quitar un recuadro, haga clic sobre él. Los datos encontrados ya vienen marcados.</p>
+          <div class="tapar-herramientas" role="radiogroup" aria-label="Herramienta">
+            <label class="check"><input type="radio" name="tapar-herr" value="negro" checked> Recuadro negro (nombres, cédulas, teléfonos, cuentas)</label>
+            <label class="check"><input type="radio" name="tapar-herr" value="sello"> Sello «Original firmado» (firmas)</label>
+          </div></div>
         <div class="row"><button class="btn" type="button" id="tapar-aplicar">Aplicar tapado</button>
           <button class="btn ghost" type="button" id="tapar-cancelar">Cancelar</button></div>
       </div>
@@ -36,6 +58,8 @@ export async function abrirTapado(cont, bytes, hallazgos, alTerminar) {
       <div class="tapar-hojas" id="tapar-hojas"></div>
     </div>`;
   const hojas = cont.querySelector("#tapar-hojas");
+  let herramienta = "negro";
+  cont.querySelectorAll("[name=tapar-herr]").forEach(r => r.addEventListener("change", () => { herramienta = r.value; }));
   const cuenta = () => {
     const total = [...marcas.values()].reduce((a, l) => a + l.length, 0);
     const pags = [...marcas.values()].filter(l => l.length).length;
@@ -49,7 +73,8 @@ export async function abrirTapado(cont, bytes, hallazgos, alTerminar) {
     capa.querySelectorAll(".tapar-caja").forEach(e => e.remove());
     (marcas.get(n) || []).forEach((c, i) => {
       const b = document.createElement("button");
-      b.type = "button"; b.className = "tapar-caja"; b.title = "Quitar este recuadro";
+      b.type = "button"; b.className = "tapar-caja" + (c[4] === "sello" ? " sello" : ""); b.title = "Quitar este recuadro";
+      if (c[4] === "sello") b.textContent = SELLO;
       b.setAttribute("aria-label", `Quitar recuadro ${i + 1} de la página ${n}`);
       Object.assign(b.style, { left: c[0] * escala + "px", top: c[1] * escala + "px",
         width: (c[2] - c[0]) * escala + "px", height: (c[3] - c[1]) * escala + "px" });
@@ -81,7 +106,7 @@ export async function abrirTapado(cont, bytes, hallazgos, alTerminar) {
     capa.addEventListener("pointerdown", e => {
       if (e.target !== capa) return;
       inicio = punto(e); capa.setPointerCapture(e.pointerId);
-      temporal = document.createElement("div"); temporal.className = "tapar-caja nueva"; capa.appendChild(temporal);
+      temporal = document.createElement("div"); temporal.className = "tapar-caja nueva" + (herramienta === "sello" ? " sello" : ""); capa.appendChild(temporal);
     });
     capa.addEventListener("pointermove", e => {
       if (!inicio) return;
@@ -95,7 +120,9 @@ export async function abrirTapado(cont, bytes, hallazgos, alTerminar) {
       temporal.remove(); temporal = null;
       if (Math.abs(x - inicio[0]) >= MINIMO && Math.abs(y - inicio[1]) >= MINIMO) {
         if (!marcas.has(n)) marcas.set(n, []);
-        marcas.get(n).push([Math.min(x, inicio[0]) / escala, Math.min(y, inicio[1]) / escala, Math.max(x, inicio[0]) / escala, Math.max(y, inicio[1]) / escala]);
+        const caja = [Math.min(x, inicio[0]) / escala, Math.min(y, inicio[1]) / escala, Math.max(x, inicio[0]) / escala, Math.max(y, inicio[1]) / escala];
+        if (herramienta === "sello") caja.push("sello");
+        marcas.get(n).push(caja);
         pintarCajas(n, capa, escala); cuenta();
       }
       inicio = null;
@@ -146,8 +173,11 @@ export async function abrirTapado(cont, bytes, hallazgos, alTerminar) {
         const ctx = lienzo.getContext("2d");
         ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, lienzo.width, lienzo.height);
         await pagina.render({ canvas: lienzo, canvasContext: ctx, viewport: vp }).promise;
-        ctx.fillStyle = "#000000";
-        for (const [x1, y1, x2, y2] of cajas) ctx.fillRect(x1 * CALIDAD, y1 * CALIDAD, (x2 - x1) * CALIDAD, (y2 - y1) * CALIDAD);
+        for (const [x1, y1, x2, y2, tipo] of cajas) {
+          const [x, y, w, h] = [x1 * CALIDAD, y1 * CALIDAD, (x2 - x1) * CALIDAD, (y2 - y1) * CALIDAD];
+          if (tipo === "sello") dibujarSello(ctx, x, y, w, h, 1.5 * CALIDAD);
+          else { ctx.fillStyle = "#000000"; ctx.fillRect(x, y, w, h); }
+        }
         const jpg = await new Promise(r => lienzo.toBlob(r, "image/jpeg", 0.9));
         const imagen = await nuevo.embedJpg(new Uint8Array(await jpg.arrayBuffer()));
         const v1 = pagina.getViewport({ scale: 1 });

@@ -379,3 +379,9 @@ table.tabla-ejecucion .fila-total td{font-weight:800;border-top:2px solid var(--
 .tapar-caja{position:absolute;padding:0;margin:0;background:rgba(0,0,0,.88);border:2px solid var(--bad);border-radius:2px;cursor:pointer}
 .tapar-caja:hover,.tapar-caja:focus-visible{background:rgba(180,35,24,.55)}
 .tapar-caja.nueva{background:rgba(0,0,0,.35);border-style:dashed;pointer-events:none}
+
+.tapar-herramientas{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:6px}
+.tapar-herramientas .check{font-size:14px}
+.tapar-caja.sello{background:#fff;border:2px solid #0F4C45;color:#0F4C45;font:800 11px/1.1 Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.tapar-caja.sello:hover,.tapar-caja.sello:focus-visible{background:#fde8e6}
+.tapar-caja.nueva.sello{background:rgba(255,255,255,.7);border:2px dashed #0F4C45}
