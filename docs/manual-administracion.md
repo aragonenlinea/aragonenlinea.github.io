@@ -300,7 +300,19 @@ Herramienta de control para el **consejo y la administración** (nadie más la v
 - **Urgente:** falta una póliza que exige el RPH (áreas comunes, manejo, responsabilidad civil); la de manejo está por debajo de 4 salarios mínimos; una póliza o un contrato vence en 30 días o menos o ya venció; un contrato terminó pero sigue marcado como vigente.
 - **Pronto:** vence en 31 a 60 días.
 
-## 16. Cuentas y continuidad
+## 16. Mesa del Consejo (lo que le corresponde a la administración)
+
+La Mesa del Consejo (*Mi cuenta → Mesa del Consejo*) la usan el consejo y la administración. Detalle completo en el [manual del consejo](manual-consejo.md). A la administración le corresponde:
+
+- **Integrantes:** asignar el cargo de cada cuenta del consejo (presidente, vicepresidente, secretario, principal, suplente).
+- **Reuniones:** programarlas, publicar la convocatoria con el orden del día y los documentos (al menos 3 días antes, RPH art. 72), registrar la asistencia y elegir el acta (subida antes en Documentos, «Actas de consejo», de preferencia «solo consejo»).
+- **Informe mensual:** preparar el informe del mes con el balance y la relación de pagos (PDF «solo consejo», RPH art. 63), la gestión de cartera y las novedades, y **Presentar al consejo**. Se puede corregir hasta que el consejo decida.
+- **Solicitudes de autorización:** presentarlas con su justificación, valor y soportes (cotizaciones, hojas de vida). Si el consejo la aplaza, complétela y vuelva a presentarla.
+- **Obligaciones:** mantener el calendario y marcar **Cumplida** cuando se haga (la próxima fecha se calcula sola según la periodicidad).
+
+**Las decisiones** (aprobar el informe, decidir solicitudes, aprobar actas) **las registran solo los consejeros**: la plataforma no le permite a la administración hacerlo.
+
+## 17. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.

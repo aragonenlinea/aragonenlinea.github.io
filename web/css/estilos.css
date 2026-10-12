@@ -398,3 +398,10 @@ tr.fila-apagada td,.fila-apagada{opacity:.6}
 .fila-smmlv{margin-top:10px}
 .fila-smmlv input{max-width:200px}
 .fila-smmlv input[type=number]{max-width:100px}
+
+/* ---------- Mesa del Consejo ---------- */
+tr.fila-detalle > td{background:var(--bg);padding:14px}
+.detalle-reunion p{margin:6px 0}
+.lista-checks{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;background:var(--surface)}
+.lista-checks .check{font-size:14px}
+.avisos-control li .btn{margin-left:auto}
