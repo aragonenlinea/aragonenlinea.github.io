@@ -38,7 +38,8 @@ export async function cargarDatos() {
     consulta(sb.from("configuracion_conjunto").select("*").eq("id", 1).maybeSingle()),
     consulta(sb.from("documentos_privados").select("id,titulo,categoria,fecha,audiencia").eq("estado", "publicado").order("fecha", { ascending: false })),
     consulta(sb.from("presupuestos").select("id,anio").eq("estado", "publicado").eq("anio", anio).maybeSingle()),
-    consulta(sb.from("proveedor_documentos").select("*").order("tipo"))
+    // Si aún no se ha aplicado 029, la sección funciona igual, sin documentos de proveedores.
+    consulta(sb.from("proveedor_documentos").select("*").order("tipo")).catch(() => [])
   ]);
   const rubros = {};
   if (presupuesto) {
