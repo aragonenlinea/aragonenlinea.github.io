@@ -405,3 +405,8 @@ tr.fila-detalle > td{background:var(--bg);padding:14px}
 .lista-checks{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;background:var(--surface)}
 .lista-checks .check{font-size:14px}
 .avisos-control li .btn{margin-left:auto}
+
+.docs-proveedor{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.docs-proveedor li{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.docs-proveedor-form{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 14px}
+.docs-proveedor-form legend{font-weight:700;padding:0 6px}

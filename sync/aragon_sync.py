@@ -37,7 +37,7 @@ import revision_pdf
 
 AQUI = Path(__file__).resolve().parent
 VERSION = "1.0"
-CATEGORIAS = ["Actas de asamblea", "Actas de consejo", "Estados financieros", "Informes de gestión", "Contratos", "Pólizas", "Otros"]
+CATEGORIAS = ["Actas de asamblea", "Actas de consejo", "Estados financieros", "Informes de gestión", "Contratos", "Pólizas", "Proveedores", "Otros"]
 PERMITIDOS_URL = "https://aragonenlinea.github.io/datos/datos_permitidos.json"
 PERMITIDOS_RESPALDO = {"correos": ["aragonenlinea.neiva@gmail.com", "conjuntoaragon2020@gmail.com"],
                        "telefonos": ["3173656199", "3163952209"], "numeros": ["900.140.902"]}

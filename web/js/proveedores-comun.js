@@ -7,6 +7,7 @@ import { pesos } from "./cuenta.js";
 
 export const SERVICIOS = ["Vigilancia", "Aseo y servicios generales", "Mantenimiento de piscina", "Mantenimiento eléctrico",
   "Mantenimiento general", "Jardinería", "Contabilidad", "Administración", "Asesoría jurídica", "Seguros", "Otro"];
+export const TIPOS_DOC_PROVEEDOR = ["RUT", "Cámara de Comercio", "Seguridad social (PILA)", "Licencia o permiso", "Experiencia o referencias", "Otro"];
 export const TIPOS_POLIZA = ["Áreas comunes (incendio y terremoto)", "Responsabilidad civil extracontractual", "Manejo",
   "Sustracción", "Equipo electrónico", "Rotura de vidrios", "Cumplimiento de contrato", "Otra"];
 // Pólizas del conjunto que el RPH exige (arts. 34 y 63) o recomienda expresamente (art. 34, parágrafo 2).
@@ -30,13 +31,14 @@ const pill = s => `<span class="pill ${s.clase}">${esc(s.texto)}</span>`;
 // Todo lo necesario para la sección (y la ejecución del rubro de cada contrato en el año).
 export async function cargarDatos() {
   const anio = new Date().getFullYear();
-  const [proveedores, contratos, polizas, conf, documentos, presupuesto] = await Promise.all([
+  const [proveedores, contratos, polizas, conf, documentos, presupuesto, docsProveedor] = await Promise.all([
     consulta(sb.from("proveedores").select("*").order("nombre")),
     consulta(sb.from("contratos").select("*").order("fecha_fin", { ascending: true, nullsFirst: false })),
     consulta(sb.from("polizas").select("*").order("vigencia_hasta")),
     consulta(sb.from("configuracion_conjunto").select("*").eq("id", 1).maybeSingle()),
     consulta(sb.from("documentos_privados").select("id,titulo,categoria,fecha,audiencia").eq("estado", "publicado").order("fecha", { ascending: false })),
-    consulta(sb.from("presupuestos").select("id,anio").eq("estado", "publicado").eq("anio", anio).maybeSingle())
+    consulta(sb.from("presupuestos").select("id,anio").eq("estado", "publicado").eq("anio", anio).maybeSingle()),
+    consulta(sb.from("proveedor_documentos").select("*").order("tipo"))
   ]);
   const rubros = {};
   if (presupuesto) {
@@ -50,7 +52,7 @@ export async function cargarDatos() {
       for (const e of ej) if (rubros[e.rubro]) rubros[e.rubro].ejecutado += Number(e.valor);
     }
   }
-  return { proveedores, contratos, polizas, conf: conf || {}, documentos, rubros, anio };
+  return { proveedores, contratos, polizas, conf: conf || {}, documentos, rubros, anio, docsProveedor };
 }
 
 // Lista de avisos: lo que la administración debe atender (y el consejo vigilar).
@@ -74,6 +76,12 @@ export function avisos(d) {
     const s = semaforo(c.fecha_fin);
     if (s.nivel === 2 && diasHasta(c.fecha_fin) < 0) lista.push({ nivel: 2, texto: `El contrato de ${nombre(c.proveedor_id)} terminó el ${fecha(c.fecha_fin)} y sigue como vigente: registre la prórroga o márquelo terminado.` });
     else if (s.nivel) lista.push({ nivel: s.nivel, texto: `Contrato de ${nombre(c.proveedor_id)} (${c.objeto}): ${s.texto.toLowerCase()}.` });
+  }
+  for (const pd of d.docsProveedor) {
+    const p = d.proveedores.find(x => x.id === pd.proveedor_id);
+    if (!p || p.estado !== "activo" || !pd.vence_el) continue;
+    const s = semaforo(pd.vence_el);
+    if (s.nivel === 2) lista.push({ nivel: 2, texto: `${pd.tipo} de ${p.nombre}: ${s.texto.toLowerCase().replace("vencida", "vencido")}.` });
   }
   return lista.sort((a, b) => b.nivel - a.nivel);
 }
@@ -119,6 +127,17 @@ export function htmlContratos(d, editar = null) {
     }).join("") || `<tr><td colspan="${editar ? 9 : 8}" class="m">Aún no hay contratos registrados.</td></tr>`}</tbody></table></div>`;
 }
 
+// Documentos del proveedor (RUT, Cámara de Comercio, PILA…) con su vencimiento.
+export function htmlDocsProveedor(d, proveedorId, quitar = false) {
+  const docs = d.docsProveedor.filter(x => x.proveedor_id === proveedorId);
+  if (!docs.length) return quitar ? `<p class="m">Aún no hay documentos.</p>` : "";
+  return `<ul class="docs-proveedor">${docs.map(x => {
+    const s = x.vence_el ? semaforo(x.vence_el) : null;
+    return `<li><b>${esc(x.tipo)}:</b> ${enlaceDoc(d, x.documento_id)}${s ? ` ${s.nivel ? pill(s) : `<span class="m">vence el ${fecha(x.vence_el)}</span>`}` : ""}${x.notas ? ` <span class="m">· ${esc(x.notas)}</span>` : ""}
+      ${quitar ? `<button class="btn sm ghost" type="button" data-quitar-pdoc="${x.id}">Quitar</button>` : ""}</li>`;
+  }).join("")}</ul>`;
+}
+
 export function htmlProveedores(d, editar = null) {
   if (!d.proveedores.length) return `<p class="m">Aún no hay proveedores registrados.</p>`;
   return `<div class="grid g2">${d.proveedores.map(p => {
@@ -129,6 +148,7 @@ export function htmlProveedores(d, editar = null) {
       ${p.funciones ? `<p class="texto-lineas">${esc(p.funciones)}</p>` : ""}
       ${p.telefono || p.correo ? `<div class="m">${[p.telefono, p.correo].filter(Boolean).map(esc).join(" · ")}</div>` : ""}
       <div class="m">${vigentes} contrato(s) vigente(s)</div>
+      ${htmlDocsProveedor(d, p.id)}
       ${editar ? `<div class="acciones-form">${editar("proveedor", p.id)}</div>` : ""}
     </div>`;
   }).join("")}</div>`;

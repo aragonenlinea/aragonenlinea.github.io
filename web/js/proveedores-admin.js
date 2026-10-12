@@ -3,7 +3,7 @@
 import { esc } from "./comun.js";
 import { sb, consulta } from "./supabase.js";
 import { pesos } from "./cuenta.js";
-import { cargarDatos, avisos, htmlAvisos, htmlPolizas, htmlContratos, htmlProveedores, SERVICIOS, TIPOS_POLIZA } from "./proveedores-comun.js";
+import { cargarDatos, avisos, htmlAvisos, htmlPolizas, htmlContratos, htmlProveedores, htmlDocsProveedor, SERVICIOS, TIPOS_POLIZA, TIPOS_DOC_PROVEEDOR } from "./proveedores-comun.js";
 
 let edicion = null;    // { tipo: "poliza" | "contrato" | "proveedor", id: número o null (nuevo) }
 let datos = null;
@@ -39,6 +39,7 @@ function formulario() {
       <p class="m solo-persona">De una persona natural no se guardan nombre, cédula ni teléfono: esos datos quedan en el contrato físico de la administración.</p>
       <label for="pv-fun">Funciones u obligaciones principales</label>
       <textarea id="pv-fun" name="funciones" maxlength="2000">${val(p.funciones)}</textarea>`;
+    if (id) campos += seccionDocsProveedor(id);
   } else if (tipo === "contrato") {
     const c = datos.contratos.find(x => x.id === id) || { supervisor: "Administración", estado: "vigente" };
     const rubros = Object.keys(datos.rubros);
@@ -79,6 +80,22 @@ function formulario() {
     <form id="fProveedores" data-tipo="${tipo}" novalidate>${campos}
       <div class="acciones-form"><button class="btn" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancelar-prov>Cancelar</button></div>
     </form></div>`;
+}
+
+// Documentos del proveedor dentro del formulario de edición (se agregan y quitan al momento).
+function seccionDocsProveedor(id) {
+  const disponibles = datos.documentos.filter(x => x.categoria === "Proveedores" && !datos.docsProveedor.some(pd => pd.proveedor_id === id && pd.documento_id === x.id));
+  return `<fieldset class="docs-proveedor-form bloque-sm"><legend>Documentos del proveedor</legend>
+    ${htmlDocsProveedor(datos, id, true)}
+    <div class="grid tres">
+      <div><label for="pd-tipo">Tipo</label><select id="pd-tipo" data-pdoc="tipo">${TIPOS_DOC_PROVEEDOR.map(t => opcion(t, t)).join("")}</select></div>
+      <div><label for="pd-doc">Documento (PDF)</label><select id="pd-doc" data-pdoc="documento"><option value="">Elija…</option>${disponibles.map(x => opcion(x.id, `${x.titulo} (${x.fecha})`)).join("")}</select></div>
+      <div><label for="pd-vence">Vence el (si aplica)</label><input id="pd-vence" data-pdoc="vence" type="date"></div>
+    </div>
+    <label for="pd-notas">Notas (opcional)</label><input id="pd-notas" data-pdoc="notas" maxlength="300" placeholder="Ej.: planilla de septiembre">
+    <div class="acciones-form"><button class="btn sm" type="button" data-agregar-pdoc="${id}">Agregar documento</button></div>
+    <p class="m">Suba primero el PDF en la pestaña Documentos, categoría <b>«Proveedores»</b>, de preferencia «solo consejo». Tape cédulas, teléfonos y firmas de personas. No se guardan certificados bancarios.</p>
+  </fieldset>`;
 }
 
 export async function vistaProveedores() {
@@ -136,6 +153,18 @@ export async function manejarProveedoresClic(b, msg, repintar) {
     return true;
   }
   if (b.hasAttribute("data-cancelar-prov")) { edicion = null; await repintar(); return true; }
+  if (b.dataset.agregarPdoc) {
+    const campo = n => document.querySelector(`[data-pdoc="${n}"]`)?.value || "";
+    if (!campo("documento")) { msg("Elija el documento (súbalo antes en Documentos, categoría «Proveedores»).", "error"); return true; }
+    await consulta(sb.from("proveedor_documentos").insert({ proveedor_id: Number(b.dataset.agregarPdoc), documento_id: Number(campo("documento")),
+      tipo: campo("tipo"), vence_el: campo("vence") || null, notas: campo("notas").trim() || null }));
+    msg("Documento agregado al proveedor."); await repintar(); ajustarTipoProveedor(document.getElementById("fProveedores")); return true;
+  }
+  if (b.dataset.quitarPdoc) {
+    if (!confirm("¿Quitar este documento del proveedor? El PDF sigue en Documentos.")) return true;
+    await consulta(sb.from("proveedor_documentos").delete().eq("id", Number(b.dataset.quitarPdoc)));
+    msg("Documento quitado del proveedor."); await repintar(); ajustarTipoProveedor(document.getElementById("fProveedores")); return true;
+  }
   return false;
 }
 

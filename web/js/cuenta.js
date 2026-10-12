@@ -12,7 +12,7 @@ const SECCIONES = [
 ];
 
 // Categorías de los documentos privados (deben coincidir con 018_documentos_privados.sql).
-export const CATEGORIAS_DOC = ["Actas de asamblea", "Actas de consejo", "Estados financieros", "Informes de gestión", "Contratos", "Pólizas", "Otros"];
+export const CATEGORIAS_DOC = ["Actas de asamblea", "Actas de consejo", "Estados financieros", "Informes de gestión", "Contratos", "Pólizas", "Proveedores", "Otros"];
 
 // 2.345.678 bytes → "2,2 MB"
 export const tamanoArchivo = b => !b ? "" : b >= 1048576 ? `${(b / 1048576).toLocaleString("es-CO", { maximumFractionDigits: 1 })} MB`
