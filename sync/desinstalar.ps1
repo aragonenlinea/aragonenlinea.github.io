@@ -12,4 +12,4 @@ foreach ($n in "Aragon en linea - archivos.lnk", "Aragon en linea - publicar aho
 }
 Remove-Item (Join-Path $Raiz "programa") -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "Programa desinstalado. Las carpetas de archivos siguen en $Raiz (puede borrarlas si no las necesita)." -ForegroundColor Cyan
-Write-Host "Falta: borrar la clave 'pc-administracion' en Supabase > Project Settings > API Keys > Secret keys." -ForegroundColor Yellow
+Write-Host "Falta: borrar la clave 'pc_administracion' en Supabase > Project Settings > API Keys > Secret keys." -ForegroundColor Yellow

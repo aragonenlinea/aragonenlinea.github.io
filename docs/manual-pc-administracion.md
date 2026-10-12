@@ -11,7 +11,7 @@ Un programa pequeño que publica en la plataforma lo que la administradora ponga
 ### A.1 Crear una clave secreta solo para este PC
 
 1. Supabase → **Project Settings** → **API Keys** → sección **Secret keys** → **Add new secret key**.
-2. Nombre: `pc-administracion`. Créela y **cópiela** (empieza por `sb_secret_`).
+2. Nombre: `pc_administracion`. Créela y **cópiela** (empieza por `sb_secret_`).
 3. **No la pegue en ningún otro lugar** (ni correo, ni chat, ni documento). Solo en el instalador del paso A.2.
 
 Una clave propia para el PC permite **revocarla** sin afectar nada más si el PC se daña, se pierde o se cambia de administración (Secret keys → los tres puntos → *Delete*), y crear otra.
@@ -83,7 +83,7 @@ La **plantilla de informe mensual** tiene una hoja **Control** con: año, mes, t
 |---|---|
 | ULTIMO RESULTADO dice que **falta la clave** o que **Supabase rechazó la clave** | El administrador de la página vuelve a correr `INSTALAR.bat` con una clave secreta válida. |
 | No pasa nada al poner archivos | Haga doble clic en "publicar ahora". Si sigue igual, en el **Programador de tareas** de Windows revise que exista y esté habilitada la tarea "Aragon en linea - publicar". |
-| El PC se dañó o se cambia | En Supabase **borre** la clave `pc-administracion` e instale de nuevo en el PC nuevo con una clave nueva. |
+| El PC se dañó o se cambia | En Supabase **borre** la clave `pc_administracion` e instale de nuevo en el PC nuevo con una clave nueva. |
 | Se publicó algo equivocado | En el panel, pestaña correspondiente → **Anular** (cartera e informes) o **Retirar** (documentos). |
 
 El programa guarda un historial en `C:\Aragon en linea\registro.txt`.
