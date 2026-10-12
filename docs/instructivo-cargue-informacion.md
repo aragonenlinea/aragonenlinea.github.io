@@ -117,6 +117,10 @@ Opcionales (columnas amarillas) para el cuadro de antigüedad: `mora_1_30, mora_
 
 Panel → **Documentos** → elegir el PDF → revisar lo que la plataforma encuentre → **Tapar datos** si hay algo de personas (nombres, cédulas, teléfonos, firmas) → título, categoría, fecha y quién lo ve (propietarios o **solo consejo**) → confirmar la revisión → **Publicar documento**. Los estados financieros se suben con el **anexo de cartera tapado** (sin nombres de deudores). Detalle en el *Manual de administración*, sección 13.
 
+### 2.5 Opción: el programa del PC
+
+En vez de cargar por el panel, la administradora puede copiar el Excel de cartera, el del informe del mes (con la hoja **Control** llena por la contadora) y los PDF ya revisados en `C:\Aragon en linea\Para subir`: el programa los publica al prender el PC y cada hora, con las mismas validaciones. Ver `docs/manual-pc-administracion.md`.
+
 ## Parte 3 · Si algo sale mal
 
 ### Me equivoqué y ya publiqué

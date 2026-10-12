@@ -51,7 +51,7 @@ Al importar: vista previa; validar que todas las unidades existan, que no haya r
 
 1. **Sitio público:** portada, comunicados, documentos, zonas comunes, directorio. Sin inicio de sesión ni datos personales. Publicado en GitHub Pages. **Aprobada el 2026-09-27.**
 2. **Acceso de residentes:** registro con autorización de datos, Mi hogar (contacto, habitantes, mascotas, vehículos con validación), PQRS, reservas. Panel de administración y censo. Entregas: 2a (Supabase, ingreso, autorización, Mi hogar, censo), 2b (PQRS y reservas).
-3. **Estado de cuenta y gestión:** 3a cartera, estado de cuenta, pago, informes financieros y tableros (**aprobada el 2026-09-27**); 3b script de sincronización del PC y documentos privados de copropietarios; 3c proveedores, contratos y pólizas (RPH arts. 34, 60.13, 63); 3d pestaña del Consejo (RPH arts. 57-58, 60, 63, 71-74: reuniones, informe mensual del administrador, solicitudes de autorización, compromisos y calendario de obligaciones).
+3. **Estado de cuenta y gestión:** 3a cartera, estado de cuenta, pago, informes financieros y tableros (**aprobada el 2026-09-27**); 3b script de sincronización del PC (`sync/`) y documentos privados de copropietarios, con «Tapar datos» y sello «Original firmado» en el panel; 3c proveedores, contratos y pólizas (RPH arts. 34, 60.13, 63); 3d pestaña del Consejo (RPH arts. 57-58, 60, 63, 71-74: reuniones, informe mensual del administrador, solicitudes de autorización, compromisos y calendario de obligaciones).
 4. **Portería, visitantes y consultas:** autorización de visitantes por los residentes y su validación en portería, consulta de placas, encuestas a la comunidad. (Visitantes se movió de la Fase 2 a la 4 el 2026-09-27.)
 
 ## Decisiones tomadas

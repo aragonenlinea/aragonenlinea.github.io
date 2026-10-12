@@ -8,6 +8,8 @@ Este manual es para la administración y el consejo. No hay que saber programar:
 
 **Para pasar de la prueba a la información real y para los cargues de cada mes (cartera, presupuesto, informes), use el [Instructivo de cargue de información](instructivo-cargue-informacion.md).**
 
+**Programa del PC de la administración:** publica solo lo que se ponga en una carpeta del PC (cartera, informes y documentos). Ver el [manual del programa del PC](manual-pc-administracion.md).
+
 ---
 
 ## 1. Cómo funciona, en una frase
