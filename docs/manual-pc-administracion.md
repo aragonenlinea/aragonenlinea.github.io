@@ -31,6 +31,14 @@ Una clave propia para el PC permite **revocarla** sin afectar nada más si el PC
 
 Para **cambiar la clave** (por ejemplo, si la revocó), vuelva a correr `INSTALAR.bat` y escriba **S** cuando pregunte si quiere reemplazarla.
 
+### A.3 Pruebas y entrega
+
+Durante el desarrollo el programa se instala y se prueba en el PC del administrador de la página, con datos de prueba. Al **entregar** la plataforma:
+
+1. En el PC de pruebas: doble clic en `sync\DESINSTALAR.bat` (quita la tarea programada, los accesos directos y el programa con su clave; deja las carpetas de archivos como respaldo).
+2. En Supabase → Secret keys: **borre** la clave que usaba ese PC.
+3. En el PC de la oficina: cree una clave nueva (A.1) e instale (A.2).
+
 ## Parte B · Uso diario (administradora)
 
 Abra en el escritorio **"Aragon en linea - archivos"**. Verá:
