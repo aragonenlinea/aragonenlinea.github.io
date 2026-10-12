@@ -385,3 +385,16 @@ table.tabla-ejecucion .fila-total td{font-weight:800;border-top:2px solid var(--
 .tapar-caja.sello{background:#fff;border:2px solid #0F4C45;color:#0F4C45;font:800 11px/1.1 Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 .tapar-caja.sello:hover,.tapar-caja.sello:focus-visible{background:#fde8e6}
 .tapar-caja.nueva.sello{background:rgba(255,255,255,.7);border:2px dashed #0F4C45}
+
+/* ---------- Proveedores y pólizas ---------- */
+.avisos-control{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-direction:column;gap:6px}
+.avisos-control li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:var(--r-sm);background:var(--bg)}
+.avisos-control li.urgente{border-left:4px solid var(--bad)}
+.avisos-control li.pronto{border-left:4px solid var(--warn)}
+tr.fila-apagada td,.fila-apagada{opacity:.6}
+.tarjeta-proveedor .row{gap:6px}
+.tarjeta-proveedor p{margin:8px 0}
+.row.espacio{justify-content:space-between}
+.fila-smmlv{margin-top:10px}
+.fila-smmlv input{max-width:200px}
+.fila-smmlv input[type=number]{max-width:100px}

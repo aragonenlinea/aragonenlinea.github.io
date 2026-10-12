@@ -284,7 +284,23 @@ En las páginas tapadas ya no se puede seleccionar ni buscar texto, y el archivo
 - **Retirar**: definitivo (venta de la casa, fin del contrato). También sirve para una cuenta suspendida.
 - Para dar acceso a un consejero: primero él entra una vez al sitio **con el correo que usará solo para el consejo**; luego se corre `supabase/004_primer_administrador.sql` con ese correo.
 
-## 15. Cuentas y continuidad
+## 15. Proveedores, contratos y pólizas
+
+Herramienta de control para el **consejo y la administración** (nadie más la ve). El consejo la consulta en *Mi cuenta → Proveedores y pólizas*; la administración la mantiene en **Panel → Proveedores y pólizas**.
+
+- **Proveedores:** empresa (con NIT y contacto de la empresa) o **persona natural**, que se registra **solo por el servicio** (por ejemplo, "Mantenimiento de piscina"): la plataforma no guarda su nombre, cédula ni teléfono; esos datos quedan en el contrato físico.
+- **Contratos:** proveedor, objeto, inicio y terminación, valor mensual y total, **rubro del presupuesto** (junto al contrato se ve cuánto se ha ejecutado de ese rubro en el año), quién supervisa, pólizas exigidas al contratista y el **PDF del contrato**.
+- **Pólizas:** del conjunto o de un contratista: tipo, aseguradora, número, valor asegurado, prima, vigencia y PDF.
+- **PDF:** primero se sube en la pestaña **Documentos** (con Tapar datos y el sello «Original firmado»), de preferencia como «solo consejo»; luego se elige en el contrato o la póliza.
+- **Nada se borra:** un proveedor se marca *inactivo*; un contrato, *terminado* o *anulado*; una póliza, *anulada*.
+- **Salario mínimo:** escríbalo cada año (decreto del Gobierno) en el recuadro de Avisos; con él se revisa que la póliza de manejo cubra 4 salarios mínimos (RPH art. 63).
+
+**Avisos** (también aparecen en la pestaña *Pendientes*):
+
+- **Urgente:** falta una póliza que exige el RPH (áreas comunes, manejo, responsabilidad civil); la de manejo está por debajo de 4 salarios mínimos; una póliza o un contrato vence en 30 días o menos o ya venció; un contrato terminó pero sigue marcado como vigente.
+- **Pronto:** vence en 31 a 60 días.
+
+## 16. Cuentas y continuidad
 
 - El sitio y el repositorio pertenecen a la cuenta `aragonenlinea`, creada con el correo del proyecto, no con cuentas personales.
 - Al cambiar de administración o de consejo, se entregan el correo, la contraseña de GitHub, la app de verificación en dos pasos y los códigos de recuperación.
